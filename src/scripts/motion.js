@@ -116,9 +116,9 @@ function init() {
     import('./stage.js').then((m) => m.initStage(gsap, ScrollTrigger));
   }
 
-  /* ---------- Services workshop: isometric floor the camera walks bay by bay (lazy) ---------- */
-  if (document.querySelector('[data-svc]')) {
-    import('./services.js').then((m) => m.initServices(gsap, ScrollTrigger));
+  /* ---------- What we make: exploded-view plates that draw themselves (lazy) ---------- */
+  if (document.querySelector('[data-plates]')) {
+    import('./plates.js').then((m) => m.initPlates(gsap, ScrollTrigger));
   }
 
   /* ---------- The print works: one persistent 3D warehouse the page scroll flies through (lazy) ---------- */

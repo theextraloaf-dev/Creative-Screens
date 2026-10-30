@@ -42,6 +42,32 @@
           "Brochures",
           "Letterheads",
           "Packaging"
+        ],
+        "parts": [
+          {
+            "name": "Tri-fold brochure",
+            "line": "Six panels, folded and scored."
+          },
+          {
+            "name": "Mailer box",
+            "line": "Printed packaging, die-cut and folded."
+          },
+          {
+            "name": "Letterhead",
+            "line": "Your letter paper, matched to your brand."
+          },
+          {
+            "name": "Envelope",
+            "line": "DL envelopes, printed to match."
+          },
+          {
+            "name": "Business cards",
+            "line": "Thick card, sharp print."
+          },
+          {
+            "name": "Presentation folder",
+            "line": "A pocket folder that holds the set."
+          }
         ]
       },
       {
@@ -54,6 +80,32 @@
           "3D letters",
           "Lightboxes",
           "Wayfinding"
+        ],
+        "parts": [
+          {
+            "name": "Face",
+            "line": "Opal acrylic that spreads the light evenly."
+          },
+          {
+            "name": "Return",
+            "line": "Aluminium side wall, bent to the letter shape."
+          },
+          {
+            "name": "LED modules",
+            "line": "Low-power LEDs that light the letter from inside."
+          },
+          {
+            "name": "Stand-offs",
+            "line": "Spacers that hold each letter off the wall."
+          },
+          {
+            "name": "Backplate",
+            "line": "The panel everything mounts to."
+          },
+          {
+            "name": "Power supply",
+            "line": "Converts mains power for the LEDs."
+          }
         ]
       },
       {
@@ -66,6 +118,32 @@
           "Wall murals",
           "Floor graphics",
           "Fleet wraps"
+        ],
+        "parts": [
+          {
+            "name": "Tailgate",
+            "line": "Wrap cut to the tailgate's shape."
+          },
+          {
+            "name": "Bed side",
+            "line": "The biggest canvas on the truck."
+          },
+          {
+            "name": "Rear door",
+            "line": "Cut around handles and seals."
+          },
+          {
+            "name": "Front door",
+            "line": "Where the logo usually goes."
+          },
+          {
+            "name": "Bonnet",
+            "line": "One sheet, no joins."
+          },
+          {
+            "name": "Vinyl layers",
+            "line": "Liner, adhesive, printed vinyl, overlaminate."
+          }
         ]
       },
       {
@@ -78,6 +156,32 @@
           "Pole flags",
           "Roll-ups",
           "Large banners"
+        ],
+        "parts": [
+          {
+            "name": "Flag",
+            "line": "Printed fabric with a sewn pole sleeve."
+          },
+          {
+            "name": "Pole sections",
+            "line": "Three sections that slot together."
+          },
+          {
+            "name": "Curved top",
+            "line": "A flexible tip that gives the flag its shape."
+          },
+          {
+            "name": "Water bag",
+            "line": "Fill with water for weight."
+          },
+          {
+            "name": "Cross base",
+            "line": "Four feet for hard floors."
+          },
+          {
+            "name": "Roll-up banner",
+            "line": "Pulls up from its base in seconds."
+          }
         ]
       },
       {
@@ -89,6 +193,32 @@
           "Booths",
           "Stage backdrops",
           "Event branding"
+        ],
+        "parts": [
+          {
+            "name": "Header lightbox",
+            "line": "A backlit sign above the stand."
+          },
+          {
+            "name": "Aluminium frame",
+            "line": "Bolts together without tools."
+          },
+          {
+            "name": "Fabric wall",
+            "line": "Printed tension fabric, no creases."
+          },
+          {
+            "name": "Floor",
+            "line": "A raised platform that hides the cables."
+          },
+          {
+            "name": "Counter",
+            "line": "Wrapped front, storage behind."
+          },
+          {
+            "name": "Screen",
+            "line": "A wall bracket for a display."
+          }
         ]
       },
       {
@@ -143,7 +273,11 @@
       "status": "Status",
       "statusValue": "Concept illustration",
       "scroll": "Scroll",
-      "scrollValue": "Through the floor"
+      "scrollValue": "Through the floor",
+      "plate": "Plate",
+      "parts": "Parts",
+      "pending": "Plate in preparation",
+      "hold": "Hold or tap a point to see the part"
     }
   },
   "sequence": {

@@ -1,435 +1,165 @@
 ---
-/* Services as a background story, right after the hero: an isometric workshop, roof off, one bay per service.
-   With motion on, the drawing is a full-screen sticky layer and builds itself piece by piece as you scroll
-   (floor, walls, partitions, then each bay's machines one part at a time) while each service's card scrolls
-   over it. Without motion it is the finished drawing followed by the cards.
-   Layout and machines are PLACEHOLDERS (concept illustration) until the real workshop is surveyed. */
+/* What we make: one exploded-view plate per service. With motion on, the section pins and each plate draws itself
+   in like a pen (src/scripts/plates.js: a WebGL shader reveals the ink in a precomputed drawing order), holds while
+   its part hotspots appear, then un-draws as the next one starts. Without motion it is a plain gallery: plate,
+   credits block and the parts list. Plates are concept illustrations (GPT line art, scripts/plates/make_plate.py). */
 import { messages, type Locale } from '../i18n';
+import { plates } from '../data/plates';
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const m = messages(locale);
 const sv = m.services;
 const L = sv.labels;
-
-// Isometric projection. Workshop units: 4 x 2 bays of 12 x 12, walls cut low so every bay is visible.
-const U = 14;
-const C = Math.cos(Math.PI / 6);
-const OX = 455;
-const OY = 110;
-const P = (x: number, y: number, z = 0) => [OX + (x - y) * C * U, OY + (x + y) * 0.5 * U - z * U];
-const pts = (...ps: number[][]) => ps.map(([x, y, z]) => P(x, y, z).map((n) => n.toFixed(1)).join(',')).join(' ');
-const BAY = 12;
-const bays = sv.items.map((_, i) => ({ c: i % 4, r: Math.floor(i / 4) }));
-// each bay has its own signature colour (key products, highlight, card tag) and floor finish
-const acc = ['#3fb6d3', '#ef8a3a', '#bbd440', '#e0457b', '#7d6ef0', '#2f6df6', '#f0b92e', '#25b3a3'];
-const pairs = [0, 1, 2, 3].map((j) => [j * 2, j * 2 + 1]);
-
-// Every drawn piece belongs to a build group: 'floor', 'wall', 'part' (partitions) or a bay index
-type Piece = { k: number; g: string; svg: string };
-const pieces: Piece[] = [];
-let cur = 'part';
-const add = (k: number, svg: string) => pieces.push({ k, g: cur, svg });
-// a box: top, front-left (+y) and front-right (+x) faces; tone picks the fill set
-const box = (x: number, y: number, z: number, w: number, d: number, h: number, tone = '') => {
-  const t = tone ? ` ${tone}` : '';
-  add(x + w / 2 + y + d / 2 + z * 0.01,
-    `<polygon class="f-l${t}" points="${pts([x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + h], [x, y + d, z + h])}"/>` +
-    `<polygon class="f-r${t}" points="${pts([x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h])}"/>` +
-    `<polygon class="f-t${t}" points="${pts([x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h])}"/>`);
-};
-// panel seams / module grid on a front-left face (plane y), drawn just after the box it sits on
-const gridY = (x: number, y: number, z: number, w: number, h: number, nx: number, nz: number, cls = 'seam') => {
-  const ls: string[] = [];
-  for (let i = 1; i < nx; i++) ls.push(`M${pts([x + (i * w) / nx, y, z])} L${pts([x + (i * w) / nx, y, z + h])}`);
-  for (let j = 1; j < nz; j++) ls.push(`M${pts([x, y, z + (j * h) / nz])} L${pts([x + w, y, z + (j * h) / nz])}`);
-  add(x + w / 2 + y + 0.05, `<path class="${cls}" d="${ls.join(' ')}"/>`);
-};
-// slats on a top face (plane z), lines along x
-const gridTop = (x: number, y: number, z: number, w: number, d: number, n: number) => {
-  const ls: string[] = [];
-  for (let j = 1; j < n; j++) ls.push(`M${pts([x, y + (j * d) / n, z])} L${pts([x + w, y + (j * d) / n, z])}`);
-  add(x + w / 2 + y + d / 2 + 0.05, `<path class="seam" d="${ls.join(' ')}"/>`);
-};
-// a flat shape on a front-left plane y (flags, stripes, window glass)
-const faceY = (y: number, cls: string, ...xz: number[][]) => add(xz[0][0] + y + 0.06, `<polygon class="${cls}" points="${pts(...xz.map(([x, z]) => [x, y, z]))}"/>`);
-
-// ---- structure ----
-const W = BAY * 4;
-const D = BAY * 2;
-cur = 'floor';
-add(-100, `<polygon class="f-t" points="${pts([0, 0, 0], [W, 0, 0], [W, D, 0], [0, D, 0])}"/><polygon class="f-l" points="${pts([0, D, -0.8], [W, D, -0.8], [W, D, 0], [0, D, 0])}"/><polygon class="f-r" points="${pts([W, 0, -0.8], [W, D, -0.8], [W, D, 0], [W, 0, 0])}"/>`);
-const floorText = (x: number, y: number, t: string, size = 3.2) => {
-  const [tx, ty] = P(x, y, 0);
-  return `<text class="floor-no" transform="matrix(${(C * U).toFixed(3)} ${(0.5 * U).toFixed(3)} ${(-C * U).toFixed(3)} ${(0.5 * U).toFixed(3)} ${tx.toFixed(1)} ${ty.toFixed(1)})" font-size="${size}">${t}</text>`;
-};
-bays.forEach(({ c, r }, i) => {
-  const x = c * BAY;
-  const y = r * BAY;
-  add(-99, `<polygon class="safety" points="${pts([x + 0.8, y + 0.8, 0], [x + 11.2, y + 0.8, 0], [x + 11.2, y + 11.2, 0], [x + 0.8, y + 11.2, 0])}"/>`);
-  add(-48, `<polygon class="bay-hl" data-bay="${i}" style="--acc:${acc[i]}" points="${pts([x + 0.3, y + 0.3, 0], [x + 11.7, y + 0.3, 0], [x + 11.7, y + 11.7, 0], [x + 0.3, y + 11.7, 0])}"/>${floorText(x + 1.2, y + 10.8, String(i + 1).padStart(2, '0'))}`);
-});
-cur = 'wall';
-add(-97, `<polygon class="f-r" points="${pts([-0.5, 0, 0], [-0.5, D, 0], [-0.5, D, 6], [-0.5, 0, 6])}"/><polygon class="f-t" points="${pts([-0.5, 0, 6], [0, 0, 6], [0, D, 6], [-0.5, D, 6])}"/>` +
-  [0, 1].map((r) => `<polygon class="glass" points="${pts([-0.5, r * BAY + 3, 2.6], [-0.5, r * BAY + 9, 2.6], [-0.5, r * BAY + 9, 4.8], [-0.5, r * BAY + 3, 4.8])}"/>`).join(''));
-add(-96, `<polygon class="f-l" points="${pts([0, -0.5, 0], [W, -0.5, 0], [W, -0.5, 6], [0, -0.5, 6])}"/><polygon class="f-t" points="${pts([-0.5, -0.5, 6], [W, -0.5, 6], [W, 0, 6], [-0.5, 0, 6])}"/>` +
-  [0, 1, 2, 3].map((i) => `<polygon class="glass" points="${pts([i * BAY + 3, -0.5, 2.6], [i * BAY + 9, -0.5, 2.6], [i * BAY + 9, -0.5, 4.8], [i * BAY + 3, -0.5, 4.8])}"/>`).join(''));
-cur = 'part';
-for (let r = 0; r < 2; r++) for (let c = 1; c < 4; c++) box(c * BAY - 0.15, r * BAY + 0.2, 0, 0.3, BAY - 0.4, 1.4);
-for (let c = 0; c < 4; c++) box(c * BAY + 0.2, BAY - 0.15, 0, BAY - 0.4, 0.3, 1.4);
-
-// ---- bay contents: placeholder machines and products, built from parts (bay-local units) ----
-const bay = (i: number, draw: (x: number, y: number) => void) => {
-  cur = String(i);
-  const x = bays[i].c * BAY;
-  const y = bays[i].r * BAY;
-  add(-50, `<polygon class="finish" fill="url(#fin-${i})" points="${pts([x + 0.9, y + 0.9, 0], [x + 11.1, y + 0.9, 0], [x + 11.1, y + 11.1, 0], [x + 0.9, y + 11.1, 0])}"/>`);
-  draw(x, y);
-};
-const cmyk = ['cyan', 'magenta', 'yellow', 'dark'];
-
-bay(0, (x, y) => { // print and stationery: four-unit digital press, feeder, console, paper pallets, cartons
-  box(x + 1.2, y + 2.6, 0, 8, 3.2, 2);
-  gridY(x + 1.2, y + 5.8, 0.15, 8, 1.7, 4, 1);
-  [0, 1, 2, 3].forEach((k) => {
-    box(x + 1.7 + k * 1.85, y + 3, 2, 1.4, 2.4, 1);
-    box(x + 1.95 + k * 1.85, y + 3.3, 3, 0.9, 0.7, 0.18, cmyk[k]);
-  });
-  box(x + 0.3, y + 3.1, 0.9, 0.9, 2.2, 0.15);
-  box(x + 9.3, y + 3, 0, 1.8, 2.4, 1.3);
-  box(x + 9.4, y + 3.1, 1.3, 1.6, 2.2, 0.35, 'paper');
-  box(x + 4.3, y + 6.7, 0, 0.3, 0.3, 1.4);
-  box(x + 3.7, y + 6.6, 1.4, 1.5, 0.25, 0.9, 'dark');
-  box(x + 1.5, y + 8.3, 0, 3, 2.4, 0.25);
-  box(x + 1.7, y + 8.5, 0.25, 2.6, 2, 1.2, 'paper');
-  gridY(x + 1.7, y + 10.5, 0.25, 2.6, 1.2, 1, 6);
-  box(x + 5.6, y + 8.3, 0, 3, 2.4, 0.25);
-  box(x + 5.8, y + 8.5, 0.25, 2.6, 2, 0.7, 'paper');
-  box(x + 9.2, y + 8.5, 0, 1.7, 1.5, 1, 'carton');
-  box(x + 9.2, y + 8.5, 1, 1.7, 1.5, 0.9, 'carton');
-});
-
-bay(1, (x, y) => { // signage: CNC router with gantry and spindle, sheet and cut letters, vacuum pump, lightbox sign
-  box(x + 1.2, y + 1.4, 0, 8.6, 5, 0.9);
-  gridTop(x + 1.2, y + 1.4, 0.9, 8.6, 5, 8);
-  box(x + 2, y + 2, 0.9, 6, 3.6, 0.08, 'glass-box');
-  box(x + 2.8, y + 2.6, 0.98, 1, 1.6, 0.15, 'accent');
-  box(x + 4.2, y + 2.6, 0.98, 1, 1.6, 0.15, 'accent');
-  box(x + 5.8, y + 0.9, 0, 0.7, 0.5, 2.7);
-  box(x + 5.8, y + 6.4, 0, 0.7, 0.5, 2.7);
-  box(x + 5.8, y + 0.9, 2.7, 0.7, 6, 0.6);
-  box(x + 5.6, y + 3.4, 1.6, 1.1, 0.9, 1.1, 'dark');
-  box(x + 5.75, y + 3.55, 1.15, 0.8, 0.6, 0.45);
-  box(x + 10.1, y + 1.6, 0, 1.3, 1.4, 1, 'dark');
-  box(x + 10.1, y + 6.6, 0, 1.2, 1.6, 1.4);
-  box(x + 2.2, y + 9.4, 0, 0.3, 0.3, 1.4);
-  box(x + 9.2, y + 9.4, 0, 0.3, 0.3, 1.4);
-  box(x + 1.8, y + 9.1, 1.4, 8, 0.6, 2.6);
-  [0, 1, 2, 3, 4].forEach((k) => box(x + 2.5 + k * 1.45, y + 9.7, 2, 0.9, 0.15, 1.4, 'accent'));
-});
-
-bay(2, (x, y) => { // graphics: wide-format printer with media roll, ink bay and output; a pickup getting a wrap; vinyl rack
-  box(x + 1.1, y + 1.5, 0, 0.9, 1.2, 0.15);
-  box(x + 9.4, y + 1.5, 0, 0.9, 1.2, 0.15);
-  box(x + 1.4, y + 1.9, 0.15, 0.3, 0.3, 1);
-  box(x + 9.7, y + 1.9, 0.15, 0.3, 0.3, 1);
-  box(x + 1.5, y + 1.1, 1.1, 8.3, 0.45, 0.45, 'roll');
-  box(x + 1, y + 1.5, 1.15, 9.4, 1.5, 1);
-  gridY(x + 1, y + 3, 1.15, 9.4, 1, 6, 1);
-  [0, 1, 2, 3].forEach((k) => box(x + 9.5 + k * 0.2, y + 1.7, 2.15, 0.18, 1, 0.25, cmyk[k]));
-  box(x + 8.4, y + 3, 1.6, 0.9, 0.12, 0.45, 'dark');
-  box(x + 1.8, y + 3, 0.2, 7.6, 0.05, 1, 'accent');
-  box(x + 1.6, y + 7, 0.6, 3.8, 3.2, 1);
-  box(x + 5.4, y + 7, 0.6, 2.6, 3.2, 2);
-  faceY(y + 10.2, 'glass', [x + 5.6, 1.9], [x + 7.8, 1.9], [x + 7.8, 2.45], [x + 5.6, 2.45]);
-  box(x + 8, y + 7, 0.6, 2, 3.2, 1.2, 'accent');
-  faceY(y + 10.2, 'wrap', [x + 1.6, 0.9], [x + 5.4, 1.25], [x + 5.4, 1.5], [x + 1.6, 1.15]);
-  box(x + 2.3, y + 10.1, 0, 1.2, 0.35, 1.1, 'dark');
-  box(x + 8.2, y + 10.1, 0, 1.2, 0.35, 1.1, 'dark');
-  box(x + 10.7, y + 6.8, 0, 0.9, 3, 2.4);
-  [0, 1, 2].forEach((k) => box(x + 10.4, y + 7.1 + k * 0.95, 0.5 + k * 0.6, 1.5, 0.6, 0.45, k === 1 ? 'accent' : 'roll'));
-});
-
-bay(3, (x, y) => { // flags and banners: feather flags on cross bases, dye-sub printer, sewing machine, roll-up banner
-  [2, 4.8, 7.6].forEach((px, k) => {
-    box(x + px - 0.3, y + 1.8, 0, 0.85, 0.85, 0.15);
-    box(x + px, y + 2.1, 0.15, 0.25, 0.25, 6);
-    faceY(y + 2.35, k === 1 ? 'flag accent' : 'flag', [x + px + 0.25, 6.1], [x + px + 1.6, 6], [x + px + 2.3, 5.1], [x + px + 2.3, 1.7], [x + px + 0.25, 1.4]);
-  });
-  box(x + 7.8, y + 4.8, 0, 0.25, 0.25, 0.9);
-  box(x + 11, y + 4.8, 0, 0.25, 0.25, 0.9);
-  box(x + 7.6, y + 4.6, 0.9, 3.8, 1.1, 0.8);
-  box(x + 7.9, y + 5.7, 0.4, 3.2, 0.05, 0.5, 'accent');
-  box(x + 1.4, y + 6.6, 0, 5, 2.4, 1.1);
-  box(x + 2.2, y + 7.2, 1.1, 1.6, 0.9, 0.3, 'dark');
-  box(x + 2.2, y + 7.3, 1.4, 0.4, 0.7, 0.8, 'dark');
-  box(x + 2.2, y + 7.3, 2.2, 1.5, 0.7, 0.35, 'dark');
-  box(x + 4.3, y + 7, 1.1, 2, 1.6, 0.08, 'accent');
-  box(x + 3, y + 9.6, 0, 0.8, 0.8, 0.8);
-  box(x + 8.2, y + 8.6, 0, 2.2, 0.6, 0.3);
-  box(x + 8.3, y + 8.85, 0.3, 2, 0.1, 3.6, 'accent');
-});
-
-bay(4, (x, y) => { // exhibitions and events: platform, branded back wall, side wall, header beam, counter, screen, plant
-  box(x + 1, y + 1.4, 0, 10, 8.4, 0.2);
-  box(x + 1, y + 1.4, 0.2, 10, 0.35, 4.2);
-  faceY(y + 1.76, 'wrap', [x + 1, 2.6], [x + 11, 3.2], [x + 11, 3.8], [x + 1, 3.2]);
-  box(x + 6.2, y + 1.76, 1.4, 3.2, 0.08, 1.7, 'dark');
-  box(x + 1, y + 1.75, 0.2, 0.35, 7.6, 4.2);
-  box(x + 10.6, y + 9.3, 0.2, 0.3, 0.3, 4);
-  box(x + 1.35, y + 9.3, 4.2, 9.55, 0.3, 0.35, 'accent');
-  box(x + 2.4, y + 7.4, 0.2, 0.7, 0.4, 1.6);
-  box(x + 5, y + 6, 0.2, 3.6, 1.3, 1.4);
-  box(x + 4.9, y + 5.9, 1.6, 3.8, 1.5, 0.12, 'accent');
-  box(x + 6.2, y + 7.3, 0.6, 1.2, 0.05, 0.6, 'dark');
-  box(x + 5.6, y + 8.2, 0.2, 0.6, 0.6, 1);
-  box(x + 7.4, y + 8.2, 0.2, 0.6, 0.6, 1);
-  box(x + 9.4, y + 2.6, 0.2, 0.8, 0.8, 0.7);
-  box(x + 9.3, y + 2.5, 0.9, 1, 1, 1.1, 'plant');
-});
-
-bay(5, (x, y) => { // LED screens: wall of cabinets on truss legs with a top truss, control desk, spare cabinets, flight case
-  box(x + 1.4, y + 2.4, 0, 0.5, 1.2, 1);
-  box(x + 10.1, y + 2.4, 0, 0.5, 1.2, 1);
-  box(x + 1.2, y + 2.6, 1, 9.6, 0.6, 4.8, 'led');
-  gridY(x + 1.2, y + 3.2, 1, 9.6, 4.8, 8, 4, 'led-grid');
-  faceY(y + 3.22, 'led-on', [x + 2.4, 2.2], [x + 6, 2.2], [x + 6, 4.6], [x + 2.4, 4.6]);
-  faceY(y + 3.22, 'led-on2', [x + 6, 3.4], [x + 9.6, 3.4], [x + 9.6, 4.6], [x + 6, 4.6]);
-  box(x + 1.2, y + 2.5, 5.8, 9.6, 0.8, 0.4);
-  box(x + 3.6, y + 7.4, 0, 3.6, 1.6, 1.1);
-  box(x + 4.2, y + 7.6, 1.1, 1.6, 0.15, 1, 'dark');
-  box(x + 6, y + 7.9, 1.1, 0.9, 0.7, 0.06, 'dark');
-  box(x + 8.6, y + 7.4, 0, 1.2, 1.2, 1.2, 'led');
-  box(x + 9.9, y + 7.4, 0, 1.2, 1.2, 1.2, 'led');
-  box(x + 8.6, y + 7.4, 1.2, 1.2, 1.2, 1.2, 'led');
-  box(x + 1.4, y + 8.2, 0, 2, 1.4, 1.1, 'dark');
-});
-
-bay(6, (x, y) => { // gifts and apparel: heat press, shelving with stock, a table of mugs and pens, T-shirt rack
-  box(x + 1.6, y + 1.8, 0, 3, 2.6, 1);
-  box(x + 2, y + 2.2, 1, 2.4, 1.8, 0.05, 'accent');
-  box(x + 4.2, y + 2.2, 1, 0.45, 0.45, 2);
-  box(x + 2, y + 2.3, 1.6, 2.4, 1.6, 0.25);
-  box(x + 1.9, y + 2.2, 2.6, 2.75, 1.8, 0.35, 'dark');
-  box(x + 1.3, y + 2.9, 2.7, 0.6, 0.3, 0.15, 'accent');
-  box(x + 7, y + 1.4, 0, 0.2, 1.4, 4);
-  box(x + 10.8, y + 1.4, 0, 0.2, 1.4, 4);
-  [0.6, 1.8, 3].forEach((h, j) => {
-    box(x + 7.2, y + 1.4, h, 3.6, 1.4, 0.12);
-    [0, 1, 2].forEach((k) => box(x + 7.5 + k * 1.15, y + 1.7, h + 0.12, 0.8, 0.8, 0.6, (j + k) % 3 === 0 ? 'accent' : 'carton'));
-  });
-  box(x + 1.8, y + 7, 0, 6, 2.4, 1.1);
-  [0, 1, 2, 3].forEach((k) => box(x + 2.4 + k * 1.2, y + 7.7, 1.1, 0.7, 0.7, 0.75, k % 2 ? '' : 'accent'));
-  box(x + 7, y + 7.4, 1.1, 0.6, 1.4, 0.15, 'dark');
-  box(x + 9.2, y + 6.8, 0, 0.15, 0.15, 3);
-  box(x + 9.2, y + 10.2, 0, 0.15, 0.15, 3);
-  box(x + 9.2, y + 6.8, 3, 0.15, 3.55, 0.12);
-  [0, 1, 2, 3].forEach((k) => box(x + 9.05, y + 7.2 + k * 0.8, 1.5, 0.45, 0.6, 1.4, k === 1 ? 'accent' : ''));
-});
-
-bay(7, (x, y) => { // acrylic and awards: laser cutter with glass lid and exhaust, chiller, acrylic sheet rack, trophies and plaques
-  box(x + 1.6, y + 1, 1.4, 0.6, 0.6, 4.6);
-  box(x + 1.4, y + 1.8, 0, 6.8, 3.6, 2);
-  gridY(x + 1.4, y + 5.4, 0.1, 6.8, 1.8, 3, 1);
-  box(x + 1.4, y + 1.8, 2, 6.8, 3.6, 0.55, 'glass-box');
-  box(x + 3.4, y + 5.3, 2.3, 2.8, 0.2, 0.12, 'dark');
-  box(x + 7.4, y + 5.4, 1.4, 0.6, 0.15, 0.5, 'dark');
-  box(x + 8.8, y + 2.2, 0, 1.6, 1.6, 1.4);
-  [0, 1, 2, 3].forEach((k) => box(x + 10.6 + k * 0.25, y + 1.6, 0, 0.1, 3, 2.4, 'glass-box'));
-  box(x + 1.8, y + 7.3, 0, 7.8, 2.3, 1.1);
-  [0, 1, 2].forEach((k) => {
-    box(x + 2.4 + k * 2.2, y + 7.9, 1.1, 1, 1, 0.45, 'dark');
-    box(x + 2.7 + k * 2.2, y + 8.2, 1.55, 0.4, 0.4, 0.6);
-    box(x + 2.5 + k * 2.2, y + 8, 2.15, 0.8, 0.8, 0.9, k === 0 ? 'accent' : 'glass-box');
-  });
-  box(x + 9, y + 8, 1.1, 0.15, 1.1, 1.4, 'glass-box');
-});
-
-pieces.sort((a, b) => a.k - b.k);
-const art = pieces.map((p) => `<g class="pc" data-g="${p.g}"${/^\d$/.test(p.g) ? ` style="--acc:${acc[Number(p.g)]}"` : ''}>${p.svg}</g>`).join('');
-// floor finishes, drawn in the floor plane (pattern space = workshop units, 14 px each)
-const iso = `matrix(${C.toFixed(4)} 0.5 ${(-C).toFixed(4)} 0.5 0 0)`;
-const finishes = [
-  `<rect width="14" height="14" fill="#eef6f8"/><circle cx="7" cy="7" r="1.4" fill="#3fb6d3" fill-opacity="0.45"/>`,
-  `<rect width="28" height="14" fill="#efdfbf"/><path d="M0 0.5 H28 M14 0 V14" stroke="#c8a873" stroke-width="0.8"/>`,
-  `<rect width="14" height="14" fill="#f4f7e4"/><path d="M0 14 L14 0" stroke="#bbd440" stroke-width="3" stroke-opacity="0.6"/>`,
-  `<rect width="7" height="7" fill="#f9eef3"/><path d="M0 3.5 H7 M3.5 0 V7" stroke="#e0457b" stroke-width="0.6" stroke-opacity="0.4"/>`,
-  `<rect width="5" height="5" fill="#e8e5fa"/><circle cx="2.5" cy="2.5" r="0.8" fill="#7d6ef0" fill-opacity="0.5"/>`,
-  `<rect width="14" height="14" fill="#2c3540"/><path d="M0 0.5 H14 M0.5 0 V14" stroke="#4d5a68" stroke-width="1"/>`,
-  `<rect width="28" height="28" fill="#fbf4de"/><rect width="14" height="14" fill="#f4dd9c"/><rect x="14" y="14" width="14" height="14" fill="#f4dd9c"/>`,
-  `<rect width="14" height="14" fill="#e6f4f2"/><path d="M0 0.5 H14 M0.5 0 V14" stroke="#25b3a3" stroke-width="0.7" stroke-opacity="0.5"/>`,
-].map((t, i) => {
-  const w = i === 1 || i === 6 ? 28 : i === 3 ? 7 : i === 4 ? 5 : 14;
-  const h = i === 6 ? 28 : i === 3 ? 7 : i === 4 ? 5 : 14;
-  return `<pattern id="fin-${i}" width="${w}" height="${h}" patternUnits="userSpaceOnUse" patternTransform="${iso}">${t}</pattern>`;
-}).join('');
-
-// camera anchors: a point a little above each bay's centre, and the whole building
-const anchors = pairs.map(([a]) => P(bays[a].c * BAY + 12, bays[a].r * BAY + 6, 2.5).map((n) => Number(n.toFixed(1))));
-const [ox, oy] = P(W / 2, D / 2, 1.5).map((n) => Number(n.toFixed(1)));
-const s0 = 1.05; // finished drawing framed in a 1200 x 640 view (no motion)
+const n2 = (i: number) => String(i).padStart(2, '0');
+const items = sv.items.map((s, i) => ({ ...s, i, plate: plates[s.slug] }));
 ---
 
-<section class="svc" id="services" aria-labelledby="svc-title" data-svc data-overview={`${ox},${oy}`} data-anchors={anchors.map((a) => a.join(',')).join(';')}>
-  <div class="svc__bg" aria-hidden="true">
-    <svg class="svc__art" viewBox="0 0 1200 640" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <pattern id="svc-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)">
-          <path d="M0 0 V6" stroke="#131d27" stroke-width="0.6" stroke-opacity="0.35"></path>
-        </pattern>
-        <Fragment set:html={finishes} />
-        <pattern id="svc-grid" width="28" height="28" patternUnits="userSpaceOnUse">
-          <path d="M28 0 H0 V28" fill="none" stroke="#131d27" stroke-opacity="0.06"></path>
-        </pattern>
-      </defs>
-      <rect x="-4000" y="-4000" width="9000" height="9000" fill="url(#svc-grid)"></rect>
-      <g class="svc-world" transform={`translate(${600 - ox * s0} ${330 - oy * s0}) scale(${s0})`} set:html={art}></g>
-    </svg>
-    <div class="svc__hud">
-      <span class="hud-tl ltr">X <b data-hud-x>0000</b> &nbsp;Y <b data-hud-y>0000</b></span>
-      <span class="hud-tr ltr">{sv.bay} [<b data-hud-bay>00</b>/08]</span>
-      <span class="hud-bl ltr"><i><em data-hud-bar></em></i> <b data-hud-pct>000</b>%</span>
-    </div>
-  </div>
+<section class="pl" id="services" aria-labelledby="pl-title" data-plates>
+  <div class="pl__pin">
+    <div class="pl__grid">
+      <header class="pl__head">
+        <p class="pl__eyebrow">{sv.concept}</p>
+        <h2 id="pl-title" class="pl__title">{sv.title}</h2>
+        <ol class="pl__index" aria-label={sv.title}>
+          {items.map((s) => (
+            <li><button type="button" data-goto={s.i} class={s.plate ? '' : 'is-pending'}><span class="ltr">{n2(s.i + 1)}</span> <b>{s.name}</b></button></li>
+          ))}
+        </ol>
+        <p class="pl__hud ltr" aria-hidden="true"><span>{L.plate} <b data-hud-n>01</b>/{n2(items.length)}</span><i><em data-hud-bar></em></i></p>
+      </header>
 
-  <div class="svc__steps">
-    <!-- cards are credits blocks (after the A24 film pages): a condensed caps title, then ruled label/value rows -->
-    <div class="svc-step svc-step--intro">
-      <div class="cr">
-        <h2 id="svc-title" class="cr__title">{sv.title}</h2>
-        <dl class="cr__rows">
-          <div><dt>{L.workshop}</dt><dd>{L.place}</dd></div>
-          <div><dt>{L.trades}</dt><dd class="ltr">08</dd></div>
-          <div><dt>{L.status}</dt><dd>{L.statusValue}</dd></div>
-          <div><dt>{L.scroll}</dt><dd>{L.scrollValue}</dd></div>
-        </dl>
-        <p class="cr__quote">“{sv.lead.split('.')[0]}.”</p>
-      </div>
-    </div>
-    {pairs.map((pair, j) => (
-      <article class="svc-step" data-step={j}>
-        <div class="cr-pair">
-          {pair.map((i) => {
-            const s = sv.items[i];
-            return (
-              <div class="cr" data-bay={i} style={`--acc:${acc[i]}`}>
-                <h3 class="cr__title">{s.name}</h3>
-                <dl class="cr__rows">
-                  <div><dt>{L.bay}</dt><dd><i class="cr__chip" aria-hidden="true"></i><span class="ltr">{String(i + 1).padStart(2, '0')} / 08</span></dd></div>
-                  <div><dt>{L.machine}</dt><dd>{s.machine}</dd></div>
-                  <div><dt>{L.makes}</dt><dd>{s.makes.map((x) => <span>{x}</span>)}</dd></div>
-                </dl>
-                <a class="cr__link" href="#quote" data-service={s.slug}>{sv.quote} <span class="arrow" aria-hidden="true">→</span></a>
-              </div>
-            );
-          })}
-        </div>
-      </article>
-    ))}
-    <div class="svc-step svc-step--outro">
-      <div class="cr">
-        <p class="cr__title">{sv.outro}</p>
-        <a class="btn" href="#quote">{sv.quote} <span class="arrow" aria-hidden="true">→</span></a>
+      <div class="pl__items">
+        {items.map((s) => (
+          <article class="pl-item" data-item={s.i} data-slug={s.slug} data-ready={s.plate ? '1' : '0'} aria-labelledby={`pl-${s.i}`}>
+            <figure class="pl-item__fig">
+              {s.plate ? (
+                <img class="pl-item__img" src={`/plates/${s.slug}.png`} alt="" width="1254" height="1254" loading="lazy" decoding="async" />
+              ) : (
+                <div class="pl-item__pending"><span>{L.pending}</span></div>
+              )}
+              {s.plate && s.parts && (
+                <ul class="pl-spots" aria-hidden="true">
+                  {s.parts.map((p, k) => (
+                    <li style={`--x:${s.plate.pts[k][0]};--y:${s.plate.pts[k][1]}`} class={s.plate.pts[k][0] > 0.6 ? 'is-flip' : ''}>
+                      <button type="button" tabindex="-1" aria-label={p.name}><i></i></button>
+                      <span class="pl-spot__card"><b>{p.name}</b><small>{p.line}</small></span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </figure>
+            <div class="cr" style="--acc: var(--lime)">
+              <h3 id={`pl-${s.i}`} class="cr__title">{s.name}</h3>
+              <dl class="cr__rows">
+                <div><dt>{L.plate}</dt><dd class="ltr">{n2(s.i + 1)} / {n2(items.length)}</dd></div>
+                <div><dt>{L.makes}</dt><dd>{s.makes.map((x) => <span>{x}</span>)}</dd></div>
+                {s.parts && <div><dt>{L.parts}</dt><dd>{s.parts.map((p) => <span>{p.name}</span>)}</dd></div>}
+              </dl>
+              {s.parts && <p class="cr__hint">{L.hold}</p>}
+              <a class="cr__link" href="#quote" data-service={s.slug}>{sv.quote} <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .svc { position: relative; z-index: 1; background: var(--paper); }
-  .svc__bg { position: relative; background: var(--paper); }
-  .svc__art { display: block; width: 100%; height: auto; direction: ltr; }
+  .pl { position: relative; z-index: 1; background: var(--paper); padding-block: var(--space-6); }
+  .pl__grid { width: min(100% - var(--gutter) * 2, var(--maxw)); margin-inline: auto; display: grid; gap: var(--space-3); }
+  .pl__eyebrow { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--grey); }
+  .pl__title { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(2.6rem, 1.8rem + 3vw, 5rem); line-height: 0.88; margin-block: 0.3rem 1rem; }
+  html[lang='ar'] .pl__title { font-family: var(--font-display); font-weight: 700; text-transform: none; line-height: 1.2; }
+  .pl__index { list-style: none; margin: 0; padding: 0; display: grid; border-block-start: 1px solid var(--ink); }
+  .pl__index li { border-block-end: 1px solid var(--ink); }
+  .pl__index button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; gap: 0.6rem; align-items: baseline; width: 100%; padding-block: 0.32rem; font-size: 0.8rem; }
+  .pl__index button span { font-family: var(--font-mono); font-size: 0.66rem; color: var(--grey); }
+  .pl__index button b { font-weight: 500; }
+  .pl__index button.is-pending b { color: var(--grey); }
+  .pl__index button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .pl__index button:global(.is-on) { background: var(--lime); }
+  .pl__index button:global(.is-on) b { font-weight: 700; }
+  .pl__hud { display: none; }
 
-  /* drawing: pencil line on paper, lime only where it means something */
-  .svc__art :global(polygon) { stroke: var(--ink); stroke-width: 1; stroke-linejoin: round; }
-  .svc__art :global(.f-t) { fill: #ffffff; }
-  .svc__art :global(.f-l) { fill: #f0f1ee; }
-  .svc__art :global(.f-r) { fill: url(#svc-hatch) #e4e5e1; }
-  .svc__art :global(.dark.f-t) { fill: #3a4450; }
-  .svc__art :global(.dark.f-l), .svc__art :global(.dark.f-r) { fill: var(--ink); }
-  .svc__art :global(.accent.f-t) { fill: var(--acc, var(--lime)); }
-  .svc__art :global(.accent.f-l) { fill: color-mix(in srgb, var(--acc, var(--lime)) 86%, #131d27); }
-  .svc__art :global(.accent.f-r) { fill: color-mix(in srgb, var(--acc, var(--lime)) 72%, #131d27); }
-  .svc__art :global(.finish) { stroke: none; }
-  .svc__art :global(.cyan.f-t) { fill: #4cc3d9; }
-  .svc__art :global(.magenta.f-t) { fill: #d9468a; }
-  .svc__art :global(.yellow.f-t) { fill: #f0d43a; }
-  .svc__art :global(.paper.f-t), .svc__art :global(.paper.f-l) { fill: #ffffff; }
-  .svc__art :global(.carton.f-t) { fill: #ead9b8; }
-  .svc__art :global(.carton.f-l) { fill: #dcc69b; }
-  .svc__art :global(.carton.f-r) { fill: #cdb487; }
-  .svc__art :global(.roll.f-t), .svc__art :global(.roll.f-l) { fill: #f6f6f3; }
-  .svc__art :global(.plant.f-t) { fill: #9cc46a; }
-  .svc__art :global(.plant.f-l), .svc__art :global(.plant.f-r) { fill: #7ba552; }
-  .svc__art :global(.led.f-l) { fill: var(--ink); }
-  .svc__art :global(.led.f-t), .svc__art :global(.led.f-r) { fill: #2a333d; }
-  .svc__art :global(.led-grid) { fill: none; stroke: #5d6b78; stroke-width: 0.7; }
-  .svc__art :global(.led-on) { fill: var(--lime); fill-opacity: 0.85; stroke: none; }
-  .svc__art :global(.pc[data-g='5'] .floor-no), .svc__art :global(.pc[data-g='floor'] .bay-hl[data-bay='5'] + .floor-no) { fill: #fff; }
-  .svc__art :global(.led-on2) { fill: #4cc3d9; fill-opacity: 0.7; stroke: none; }
-  .svc__art :global(.seam) { fill: none; stroke: var(--ink); stroke-width: 0.7; stroke-opacity: 0.55; }
-  .svc__art :global(.glass-box) { fill: #dfe9ee; fill-opacity: 0.75; }
-  .svc__art :global(.glass) { fill: #dfe9ee; stroke-width: 0.8; }
-  .svc__art :global(.flag) { fill: #fff; }
-  .svc__art :global(.flag.accent), .svc__art :global(.wrap) { fill: var(--acc, var(--lime)); }
-  .svc__art :global(.safety) { fill: none; stroke-width: 0.8; stroke-dasharray: 5 4; stroke-opacity: 0.45; }
-  .svc__art :global(.floor-no) { font-family: var(--font-mono); fill: var(--ink); fill-opacity: 0.55; }
-  /* focus: bays outside the current card fall back to a faint ghost (opacity on the parts, so GSAP's own opacity on the groups is untouched) */
-  .svc__art :global(.pc > *) { transition: opacity 0.45s var(--ease-out); }
-  .svc__art :global(.pc.is-dim > *) { opacity: 0.12; }
-  .cr[data-bay] { transition: opacity 0.3s var(--ease-out); }
-  .cr-pair:global(.has-hover) .cr:not(:global(.is-hover)) { opacity: 0.45; }
-  .svc__art :global(.bay-hl) { fill: var(--acc); fill-opacity: 0; stroke: var(--acc); stroke-width: 0; transition: fill-opacity 0.35s var(--ease-out), stroke-width 0.35s; }
-  .svc__art :global(.bay-hl.is-on) { fill-opacity: 0.22; stroke-width: 3; }
+  /* gallery (no motion): plate, credits and parts per service */
+  .pl__items { display: grid; gap: var(--space-5); }
+  .pl-item { display: grid; gap: var(--space-3); align-items: center; }
+  .pl-item__fig { position: relative; margin: 0; aspect-ratio: 1; max-width: 40rem; width: 100%; }
+  .pl-item__img { width: 100%; height: auto; display: block; }
+  .pl-item__pending { position: absolute; inset: 8%; display: grid; place-items: center; border: 1.5px dashed var(--ink); color: var(--grey); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
+    background: repeating-linear-gradient(135deg, transparent 0 14px, rgba(19, 29, 39, 0.05) 14px 15px); }
+  html[lang='ar'] .pl-item__pending { text-transform: none; letter-spacing: 0; }
+  @media (min-width: 900px) { .pl-item { grid-template-columns: 1.4fr 1fr; } }
 
-  .svc__hud { display: none; }
-
-  /* cards: the readable layer; a list under the drawing when motion is off */
-  .svc__steps { display: grid; gap: var(--space-2); padding: var(--space-4) var(--gutter) var(--space-6); max-width: var(--maxw); margin-inline: auto; }
-  /* credits blocks: condensed caps title, hairline-ruled rows, tiny caps labels left, values right */
-  .cr { display: grid; gap: 0.55rem; width: min(100%, 21rem); padding: 0.9rem 1rem 1rem; background: color-mix(in srgb, var(--paper) 92%, transparent); }
-  .cr__title { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem); line-height: 0.9; letter-spacing: 0.005em; color: var(--ink); text-wrap: balance; }
+  /* credits blocks (as in the A24 film pages) */
+  .cr { display: grid; gap: 0.55rem; width: min(100%, 23rem); }
+  .cr__title { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem); line-height: 0.9; text-wrap: balance; }
   html[lang='ar'] .cr__title { font-family: var(--font-display); font-weight: 700; text-transform: none; line-height: 1.25; font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem); }
   .cr__rows { margin: 0; display: grid; border-block-end: 1px solid var(--ink); }
   .cr__rows > div { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; padding-block: 0.32rem; border-block-start: 1px solid var(--ink); }
-  .cr__rows dt { font-family: var(--font-body); font-weight: 700; font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.08em; padding-block-start: 0.18rem; }
-  .cr__rows dd { margin: 0; display: grid; justify-items: end; text-align: end; font-size: 0.82rem; line-height: 1.3; }
-  html[lang='ar'] .cr__rows dt { text-transform: none; letter-spacing: 0; font-size: 0.72rem; }
-  .cr__rows dd:has(.cr__chip) { display: flex; justify-content: flex-end; align-items: center; gap: 0.4rem; }
-  .cr__chip { width: 0.65rem; height: 0.65rem; background: var(--acc); border: 1px solid var(--ink); }
-  .cr__quote { font-family: var(--font-num); text-transform: uppercase; font-size: 1.15rem; line-height: 1; text-align: center; padding-block-start: 0.35rem; }
-  html[lang='ar'] .cr__quote { font-family: var(--font-display); text-transform: none; line-height: 1.5; }
-  .cr__link { justify-self: end; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
-  html[lang='ar'] .cr__link { text-transform: none; letter-spacing: 0; font-size: 0.8rem; }
-  .cr .btn { justify-self: start; }
-  .cr-pair { display: grid; gap: 1.25rem; }
-  @media (min-width: 1200px) { .cr { width: min(100%, 25rem); } .cr__rows dt { font-size: 0.64rem; } .cr__rows dd { font-size: 0.92rem; } .cr__link { font-size: 0.7rem; } }
-  @media (min-width: 900px) { .svc__steps { grid-template-columns: repeat(2, 1fr); } .svc-step--intro, .svc-step--outro { grid-column: 1 / -1; } .cr-pair { grid-template-columns: repeat(2, minmax(0, 21rem)); } }
+  .cr__rows dt { font-weight: 700; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; padding-block-start: 0.18rem; }
+  .cr__rows dd { margin: 0; display: grid; justify-items: end; text-align: end; font-size: 0.86rem; line-height: 1.3; }
+  html[lang='ar'] .cr__rows dt { text-transform: none; letter-spacing: 0; font-size: 0.74rem; }
+  .cr__hint { display: none; font-family: var(--font-mono); font-size: 0.64rem; color: var(--grey); }
+  .cr__link { justify-self: end; font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+  html[lang='ar'] .cr__link { text-transform: none; letter-spacing: 0; font-size: 0.82rem; }
 
-  /* ---- motion on: the drawing is a sticky full-screen layer; cards scroll over it (src/scripts/services.js) ---- */
-  :global(html.motion) .svc__bg { position: sticky; top: 0; height: 100svh; overflow: hidden; }
-  :global(html.motion) .svc__art { width: 100%; height: 100%; }
-  :global(html.motion) .svc__steps { display: block; max-width: none; margin-block-start: -100svh; padding: 0; position: relative; }
-  :global(html.motion) .svc-step { min-height: 100svh; display: grid; align-items: center; padding-inline: var(--gutter); padding-block: calc(var(--header-h) + 1rem) 1rem; width: min(100%, var(--maxw) + var(--gutter) * 2); margin-inline: auto; pointer-events: none; }
-  :global(html.motion) .cr { pointer-events: auto; }
-  :global(html.motion) .svc__hud { display: block; position: absolute; inset: 0; pointer-events: none; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
-  .svc__hud > span { position: absolute; padding: 0.75rem var(--gutter); }
-  .svc__hud b { font-weight: 400; font-variant-numeric: tabular-nums; }
-  .hud-tl { inset-block-start: var(--header-h); left: 0; }
-  .hud-tr { inset-block-start: var(--header-h); right: 0; }
-  .hud-bl { inset-block-end: 0; right: 0; display: flex; align-items: center; gap: 0.5rem; }
-  .hud-bl i { display: block; width: 7rem; height: 3px; background: var(--hairline); }
-  .hud-bl em { display: block; height: 100%; width: 0; background: var(--ink); }
-  html[lang='ar'] .svc__hud { text-transform: none; letter-spacing: 0; }
-  /* while it plays, the pair stacks in the left column so the drawing keeps the right side */
-  @media (min-width: 700px) { :global(html.motion) .cr-pair { grid-template-columns: none; } }
-  /* phones: cards sit low, clear of the sticky CTA bar; the drawing frames the bay above them */
-  @media (max-width: 700px) {
-    :global(html.motion) .svc-step { align-items: end; padding-block-end: 5.5rem; }
-    .cr-pair { grid-template-columns: 1fr 1fr !important; gap: 0.5rem; }
-    .cr { padding: 0.6rem 0.65rem 0.7rem; }
-    .cr__rows dd { font-size: 0.72rem; }
-    .cr-pair .cr__title { font-size: 1.55rem; }
-    .hud-bl { inset-block-end: auto; inset-block-start: calc(var(--header-h) + 1.6rem); }
-    .hud-bl i { width: 3.5rem; }
+  /* hotspots: lime point with a plus; hold, hover or tap to open the part card */
+  .pl-spots { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; pointer-events: none; }
+  .pl-spots li { position: absolute; left: calc(var(--x) * 100%); top: calc(var(--y) * 100%); opacity: 0; transform: scale(0.4); transition: opacity 0.3s var(--ease-out), transform 0.35s var(--ease-out); transition-delay: calc(var(--d, 0) * 1s); }
+  .pl-spots button { all: unset; position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: var(--lime); border: 1px solid var(--ink); cursor: pointer; pointer-events: auto; }
+  .pl-spots button i::before, .pl-spots button i::after { content: ''; position: absolute; inset: 50% 5px auto; height: 1.5px; margin-top: -0.75px; background: var(--ink); }
+  .pl-spots button i::after { inset: 5px auto 5px 50%; width: 1.5px; height: auto; margin: 0 0 0 -0.75px; }
+  .pl-spots button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  :global(html.motion) .pl-spots button { animation: pl-pulse 2.4s var(--ease-out) infinite; }
+  @keyframes pl-pulse { 0% { box-shadow: 0 0 0 0 rgba(187, 212, 64, 0.75); } 70%, 100% { box-shadow: 0 0 0 12px rgba(187, 212, 64, 0); } }
+  .pl-spot__card { position: absolute; left: 18px; top: 0; transform: translateY(-50%); display: grid; gap: 0.15rem; width: max-content; max-width: 15rem; padding: 0.45rem 0.6rem; background: var(--white); border: 1px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; z-index: 2; }
+  .pl-spots li.is-flip .pl-spot__card { left: auto; right: 18px; }
+  .pl-spot__card b { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: 1.05rem; line-height: 1; }
+  html[lang='ar'] .pl-spot__card b { font-family: var(--font-display); font-weight: 700; text-transform: none; font-size: 0.95rem; }
+  .pl-spot__card small { font-size: 0.74rem; color: var(--grey); line-height: 1.35; }
+  .pl-spots li:global(.is-open) .pl-spot__card { opacity: 1; visibility: visible; }
+  .pl-spots li:global(.is-open) { z-index: 3; }
+  /* without motion the points are simply there */
+  :global(html:not(.motion)) .pl-spots li { opacity: 1; transform: none; }
+
+  /* ---- motion on: pinned stage; one plate at a time (src/scripts/plates.js) ---- */
+  :global(html.motion) .pl { padding: 0; height: calc(var(--n, 8) * 85svh + 100svh); }
+  :global(html.motion) .pl__pin { position: sticky; top: 0; height: 100svh; padding-block: calc(var(--header-h) + 1.25rem) 1.25rem; }
+  :global(html.motion) .pl__grid { height: 100%; grid-template-columns: minmax(11rem, 14rem) minmax(16rem, 22rem) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); align-items: center; gap: clamp(1rem, 3vw, 3rem); }
+  :global(html.motion) .pl__head { grid-column: 1; align-self: center; }
+  :global(html.motion) .pl__items { grid-column: 2 / 4; grid-row: 1; display: grid; height: 100%; min-height: 0; }
+  :global(html.motion) .pl-item { grid-area: 1 / 1; grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr); gap: clamp(1rem, 3vw, 3rem); height: 100%; min-height: 0; opacity: 0; visibility: hidden; transition: opacity 0.35s var(--ease-out), visibility 0.35s; }
+  :global(html.motion) .pl-item:global(.is-on) { opacity: 1; visibility: visible; }
+  :global(html.motion) .pl-item .cr { grid-column: 1; grid-row: 1; }
+  :global(html.motion) .pl-item__fig { grid-column: 2; grid-row: 1; justify-self: center; width: min(100%, calc(100svh - var(--header-h) - 4rem)); max-width: none; }
+  :global(html.motion) .cr__hint { display: block; }
+  /* with WebGL the canvas draws the plate; the image is the no-WebGL fallback (a wipe) */
+  :global(html.motion) .pl.has-gl .pl-item__img { visibility: hidden; }
+  .pl-item__fig :global(canvas) { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  :global(html.motion) .pl__hud { margin-block-start: 1rem; display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .pl__hud b { font-weight: 400; }
+  .pl__hud i { display: block; width: 6rem; height: 3px; background: var(--hairline); }
+  .pl__hud em { display: block; height: 100%; width: 0; background: var(--ink); }
+  :global(html.motion) .pl-item__fig { pointer-events: none; }
+  :global(html.motion) .pl-item.is-on .pl-item__fig { pointer-events: auto; }
+  /* phones and narrow tablets: index becomes a number strip, plate on top, credits below */
+  @media (max-width: 900px) {
+    :global(html.motion) .pl__grid { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); gap: 0.6rem; }
+    :global(html.motion) .pl__head { grid-row: 1; }
+    :global(html.motion) .pl__title { font-size: 2.2rem; margin-block: 0.1rem 0.5rem; }
+    :global(html.motion) .pl__eyebrow { display: none; }
+    :global(html.motion) .pl__index { grid-auto-flow: column; border: 0; gap: 0.25rem; }
+    :global(html.motion) .pl__index li { border: 1px solid var(--ink); }
+    :global(html.motion) .pl__index button { justify-content: center; padding: 0.3rem 0; }
+    :global(html.motion) .pl__index button b { display: none; }
+    :global(html.motion) .pl__items { grid-column: 1; grid-row: 2; }
+    :global(html.motion) .pl-item { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; align-content: stretch; gap: 0.4rem; }
+    :global(html.motion) .pl-item__fig { grid-column: 1; grid-row: 1; width: min(100%, 52svh); align-self: center; }
+    :global(html.motion) .pl-item .cr { grid-column: 1; grid-row: 2; width: 100%; padding-block-end: 4.5rem; }
+    :global(html.motion) .cr__rows > div:nth-child(3), :global(html.motion) .cr__hint { display: none; }
+    :global(html.motion) .cr__title { font-size: 1.8rem; }
+    :global(html.motion) .pl__hud { display: none; }
   }
 </style>
