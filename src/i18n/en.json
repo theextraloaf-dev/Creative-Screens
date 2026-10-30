@@ -260,7 +260,26 @@
         "title": "We deliver",
         "text": "Delivered or installed, ready to use."
       }
-    ]
+    ],
+    "ticket": {
+      "label": "Job ticket",
+      "no": "No.",
+      "stage": "Stage",
+      "next": "Next",
+      "stages": [
+        "Brief",
+        "Analysis",
+        "Production",
+        "Delivery"
+      ],
+      "stamps": [
+        "Received",
+        "Checked",
+        "Printed",
+        "Delivered"
+      ],
+      "last": "Your site"
+    }
   },
   "wh": {
     "brief": "Brief",
