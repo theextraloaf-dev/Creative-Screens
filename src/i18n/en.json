@@ -36,49 +36,95 @@
         "slug": "print-stationery",
         "name": "Print & Stationery",
         "line": "Business cards, brochures, letterheads and packaging, printed in-house.",
-        "machine": "Digital press"
+        "machine": "Digital press",
+        "makes": [
+          "Business cards",
+          "Brochures",
+          "Letterheads",
+          "Packaging"
+        ]
       },
       {
         "slug": "signage",
         "name": "Signage",
         "line": "Shop fronts, 3D letters, lightboxes and wayfinding.",
-        "machine": "CNC router"
+        "machine": "CNC router",
+        "makes": [
+          "Shop fronts",
+          "3D letters",
+          "Lightboxes",
+          "Wayfinding"
+        ]
       },
       {
         "slug": "graphics",
         "name": "Window, Wall, Floor & Vehicle Graphics",
         "line": "Window film, wall murals, floor graphics and fleet wraps.",
-        "machine": "Wide-format printer"
+        "machine": "Wide-format printer",
+        "makes": [
+          "Window film",
+          "Wall murals",
+          "Floor graphics",
+          "Fleet wraps"
+        ]
       },
       {
         "slug": "flags-banners",
         "name": "Flags & Banners",
         "line": "Feather flags, pole flags, roll-ups and large banners.",
-        "machine": "Dye-sub printer and sewing"
+        "machine": "Dye-sub printer and sewing",
+        "makes": [
+          "Feather flags",
+          "Pole flags",
+          "Roll-ups",
+          "Large banners"
+        ]
       },
       {
         "slug": "exhibitions-events",
         "name": "Exhibitions & Events",
         "line": "Booths, stage backdrops and event branding, built and installed.",
-        "machine": "Booth build area"
+        "machine": "Booth build area",
+        "makes": [
+          "Booths",
+          "Stage backdrops",
+          "Event branding"
+        ]
       },
       {
         "slug": "led-screens",
         "name": "LED Screens",
         "line": "Indoor and outdoor LED walls, supplied and installed.",
-        "machine": "LED wall rig"
+        "machine": "LED wall rig",
+        "makes": [
+          "Indoor LED walls",
+          "Outdoor LED walls",
+          "Installation"
+        ]
       },
       {
         "slug": "gifts-apparel",
         "name": "Gifts & Apparel",
         "line": "Branded mugs, pens, caps and uniforms.",
-        "machine": "Heat press"
+        "machine": "Heat press",
+        "makes": [
+          "Mugs",
+          "Pens",
+          "Caps",
+          "Uniforms"
+        ]
       },
       {
         "slug": "acrylic-awards",
         "name": "Acrylic & Awards",
         "line": "Laser-cut acrylic, plaques, trophies and display stands.",
-        "machine": "Laser cutter"
+        "machine": "Laser cutter",
+        "makes": [
+          "Laser-cut acrylic",
+          "Plaques",
+          "Trophies",
+          "Display stands"
+        ]
       }
     ],
     "concept": "Concept illustration: placeholder layout and machines",
@@ -86,7 +132,19 @@
     "scroll": "[Scroll to continue]",
     "bay": "Bay",
     "quote": "Get a quote",
-    "outro": "Everything under one roof."
+    "outro": "Everything under one roof.",
+    "labels": {
+      "bay": "Bay",
+      "machine": "Machine",
+      "makes": "Makes",
+      "workshop": "Workshop",
+      "place": "Muscat, Oman",
+      "trades": "Trades",
+      "status": "Status",
+      "statusValue": "Concept illustration",
+      "scroll": "Scroll",
+      "scrollValue": "Through the floor"
+    }
   },
   "sequence": {
     "title": "From artwork to finished vehicle",
