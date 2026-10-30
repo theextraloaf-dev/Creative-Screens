@@ -1,20 +1,217 @@
 ---
-/* Services as a plain index list: each row is a link to the quote area (hub pages come later). */
+/* Services as one isometric workshop, roof off: eight bays, one per service. With motion on, the section pins and
+   the camera walks bay to bay; a callout card (code, machine, one line) is pinned to the bay on screen, with HUD
+   readouts around the frame. Without motion it is the full drawing plus the plain index list.
+   Layout and machines are PLACEHOLDERS (concept illustration) until the real workshop is surveyed. */
 import { messages, type Locale } from '../i18n';
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const m = messages(locale);
+const sv = m.services;
+
+// Isometric projection. Workshop units: 4 x 2 bays of 12 x 12, walls cut low so every bay is visible.
+const U = 14;
+const C = Math.cos(Math.PI / 6);
+const OX = 455;
+const OY = 110;
+const P = (x: number, y: number, z = 0) => [OX + (x - y) * C * U, OY + (x + y) * 0.5 * U - z * U];
+const pts = (...ps: number[][]) => ps.map(([x, y, z]) => P(x, y, z).map((n) => n.toFixed(1)).join(',')).join(' ');
+const BAY = 12;
+const bays = sv.items.map((_, i) => ({ c: i % 4, r: Math.floor(i / 4) }));
+
+type Shape = { k: number; svg: string };
+const shapes: Shape[] = [];
+// a box: top, front-left (+y) and front-right (+x) faces; tone picks the fill set
+const box = (x: number, y: number, z: number, w: number, d: number, h: number, tone = '', k?: number) => {
+  const top = pts([x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]);
+  const left = pts([x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + h], [x, y + d, z + h]);
+  const right = pts([x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h]);
+  const t = tone ? ` ${tone}` : '';
+  shapes.push({
+    k: k ?? x + w / 2 + y + d / 2 + z * 0.01,
+    svg: `<polygon class="f-l${t}" points="${left}"/><polygon class="f-r${t}" points="${right}"/><polygon class="f-t${t}" points="${top}"/>`,
+  });
+};
+const flat = (k: number, svg: string) => shapes.push({ k, svg });
+
+// floor slab and the two tall back walls (cut)
+const W = BAY * 4;
+const D = BAY * 2;
+const back: string[] = [
+  `<polygon class="f-t" points="${pts([0, 0, 0], [W, 0, 0], [W, D, 0], [0, D, 0])}"/>`,
+  `<polygon class="f-l" points="${pts([0, D, -0.8], [W, D, -0.8], [W, D, 0], [0, D, 0])}"/>`,
+  `<polygon class="f-r" points="${pts([W, 0, -0.8], [W, D, -0.8], [W, D, 0], [W, 0, 0])}"/>`,
+  `<polygon class="f-r" points="${pts([-0.5, 0, 0], [-0.5, D, 0], [-0.5, D, 6], [-0.5, 0, 6])}"/>`,
+  `<polygon class="f-t" points="${pts([-0.5, 0, 6], [0, 0, 6], [0, D, 6], [-0.5, D, 6])}"/>`,
+  `<polygon class="f-l" points="${pts([0, -0.5, 0], [W, -0.5, 0], [W, -0.5, 6], [0, -0.5, 6])}"/>`,
+  `<polygon class="f-t" points="${pts([-0.5, -0.5, 6], [W, -0.5, 6], [W, 0, 6], [-0.5, 0, 6])}"/>`,
+];
+// windows in the back walls
+for (let i = 0; i < 4; i++) back.push(`<polygon class="glass" points="${pts([i * BAY + 3, -0.5, 2.6], [i * BAY + 9, -0.5, 2.6], [i * BAY + 9, -0.5, 4.8], [i * BAY + 3, -0.5, 4.8])}"/>`);
+for (let r = 0; r < 2; r++) back.push(`<polygon class="glass-r" points="${pts([-0.5, r * BAY + 3, 2.6], [-0.5, r * BAY + 9, 2.6], [-0.5, r * BAY + 9, 4.8], [-0.5, r * BAY + 3, 4.8])}"/>`);
+
+// floor markings: bay number and a dashed safety line, drawn flat on the floor
+const floorText = (x: number, y: number, t: string, size = 3.2) => {
+  const [tx, ty] = P(x, y, 0);
+  return `<text class="floor-no" transform="matrix(${(C * U).toFixed(3)} ${(0.5 * U).toFixed(3)} ${(-C * U).toFixed(3)} ${(0.5 * U).toFixed(3)} ${tx.toFixed(1)} ${ty.toFixed(1)})" font-size="${size}">${t}</text>`;
+};
+const floor: string[] = [];
+const highlights: string[] = [];
+bays.forEach(({ c, r }, i) => {
+  const x = c * BAY;
+  const y = r * BAY;
+  floor.push(`<polygon class="safety" points="${pts([x + 0.8, y + 0.8, 0], [x + 11.2, y + 0.8, 0], [x + 11.2, y + 11.2, 0], [x + 0.8, y + 11.2, 0])}"/>`);
+  floor.push(floorText(x + 1.2, y + 10.8, String(i + 1).padStart(2, '0')));
+  highlights.push(`<polygon class="bay-hl" data-bay="${i}" points="${pts([x + 0.3, y + 0.3, 0], [x + 11.7, y + 0.3, 0], [x + 11.7, y + 11.7, 0], [x + 0.3, y + 11.7, 0])}"/>`);
+});
+
+// low partitions, split per bay so the depth sort stays right
+for (let r = 0; r < 2; r++) for (let c = 1; c < 4; c++) box(c * BAY - 0.15, r * BAY + 0.2, 0, 0.3, BAY - 0.4, 1.4);
+for (let c = 0; c < 4; c++) box(c * BAY + 0.2, BAY - 0.15, 0, BAY - 0.4, 0.3, 1.4);
+
+// bay contents (placeholder machines and products), in bay-local units
+const at = (i: number) => [bays[i].c * BAY, bays[i].r * BAY];
+{ // 01 print and stationery: digital press with four colour units, feed, output stacks
+  const [x, y] = at(0);
+  box(x + 1.5, y + 2.5, 0, 7.5, 3, 2.2);
+  [0, 1, 2, 3].forEach((k) => box(x + 2.2 + k * 1.7, y + 3, 2.2, 1.1, 2, 0.8, k === 3 ? 'accent' : ''));
+  box(x + 9, y + 3, 0, 1.8, 2, 1.3);
+  box(x + 2, y + 7.4, 0, 3, 2.2, 0.5);
+  box(x + 2, y + 7.4, 0.5, 3, 2.2, 0.5);
+  box(x + 6.5, y + 7.6, 0, 2.6, 2, 1.4);
+}
+{ // 02 signage: CNC router bed and gantry, a standing lightbox sign
+  const [x, y] = at(1);
+  box(x + 1.5, y + 1.8, 0, 8.5, 5, 1.2);
+  box(x + 5, y + 1.4, 1.2, 0.8, 5.8, 1.8);
+  box(x + 5.1, y + 4, 0.4, 0.6, 0.6, 0.8, 'dark');
+  box(x + 2.5, y + 9, 0, 0.3, 0.3, 1.6);
+  box(x + 8.7, y + 9, 0, 0.3, 0.3, 1.6);
+  box(x + 2, y + 8.8, 1.6, 7.5, 0.5, 2.6, 'accent');
+}
+{ // 03 graphics: wide-format printer on legs, media sheet, a pickup with a wrap
+  const [x, y] = at(2);
+  box(x + 1.3, y + 2, 0, 0.3, 0.3, 1.1);
+  box(x + 9.4, y + 2, 0, 0.3, 0.3, 1.1);
+  box(x + 1, y + 1.6, 1.1, 9, 1.4, 1);
+  box(x + 2, y + 3, 1.0, 7, 2.2, 0.05, 'accent');
+  box(x + 1.8, y + 7, 0.5, 4, 3.2, 1);
+  box(x + 5.8, y + 7, 0.5, 2.4, 3.2, 2, 'dark');
+  box(x + 8.2, y + 7, 0.5, 1.8, 3.2, 1.2, 'accent');
+  [2.6, 8.4].forEach((wx) => box(x + wx, y + 9.9, 0, 1, 0.4, 0.9, 'dark'));
+}
+{ // 04 flags and banners: three poles with flags, sewing table, roll-up
+  const [x, y] = at(3);
+  [2, 5, 8].forEach((px, k) => {
+    box(x + px, y + 2, 0, 0.25, 0.25, 6);
+    flat(x + px + y + 2.2, `<polygon class="flag${k === 1 ? ' accent' : ''}" points="${pts([x + px + 0.25, y + 2.1, 5.8], [x + px + 2.6, y + 2.1, 5.3], [x + px + 2.6, y + 2.1, 3.9], [x + px + 0.25, y + 2.1, 4.3])}"/>`);
+  });
+  box(x + 1.8, y + 7, 0, 5, 2.4, 1.1);
+  box(x + 2.8, y + 7.5, 1.1, 1.3, 1, 0.9, 'dark');
+  box(x + 8.4, y + 7.6, 0, 1.6, 0.6, 0.3);
+  box(x + 8.6, y + 7.9, 0.3, 1.2, 0.12, 3.4, 'accent');
+}
+{ // 05 exhibitions and events: platform, booth walls, screen, counter
+  const [x, y] = at(4);
+  box(x + 1.3, y + 1.6, 0, 9.4, 8, 0.15);
+  box(x + 1.3, y + 1.6, 0.15, 9.4, 0.3, 4);
+  box(x + 1.3, y + 1.9, 0.15, 0.3, 7.7, 4);
+  box(x + 5.5, y + 1.9, 1.8, 3.6, 0.1, 1.8, 'dark');
+  box(x + 5, y + 6.2, 0.15, 3.4, 1.4, 1.4, 'accent');
+}
+{ // 06 LED screens: LED wall on its frame, control desk
+  const [x, y] = at(5);
+  box(x + 1.6, y + 2.2, 0, 0.4, 1.2, 1.2);
+  box(x + 9.6, y + 2.2, 0, 0.4, 1.2, 1.2);
+  box(x + 1.4, y + 2.4, 1.2, 9, 0.6, 4.6, 'led');
+  box(x + 4, y + 7.6, 0, 3.2, 1.5, 1.1);
+  box(x + 4.6, y + 7.9, 1.1, 1.6, 0.2, 0.9, 'dark');
+}
+{ // 07 gifts and apparel: heat press, shelving, a table of mugs
+  const [x, y] = at(6);
+  box(x + 1.8, y + 1.8, 0, 3.4, 2.8, 1);
+  box(x + 4.6, y + 2.2, 1, 0.5, 0.5, 1.8);
+  box(x + 2.1, y + 2.1, 1.9, 2.8, 2.2, 0.4, 'dark');
+  box(x + 7, y + 1.5, 0, 3.6, 1.4, 3.8);
+  box(x + 2, y + 7, 0, 7, 2.4, 1.1);
+  [0, 1, 2, 3].forEach((k) => box(x + 2.6 + k * 1.6, y + 7.8, 1.1, 0.7, 0.7, 0.7, k === 1 ? 'accent' : ''));
+}
+{ // 08 acrylic and awards: laser cutter with a tinted lid, trophies on a table
+  const [x, y] = at(7);
+  box(x + 1.5, y + 1.8, 0, 6.5, 3.6, 2);
+  box(x + 1.5, y + 1.8, 2, 6.5, 3.6, 0.5, 'glass-box');
+  box(x + 8.6, y + 2.2, 0, 1.6, 2.6, 1.2);
+  box(x + 2, y + 7.4, 0, 7.5, 2.2, 1.1);
+  [0, 1, 2].forEach((k) => {
+    box(x + 2.6 + k * 2.2, y + 8, 1.1, 0.9, 0.9, 0.4);
+    box(x + 2.85 + k * 2.2, y + 8.25, 1.5, 0.4, 0.4, 1.4, k === 0 ? 'accent' : 'glass-box');
+  });
+}
+shapes.sort((a, b) => a.k - b.k);
+
+// anchor points the camera frames and the cards pin to (a little above each bay's centre)
+const anchors = bays.map(({ c, r }) => P(c * BAY + 6, r * BAY + 6, 3).map((n) => Number(n.toFixed(1))));
+const [ox, oy] = P(W / 2, D / 2, 1.5).map((n) => Number(n.toFixed(1)));
+const svgAll = [...back, ...floor].join('') + highlights.join('') + shapes.map((s) => s.svg).join('');
 ---
 
-<section class="svc section" id="services" aria-labelledby="svc-title">
-  <div class="wrap">
-    <h2 id="svc-title" data-text-reveal>{m.services.title}</h2>
-    <ol class="svc__list">
-      {m.services.items.map((s, i) => (
-        <li data-reveal data-delay={Math.min(i, 5) * 0.05}>
+<section class="svc" id="services" aria-labelledby="svc-title" data-svc data-overview={`${ox},${oy}`}>
+  <div class="svc__pin">
+    <div class="wrap svc__head">
+      <p class="eyebrow">{sv.concept}</p>
+      <h2 id="svc-title">{sv.title}</h2>
+      <p class="svc__lead">{sv.lead}</p>
+    </div>
+
+    <div class="wrap svc__stage">
+      <div class="svc__frame">
+        <svg class="svc__art" viewBox="0 0 1200 640" role="img" aria-label={sv.title}>
+          <defs>
+            <pattern id="svc-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)">
+              <path d="M0 0 V6" stroke="#131d27" stroke-width="0.6" stroke-opacity="0.35"></path>
+            </pattern>
+            <pattern id="svc-grid" width="28" height="28" patternUnits="userSpaceOnUse">
+              <path d="M28 0 H0 V28" fill="none" stroke="#131d27" stroke-opacity="0.06"></path>
+            </pattern>
+          </defs>
+          <g class="svc-world">
+            <rect x="-1200" y="-800" width="3600" height="2200" fill="url(#svc-grid)"></rect>
+            <g set:html={svgAll}></g>
+            {anchors.map(([x, y], i) => (
+              <g class="bay-pin" data-bay={i} transform={`translate(${x} ${y})`}><circle r="5"></circle><circle class="ring" r="11"></circle></g>
+            ))}
+          </g>
+        </svg>
+
+        <!-- HUD readouts (motion only) -->
+        <div class="svc__hud" aria-hidden="true">
+          <span class="hud-tl ltr">X <b data-hud-x>0000</b> &nbsp;Y <b data-hud-y>0000</b></span>
+          <span class="hud-tr ltr">{sv.bay} [<b data-hud-bay>00</b>/08]</span>
+          <span class="hud-bl ltr"><i><em data-hud-bar></em></i> <b data-hud-pct>000</b>%</span>
+          <span class="hud-br" data-hud-scroll>{sv.scroll}</span>
+        </div>
+
+        <!-- one callout card per bay, pinned to the bay on screen -->
+        <div class="svc__cards" aria-hidden="true">
+          {sv.items.map((s, i) => (
+            <article class="svc-card" data-card={i}>
+              <p class="svc-card__code ltr">[{String(i + 1).padStart(2, '0')}/08] SVC-{String(i + 1).padStart(2, '0')}</p>
+              <h3>{s.name}</h3>
+              <p class="svc-card__line">{s.line}</p>
+              <p class="svc-card__mach"><span>{s.machine}</span></p>
+              <a href="#quote" data-service={s.slug} tabindex="-1">{sv.quote} <span class="arrow" aria-hidden="true">→</span></a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <ol class="wrap svc__list">
+      {sv.items.map((s, i) => (
+        <li>
           <a href="#quote" data-service={s.slug}>
             <span class="svc__no">{String(i + 1).padStart(2, '0')}</span>
-            <span class="svc__name"><span>{s.name}</span></span>
+            <span class="svc__name"><span>{s.name}</span><small>{s.line}</small></span>
             <span class="arrow" aria-hidden="true">→</span>
           </a>
         </li>
@@ -24,25 +221,93 @@ const m = messages(locale);
 </section>
 
 <style>
-  .svc h2 { font-size: var(--step-3); margin-block-end: var(--space-3); }
-  .svc__list { list-style: none; margin: 0; padding: 0; border-block-start: 1px solid var(--hairline); }
+  .svc { position: relative; background: var(--paper); padding-block: var(--space-6); }
+  .svc__head { display: grid; gap: 0.6rem; margin-block-end: var(--space-3); }
+  .svc h2 { font-size: var(--step-3); }
+  .svc__lead { color: var(--grey); max-width: 46ch; }
+  .svc__frame { position: relative; border: 1px solid var(--ink); background: var(--white); overflow: hidden; }
+  .svc__art { width: 100%; height: auto; direction: ltr; }
+
+  /* drawing: pencil line on paper, lime only where it means something */
+  .svc__art :global(polygon) { stroke: var(--ink); stroke-width: 1; stroke-linejoin: round; }
+  .svc__art :global(.f-t) { fill: #ffffff; }
+  .svc__art :global(.f-l) { fill: #f0f1ee; }
+  .svc__art :global(.f-r) { fill: url(#svc-hatch) #e4e5e1; }
+  .svc__art :global(.dark.f-t) { fill: #3a4450; }
+  .svc__art :global(.dark.f-l), .svc__art :global(.dark.f-r) { fill: var(--ink); }
+  .svc__art :global(.accent.f-t) { fill: var(--lime); }
+  .svc__art :global(.accent.f-l) { fill: #a9c03a; }
+  .svc__art :global(.accent.f-r) { fill: #97ac33; }
+  .svc__art :global(.led.f-l) { fill: var(--ink); }
+  .svc__art :global(.led.f-t), .svc__art :global(.led.f-r) { fill: #2a333d; }
+  .svc__art :global(.glass-box) { fill: #dfe9ee; fill-opacity: 0.75; }
+  .svc__art :global(.glass), .svc__art :global(.glass-r) { fill: #dfe9ee; stroke-width: 0.8; }
+  .svc__art :global(.flag) { fill: #fff; }
+  .svc__art :global(.flag.accent) { fill: var(--lime); }
+  .svc__art :global(.safety) { fill: none; stroke-width: 0.8; stroke-dasharray: 5 4; stroke-opacity: 0.45; }
+  .svc__art :global(.floor-no) { font-family: var(--font-mono); fill: var(--ink); fill-opacity: 0.55; }
+  .svc__art :global(.bay-hl) { fill: var(--lime); fill-opacity: 0; stroke: none; transition: fill-opacity 0.35s var(--ease-out); }
+  .svc__art :global(.bay-hl.is-on) { fill-opacity: 0.45; }
+  .bay-pin { opacity: 0; transition: opacity 0.3s; }
+  .bay-pin circle { fill: var(--lime); stroke: var(--ink); stroke-width: 1.2; }
+  .bay-pin .ring { fill: none; stroke-opacity: 0.5; }
+  .bay-pin:global(.is-on) { opacity: 1; }
+
+  .svc__hud, .svc__cards { display: none; }
+
+  /* index list: always in the DOM; the visible list when motion is off */
+  .svc__list { list-style: none; margin-block: var(--space-4) 0; padding: 0; border-block-start: 1px solid var(--hairline); }
   .svc__list a {
     display: grid; grid-template-columns: 2.6rem 1fr auto; align-items: baseline; gap: 0.5rem;
     padding-block: 0.9rem; border-block-end: 1px solid var(--hairline); text-decoration: none;
-    font-family: var(--font-display); font-weight: 600; font-size: var(--step-1); line-height: 1.25;
   }
-  html[lang='ar'] .svc__list a { font-weight: 700; line-height: 1.6; }
-  .svc__no { font-family: var(--font-mono); font-weight: 400; font-size: var(--step--1); color: var(--grey); }
-  .svc__name span {
-    background: linear-gradient(var(--lime), var(--lime)) no-repeat; background-size: 0% 100%;
-    background-position: var(--origin-start) 0; padding-inline: 0.3em; margin-inline: -0.3em;
-    box-decoration-break: clone; -webkit-box-decoration-break: clone; transition: background-size 0.45s var(--ease-out);
-  }
-  @media (min-width: 900px) {
-    .svc .wrap { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr); gap: var(--space-4); align-items: start; }
-    .svc h2 { margin-block-end: 0; position: sticky; inset-block-start: calc(var(--header-h) + var(--space-3)); }
-  }
-  .arrow { opacity: 0; transition: opacity var(--dur-fast), transform var(--dur-ink) var(--ease-out); }
-  .svc__list a:hover .svc__name span, .svc__list a:focus-visible .svc__name span { background-size: 100% 100%; }
+  .svc__no { font-family: var(--font-mono); font-size: var(--step--1); color: var(--grey); }
+  .svc__name { display: grid; gap: 0.2rem; }
+  .svc__name > span { font-family: var(--font-display); font-weight: 600; font-size: var(--step-1); line-height: 1.25; }
+  html[lang='ar'] .svc__name > span { font-weight: 700; line-height: 1.6; }
+  .svc__name small { color: var(--grey); font-size: var(--step--1); }
+  .svc__list .arrow { opacity: 0; transition: opacity var(--dur-fast); }
   .svc__list a:hover .arrow, .svc__list a:focus-visible .arrow { opacity: 1; }
+  @media (min-width: 900px) { .svc__list { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--space-4); } }
+
+  /* ---- motion on: pinned, the camera walks bay to bay (src/scripts/services.js) ---- */
+  :global(html.motion) .svc { height: 820vh; padding: 0; }
+  :global(html.motion) .svc__pin { position: sticky; top: 0; height: 100svh; display: grid; align-content: safe center; padding-block: calc(var(--header-h) + var(--space-2)) 5rem; }
+  :global(html.motion) .svc__head { margin-block-end: var(--space-2); }
+  :global(html.motion) .svc h2 { font-size: var(--step-2); }
+  :global(html.motion) .svc__art { max-height: 62svh; }
+  :global(html.motion) .svc__list { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0; }
+  :global(html.motion) .svc__hud { display: block; position: absolute; inset: 0; pointer-events: none; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
+  .svc__hud > span { position: absolute; padding: 0.6rem 0.75rem; }
+  .svc__hud b { font-weight: 400; font-variant-numeric: tabular-nums; }
+  .hud-tl { inset-block-start: 0; left: 0; }
+  .hud-tr { inset-block-start: 0; right: 0; }
+  .hud-bl { inset-block-end: 0; left: 0; display: flex; align-items: center; gap: 0.5rem; }
+  .hud-bl i { display: block; width: 7rem; height: 3px; background: var(--hairline); }
+  .hud-bl em { display: block; height: 100%; width: 0; background: var(--ink); }
+  .hud-br { inset-block-end: 0; right: 0; transition: opacity 0.3s; }
+  html[lang='ar'] .svc__hud { text-transform: none; letter-spacing: 0; }
+
+  :global(html.motion) .svc__cards { display: block; position: absolute; inset: 0; pointer-events: none; }
+  .svc-card {
+    position: absolute; left: 0; top: 0; width: min(19rem, 70%); padding: 0.85rem 1rem; display: grid; gap: 0.35rem;
+    background: var(--paper); border: 1px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
+    opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease-out), visibility 0.3s;
+  }
+  .svc-card:global(.is-on) { opacity: 1; visibility: visible; pointer-events: auto; }
+  .svc-card__code { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em; color: var(--grey); }
+  .svc-card h3 { font-size: var(--step-1); }
+  .svc-card__line { font-size: var(--step--1); color: var(--grey); }
+  .svc-card__mach span { display: inline-block; font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; background: var(--lime); color: var(--navy); padding: 0.1rem 0.4rem; }
+  html[lang='ar'] .svc-card__mach span { text-transform: none; letter-spacing: 0; }
+  .svc-card a { font-weight: 700; font-size: var(--step--1); justify-self: start; }
+  /* phones: the card docks at the bottom of the frame instead of following the bay */
+  @media (max-width: 700px) {
+    .svc-card { inset: auto 0.5rem 0.5rem 0.5rem !important; width: auto; transform: none !important; box-shadow: 4px 4px 0 var(--ink); padding: 0.6rem 0.75rem; }
+    .svc-card__line { display: none; }
+    .hud-bl i { width: 3.5rem; }
+    :global(html.motion) .svc__art { max-height: none; }
+    :global(html.motion) .svc__frame { aspect-ratio: 4 / 5; }
+    :global(html.motion) .svc__art { height: 100%; }
+  }
 </style>

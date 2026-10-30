@@ -34,37 +34,58 @@
     "items": [
       {
         "slug": "print-stationery",
-        "name": "Print & Stationery"
+        "name": "Print & Stationery",
+        "line": "Business cards, brochures, letterheads and packaging, printed in-house.",
+        "machine": "Digital press"
       },
       {
         "slug": "signage",
-        "name": "Signage"
+        "name": "Signage",
+        "line": "Shop fronts, 3D letters, lightboxes and wayfinding.",
+        "machine": "CNC router"
       },
       {
         "slug": "graphics",
-        "name": "Window, Wall, Floor & Vehicle Graphics"
+        "name": "Window, Wall, Floor & Vehicle Graphics",
+        "line": "Window film, wall murals, floor graphics and fleet wraps.",
+        "machine": "Wide-format printer"
       },
       {
         "slug": "flags-banners",
-        "name": "Flags & Banners"
+        "name": "Flags & Banners",
+        "line": "Feather flags, pole flags, roll-ups and large banners.",
+        "machine": "Dye-sub printer and sewing"
       },
       {
         "slug": "exhibitions-events",
-        "name": "Exhibitions & Events"
+        "name": "Exhibitions & Events",
+        "line": "Booths, stage backdrops and event branding, built and installed.",
+        "machine": "Booth build area"
       },
       {
         "slug": "led-screens",
-        "name": "LED Screens"
+        "name": "LED Screens",
+        "line": "Indoor and outdoor LED walls, supplied and installed.",
+        "machine": "LED wall rig"
       },
       {
         "slug": "gifts-apparel",
-        "name": "Gifts & Apparel"
+        "name": "Gifts & Apparel",
+        "line": "Branded mugs, pens, caps and uniforms.",
+        "machine": "Heat press"
       },
       {
         "slug": "acrylic-awards",
-        "name": "Acrylic & Awards"
+        "name": "Acrylic & Awards",
+        "line": "Laser-cut acrylic, plaques, trophies and display stands.",
+        "machine": "Laser cutter"
       }
-    ]
+    ],
+    "concept": "Concept illustration: placeholder layout and machines",
+    "lead": "One workshop, eight trades. Scroll through the floor.",
+    "scroll": "[Scroll to continue]",
+    "bay": "Bay",
+    "quote": "Get a quote"
   },
   "sequence": {
     "title": "From artwork to finished vehicle",
