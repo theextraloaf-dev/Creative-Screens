@@ -91,20 +91,51 @@
     "proof": "Before / After: client photo pending",
     "cta": "Get a quote for vehicle branding",
     "notes": [
+      "Enquiry on WhatsApp",
+      "Truck drives in",
+      "Measured: 5,330 × 1,815 mm",
+      "Design proof on your truck",
+      "Approved",
       "Logo traced to vector",
-      "Sized: 600 × 240 mm",
-      "Colour check",
       "Print & cut machine",
+      "Colour check",
       "Print head pass",
       "Registration marks",
       "Contour cut",
       "Weeding: waste removed",
       "Transfer tape",
-      "Door panel: 900 mm",
-      "Positioned on the door",
+      "Wrap panels applied",
+      "Logo on the door",
       "Squeegee: no bubbles",
-      "Tape peeled",
-      "Ready to drive"
+      "Quality check",
+      "Handed over",
+      "Every panel, every view"
+    ],
+    "story": [
+      {
+        "title": "Brief",
+        "caption": "Your enquiry arrives and we measure the vehicle."
+      },
+      {
+        "title": "Design",
+        "caption": "A proof on your truck's own outline, approved by you."
+      },
+      {
+        "title": "Print",
+        "caption": "Printed in-house, colour-matched."
+      },
+      {
+        "title": "Cut",
+        "caption": "Cut precisely to shape and weeded."
+      },
+      {
+        "title": "Apply",
+        "caption": "Every panel wrapped, bubble-free."
+      },
+      {
+        "title": "Deliver",
+        "caption": "Checked, handed over, ready to drive."
+      }
     ]
   },
   "anatomy": {

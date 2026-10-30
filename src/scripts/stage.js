@@ -1,9 +1,11 @@
 import { dir } from './motion-tokens.js';
 
-/* Vehicle graphic sequence (2D blueprint): one scrubbed timeline on a CSS-sticky stage.
-   One camera and one object: the camera starts close on the bench and pulls back to the truck while the
-   same decal travels to the door. Time units are 0 to 100 so beats map directly to scroll share:
-   Design 0-20, Print 20-45, Cut 45-70, Apply 70-100. A beat starts about every 6 units (~150px of scroll). */
+/* Vehicle branding story (2D blueprint): one scrubbed timeline on a CSS-sticky stage, one camera, one job.
+   Time units are 0 to 100 so beats map directly to scroll share:
+   Brief 0-16, Design 16-30, Print 30-46, Cut 46-60, Apply 60-80, Deliver 80-100.
+   A beat starts every 2-4 units (roughly every 120px of scroll on a desktop). */
+const CHAPTERS = [0, 16, 30, 46, 60, 80];
+
 function init2D(gsap, ScrollTrigger) {
   const stage = document.querySelector('[data-stage]');
   const svg = stage?.querySelector('svg');
@@ -20,10 +22,14 @@ function init2D(gsap, ScrollTrigger) {
   const sqStart = num('sqStart');
   const sqEnd = num('sqEnd');
   const benchX = num('benchX');
+  const truckX = num('truckX');
   const proof = stage.querySelector('[data-proof]');
   const art = stage.querySelector('.stage__art');
+  const caps = [...stage.querySelectorAll('.cap2')];
+  const rail = [...stage.querySelectorAll('.stage__rail--6 li')];
 
   const world = q('.world');
+  const drive = q('.truck-drive');
   const decal = q('.decal');
   const carriage = q('.carriage');
   const cutline = q('.cutline');
@@ -34,6 +40,16 @@ function init2D(gsap, ScrollTrigger) {
   const left = 110;
   const right = 450; // decal contour edges, bench space
   const [from, to] = rtl ? [right, left] : [left, right];
+
+  /* camera: a point to look at and a zoom; the world is moved so that point sits in the middle of the frame */
+  const cam = { x: 600, y: 300, s: 1 };
+  const shots = {
+    wide: { x: 600, y: 300, s: 1 },
+    truck: { x: truckX + 300, y: 372, s: 1.45 },
+    bench: { x: benchX + 280, y: 290, s: 1.55 },
+    sheet: { x: truckX + 340, y: 500, s: 0.93 },
+  };
+  const placeCam = () => world.setAttribute('transform', `translate(${600 - cam.x * cam.s} ${280 - cam.y * cam.s}) scale(${cam.s})`);
 
   /* blade follows the contour; the carriage tracks it along the rail */
   const cutLen = cutline.getTotalLength();
@@ -48,68 +64,99 @@ function init2D(gsap, ScrollTrigger) {
     cutline.style.strokeDashoffset = String(1 - blade.t);
   };
 
+  /* wrap panels sweep on in reading direction */
+  const panelClips = qa('.panel-clip');
+  panelClips.forEach((r) => gsap.set(r, { attr: rtl ? { x: Number(r.dataset.b), width: 0 } : { width: 0 } }));
+
   /* ---- start state ---- */
-  gsap.set(world, { scale: 1.55, svgOrigin: `${benchX + 280} 290` });
-  gsap.set(q('.sheet'), { opacity: 0, y: 16 });
+  placeCam();
+  gsap.set(drive, { x: -1400 }); // parked off-frame until it drives in
   gsap.set(q('.machine'), { y: -40 });
   gsap.set(carriage, { x: from });
   gsap.set(qa('.chip'), { y: 8 });
   gsap.set(inkRect, { attr: { x: rtl ? right + 4 : left - 4, width: 0 } });
   gsap.set(q('.tape'), { scaleY: 0, svgOrigin: '280 212' });
+  gsap.set(q('.stamp'), { scale: 1.6, svgOrigin: '540 270' });
   gsap.set(proof, { opacity: 0, y: 14 });
 
   const tl = gsap.timeline({ defaults: { ease: 'none' } });
+  // explicit start values so scrubbing from any point (or landing mid-page) renders the same frame
+  const shot = (a, b, at, dur) => tl.fromTo(cam, { ...shots[a] }, { ...shots[b], duration: dur, ease: 'power2.inOut', onUpdate: placeCam, immediateRender: false }, at);
+  const spin = (from, to, at, dur) => qa('.spoke').forEach((sp) => tl.fromTo(sp, { rotation: from, svgOrigin: `${sp.dataset.wx} 428` }, { rotation: to, svgOrigin: `${sp.dataset.wx} 428`, duration: dur, ease: 'power2.inOut', immediateRender: false }, at));
 
-  /* 1 Design: sheet lands, logo traced to vector, sized, colours checked */
-  tl.to(q('.sheet'), { opacity: 1, y: 0, duration: 4, ease: 'power2.out' }, 0)
-    .to(qa('.trace-line'), { strokeDashoffset: 0, duration: 9, ease: 'power1.inOut' }, 2)
-    .to(q('.dims'), { opacity: 1, duration: 3 }, 9)
-    .to(qa('.chip'), { opacity: 1, y: 0, duration: 2.5, stagger: 2.2, ease: 'back.out(2)' }, 13)
-    .to(qa('.tick'), { strokeDashoffset: 0, duration: 2, stagger: 2.2, ease: 'power1.out' }, 14.5);
+  /* 1 Brief: the enquiry arrives on WhatsApp, the truck drives in, it is measured */
+  tl.to(q('.phone'), { opacity: 1, duration: 1.5 }, 0)
+    .to(qa('.msg'), { opacity: 1, duration: 1, stagger: 1.2 }, 0.8)
+    .to(q('.phone'), { opacity: 0, y: -20, duration: 2 }, 6)
+    .to(drive, { x: 0, duration: 6, ease: 'power2.out' }, 6);
+  spin(-792, 0, 6, 6);
+  shot('wide', 'truck', 11, 4);
+  tl.to(q('.vdims'), { opacity: 1, duration: 2 }, 12.5)
+    .to(q('.vdims'), { opacity: 0, duration: 1.5 }, 16.5);
 
-  /* 2 Print: machine arrives, the head sweeps once, registration marks print */
-  tl.to(q('.machine'), { opacity: 1, y: 0, duration: 5, ease: 'power2.out' }, 20)
-    .to(q('.printline'), { opacity: 0.85, duration: 1 }, 25)
-    .to(carriage, { x: to, duration: 16, ease: 'power1.inOut' }, 25.5)
-    .to(inkRect, { attr: rtl ? { x: left - 4, width: right - left + 8 } : { width: right - left + 8 }, duration: 16, ease: 'power1.inOut' }, 25.5)
-    .to(q('.printline'), { opacity: 0, duration: 1 }, 41.5)
-    .to(q('.dims'), { opacity: 0, duration: 2 }, 41)
-    .to(q('.trace'), { opacity: 0, duration: 2 }, 41);
-  qa('.reg').forEach((r, i) => tl.to(r, { opacity: 1, duration: 1.2 }, 39 + i * 2));
-  tl.to(q('.chips'), { opacity: 0, duration: 2 }, 44);
+  /* 2 Design: a proof drawn on the truck's own outline, approved, then the logo is traced on the sheet */
+  tl.to(q('.proof'), { opacity: 1, duration: 3 }, 17)
+    .to(q('.stamp'), { opacity: 1, scale: 1, duration: 1.5, ease: 'back.out(2.5)' }, 23)
+    .to([q('.proof'), q('.stamp')], { opacity: 0, duration: 2 }, 27);
+  shot('truck', 'bench', 26, 4);
+  tl.to(q('.sheet'), { opacity: 1, duration: 2 }, 27)
+    .to(q('.trace'), { opacity: 1, duration: 1 }, 28)
+    .to(qa('.trace-line'), { strokeDashoffset: 0, duration: 4, ease: 'power1.inOut' }, 28);
 
-  /* 3 Cut and weed: blade traces the contour, machine lifts, waste peels, transfer tape goes on */
-  tl.to([knife, arm], { opacity: 1, duration: 1 }, 46)
-    .to(blade, { t: 1, duration: 12, ease: 'power1.inOut', onUpdate: placeBlade }, 46)
-    .to([knife, arm], { opacity: 0, duration: 1 }, 58)
-    .to(q('.machine'), { opacity: 0, y: -40, duration: 3, ease: 'power2.in' }, 58.5)
-    .to(qa('.reg'), { opacity: 0, duration: 2 }, 59)
-    .to(q('.waste'), { x: 40 * d, y: -60, rotation: 6 * d, opacity: 0, svgOrigin: `${rtl ? 480 : 80} 170`, duration: 7, ease: 'power2.in' }, 59)
-    .to(cutline, { opacity: 0, duration: 3 }, 63)
-    .to(q('.tape'), { opacity: 1, scaleY: 1, duration: 5, ease: 'power2.out' }, 65);
+  /* 3 Print: machine arrives, colours checked, the head sweeps once, registration marks print */
+  tl.to(q('.machine'), { opacity: 1, y: 0, duration: 3, ease: 'power2.out' }, 32)
+    .to(qa('.chip'), { opacity: 1, y: 0, duration: 1.5, stagger: 1, ease: 'back.out(2)' }, 35)
+    .to(qa('.tick'), { strokeDashoffset: 0, duration: 1, stagger: 1, ease: 'power1.out' }, 36)
+    .to(q('.printline'), { opacity: 0.85, duration: 0.5 }, 38)
+    .to(carriage, { x: to, duration: 6, ease: 'power1.inOut' }, 38.3)
+    .to(inkRect, { attr: rtl ? { x: left - 4, width: right - left + 8 } : { width: right - left + 8 }, duration: 6, ease: 'power1.inOut' }, 38.3)
+    .to(q('.printline'), { opacity: 0, duration: 0.5 }, 44.3)
+    .to(q('.trace'), { opacity: 0, duration: 1 }, 44)
+    .to(q('.chips'), { opacity: 0, duration: 1 }, 45)
+    .set(q('.waste'), { opacity: 1 }, 44);
+  qa('.reg').forEach((r, i) => tl.to(r, { opacity: 1, duration: 0.6 }, 44 + i * 0.8));
 
-  /* 4 Apply: camera pulls back, door marked, decal glides on, squeegee, tape off, wheels turn */
-  tl.to(world, { scale: 1, duration: 18, ease: 'power2.inOut' }, 62)
-    .to(q('.sheet'), { opacity: 0.35, duration: 6 }, 72)
-    .to([q('.doorzone'), q('.doordim')], { opacity: 1, duration: 3 }, 71)
-    .to(decal, { x: dx, y: dy - 14, scale: 0.46, svgOrigin: decalOrigin, duration: 12, ease: 'power2.inOut' }, 74)
-    .to(qa('.bubble'), { opacity: 1, duration: 2, stagger: 0.5 }, 84)
-    .to(q('.squeegee'), { opacity: 1, duration: 1 }, 85.5)
-    .fromTo(q('.squeegee'), { x: 0 }, { x: sqEnd - sqStart, duration: 10, ease: 'power1.inOut' }, 86)
-    .to(decal, { y: dy, duration: 8, ease: 'power2.out' }, 86)
-    .to([q('.doorzone'), q('.doordim')], { opacity: 0, duration: 3 }, 88)
-    .to(q('.squeegee'), { opacity: 0, duration: 1.5 }, 96)
-    .to(q('.tape'), { opacity: 0, y: -40, duration: 4, ease: 'power2.in' }, 92.5);
+  /* 4 Cut and weed: blade traces the contour, machine lifts, waste peels, transfer tape goes on */
+  tl.to([knife, arm], { opacity: 1, duration: 0.5 }, 47)
+    .to(blade, { t: 1, duration: 7, ease: 'power1.inOut', onUpdate: placeBlade }, 47)
+    .to([knife, arm], { opacity: 0, duration: 0.5 }, 54)
+    .to(q('.machine'), { opacity: 0, y: -40, duration: 2, ease: 'power2.in' }, 54)
+    .to(qa('.reg'), { opacity: 0, duration: 1 }, 54.5)
+    .to(q('.waste'), { x: 40 * d, y: -60, rotation: 6 * d, opacity: 0, svgOrigin: `${rtl ? 480 : 80} 170`, duration: 3, ease: 'power2.in' }, 54.5)
+    .to(cutline, { opacity: 0, duration: 1.5 }, 56)
+    .to(q('.tape'), { opacity: 1, scaleY: 1, duration: 3, ease: 'power2.out' }, 57.5);
 
-  /* bubbles vanish as the squeegee passes them */
+  /* 5 Apply: back to the truck, the wrap goes on panel by panel, then the logo decal on the front door */
+  shot('bench', 'truck', 60, 4);
+  tl.to(q('.sheet'), { opacity: 0.3, duration: 3 }, 61);
+  panelClips.forEach((r, i) => {
+    const order = rtl ? panelClips.length - 1 - i : i;
+    tl.to(r, { attr: rtl ? { x: Number(r.dataset.a), width: Number(r.dataset.b) - Number(r.dataset.a) } : { width: Number(r.dataset.b) - Number(r.dataset.a) }, duration: 2, ease: 'power1.inOut' }, 64 + order * 2);
+  });
+  tl.to(q('.doorzone'), { opacity: 1, duration: 1 }, 71)
+    .to(decal, { x: dx, y: dy - 10, scale: 0.34, svgOrigin: decalOrigin, duration: 4, ease: 'power2.inOut' }, 72)
+    .to(qa('.bubble'), { opacity: 1, duration: 0.6, stagger: 0.3 }, 75.5)
+    .to(q('.squeegee'), { opacity: 1, duration: 0.5 }, 76)
+    .fromTo(q('.squeegee'), { x: 0 }, { x: sqEnd - sqStart, duration: 3.5, ease: 'power1.inOut' }, 76.3)
+    .to(decal, { y: dy, duration: 2.5, ease: 'power2.out' }, 76.3)
+    .to(q('.doorzone'), { opacity: 0, duration: 1 }, 77)
+    .to(q('.squeegee'), { opacity: 0, duration: 0.5 }, 79.8)
+    .to(q('.tape'), { opacity: 0, y: -40, duration: 1.5, ease: 'power2.in' }, 79);
   qa('.bubble').forEach((bb) => {
     const frac = (Number(bb.getAttribute('cx')) - sqStart) / (sqEnd - sqStart);
-    tl.to(bb, { opacity: 0, duration: 1.5 }, 86 + 10 * Math.min(Math.max(frac, 0), 1));
+    tl.to(bb, { opacity: 0, duration: 0.6 }, 76.3 + 3.5 * Math.min(Math.max(frac, 0), 1));
   });
 
-  /* delivered: wheels turn once as the proof and CTA arrive */
-  qa('.spoke').forEach((sp) => tl.to(sp, { rotation: 360, svgOrigin: `${sp.dataset.wx} 424`, duration: 7, ease: 'power2.inOut' }, 93));
-  tl.to(proof, { opacity: 1, y: 0, duration: 6, ease: 'power2.out' }, 94);
+  /* 6 Deliver: quality check, keys handed over, then the multi-view sheet: every panel, every view */
+  tl.to(qa('.qc-badge'), { opacity: 1, duration: 1, stagger: 1.6, ease: 'back.out(2)' }, 81)
+    .to(qa('.qc-badge'), { opacity: 0, duration: 1 }, 87)
+    .fromTo(q('.key'), { opacity: 0, y: -16 }, { opacity: 1, y: 0, duration: 1.5, ease: 'back.out(2)' }, 87.5)
+    .to(q('.key'), { opacity: 0, duration: 1 }, 91.5);
+  spin(0, 180, 88, 4);
+  shot('truck', 'sheet', 91, 5);
+  tl.to(q('.sheet'), { opacity: 0, duration: 2 }, 91)
+    .to(q('.views'), { opacity: 1, duration: 3 }, 92.5)
+    .to(proof, { opacity: 1, y: 0, duration: 4, ease: 'power2.out' }, 95);
   tl.set({}, {}, 100); // fix the total duration at 100
 
   /* pointer labels: each names the part on screen right now, pinned to that part */
@@ -132,6 +179,9 @@ function init2D(gsap, ScrollTrigger) {
       n.li.classList.toggle('is-flip', x > box.width * 0.62);
       n.li.classList.toggle('is-below', n.at === 'below' || y < 70); // no room above: hang the label below the part
     }
+    const step = CHAPTERS.filter((c) => t >= c).length - 1;
+    caps.forEach((c, i) => c.classList.toggle('is-on', i === step));
+    rail.forEach((li, i) => li.classList.toggle('is-done', i <= step));
   };
   tl.eventCallback('onUpdate', placeNotes);
   window.addEventListener('resize', placeNotes, { passive: true });
@@ -142,12 +192,7 @@ function init2D(gsap, ScrollTrigger) {
     end: 'bottom bottom',
     scrub: 0.5,
     animation: tl,
-    onUpdate: (self) => {
-      const p = self.progress;
-      stage.dataset.step = p < 0.2 ? '0' : p < 0.45 ? '1' : p < 0.7 ? '2' : '3';
-    },
   });
-  stage.dataset.step = '0';
   placeNotes();
 }
 
