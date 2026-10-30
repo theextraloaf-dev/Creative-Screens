@@ -69,18 +69,41 @@ export function initServices(gsap, ScrollTrigger) {
   tl.fromTo(cam, { ...prev }, { ...shotAll(), duration: 10, ease: 'power2.inOut', onUpdate: place, immediateRender: false }, at(5) - 15);
   tl.set({}, {}, 100);
 
+  /* focus: only the bays named on the card on screen stay solid; hovering a service isolates its bay */
+  const bayParts = anchors.flatMap((_, j) => [group(String(j * 2)), group(String(j * 2 + 1))]);
+  let hover = -1;
+  let focusKey = 'all';
+  const setFocus = (list) => {
+    const key = list ? list.join(',') : 'all';
+    if (key === focusKey) return;
+    focusKey = key;
+    bayParts.forEach((els, i) => els.forEach((el) => el.classList.toggle('is-dim', !!list && !list.includes(i))));
+    hls.forEach((h, i) => h.classList.toggle('is-on', !!list && list.includes(i)));
+  };
+  sec.querySelectorAll('.cr[data-bay]').forEach((cr) => {
+    const i = Number(cr.dataset.bay);
+    const pair = cr.closest('.cr-pair');
+    const on = () => { hover = i; cr.classList.add('is-hover'); pair.classList.add('has-hover'); update(); };
+    const off = () => { hover = -1; cr.classList.remove('is-hover'); pair.classList.remove('has-hover'); update(); };
+    cr.addEventListener('pointerenter', on);
+    cr.addEventListener('pointerleave', off);
+    cr.addEventListener('focusin', on);
+    cr.addEventListener('focusout', off);
+  });
+
   const pad = (n, l) => String(Math.max(0, Math.round(n))).padStart(l, '0');
-  const update = () => {
+  function update() {
     const t = tl.time();
     const card = Math.round(t / 20) - 1; // card nearest the middle of the screen
     const on = card >= 0 && card < 4 ? card : -1;
-    hls.forEach((h, i) => h.classList.toggle('is-on', on >= 0 && Math.floor(i / 2) === on));
+    const pairOn = on >= 0 ? [on * 2, on * 2 + 1] : null;
+    setFocus(pairOn && pairOn.includes(hover) ? [hover] : pairOn);
     hx.textContent = pad(cam.x * 10, 4);
     hy.textContent = pad(cam.y * 10, 4);
     hb.textContent = on >= 0 ? `${pad(on * 2 + 1, 2)}–${pad(on * 2 + 2, 2)}` : '00';
     hp.textContent = pad(t, 3);
     bar.style.width = `${t}%`;
-  };
+  }
   tl.eventCallback('onUpdate', update);
   ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', scrub: 0.5, animation: tl });
 

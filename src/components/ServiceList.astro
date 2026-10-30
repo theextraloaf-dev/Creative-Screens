@@ -311,7 +311,7 @@ const s0 = 1.05; // finished drawing framed in a 1200 x 640 view (no motion)
           {pair.map((i) => {
             const s = sv.items[i];
             return (
-              <div class="cr" style={`--acc:${acc[i]}`}>
+              <div class="cr" data-bay={i} style={`--acc:${acc[i]}`}>
                 <h3 class="cr__title">{s.name}</h3>
                 <dl class="cr__rows">
                   <div><dt>{L.bay}</dt><dd><i class="cr__chip" aria-hidden="true"></i><span class="ltr">{String(i + 1).padStart(2, '0')} / 08</span></dd></div>
@@ -373,6 +373,11 @@ const s0 = 1.05; // finished drawing framed in a 1200 x 640 view (no motion)
   .svc__art :global(.flag.accent), .svc__art :global(.wrap) { fill: var(--acc, var(--lime)); }
   .svc__art :global(.safety) { fill: none; stroke-width: 0.8; stroke-dasharray: 5 4; stroke-opacity: 0.45; }
   .svc__art :global(.floor-no) { font-family: var(--font-mono); fill: var(--ink); fill-opacity: 0.55; }
+  /* focus: bays outside the current card fall back to a faint ghost (opacity on the parts, so GSAP's own opacity on the groups is untouched) */
+  .svc__art :global(.pc > *) { transition: opacity 0.45s var(--ease-out); }
+  .svc__art :global(.pc.is-dim > *) { opacity: 0.12; }
+  .cr[data-bay] { transition: opacity 0.3s var(--ease-out); }
+  .cr-pair:global(.has-hover) .cr:not(:global(.is-hover)) { opacity: 0.45; }
   .svc__art :global(.bay-hl) { fill: var(--acc); fill-opacity: 0; stroke: var(--acc); stroke-width: 0; transition: fill-opacity 0.35s var(--ease-out), stroke-width 0.35s; }
   .svc__art :global(.bay-hl.is-on) { fill-opacity: 0.22; stroke-width: 3; }
 
