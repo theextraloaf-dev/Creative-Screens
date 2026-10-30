@@ -18,6 +18,8 @@ const n2 = (i: number) => String(i).padStart(2, '0');
 const items = sv.items.map((s, i) => ({ ...s, i, plate: plates[s.slug] }));
 const ring = ringPath();
 const Q = locale === 'ar' ? ['«', '»'] : ['“', '”'];
+// titles: the ampersand in the serif italic
+const title = (name: string) => name.split('&').map((part, k) => (k ? `<i class="amp">&amp;</i>${part}` : part)).join('');
 ---
 
 <section class="pl" id="services" aria-labelledby="pl-title" data-plates>
@@ -28,7 +30,7 @@ const Q = locale === 'ar' ? ['«', '»'] : ['“', '”'];
       <div class="pl-car__credits">
         {items.map((s) => (
           <div class="cr" data-cr={s.i}>
-            <p class="cr__title">{s.name}</p>
+            <p class="cr__title" set:html={title(s.name)} />
             <dl class="cr__rows">
               <div><dt>{L.plate}</dt><dd class="ltr">{n2(s.i + 1)} / {n2(items.length)}</dd></div>
               <div><dt>{L.makes}</dt><dd>{s.makes.map((x) => <span>{x}</span>)}</dd></div>
@@ -88,7 +90,7 @@ const Q = locale === 'ar' ? ['«', '»'] : ['“', '”'];
               <img src={`/plates/${s.slug}.png`} alt="" width="1254" height="1254" loading="lazy" decoding="async" />
             </figure>
             <div class="cr">
-              <h3 id={`pl-${s.i}`} class="cr__title">{s.name}</h3>
+              <h3 id={`pl-${s.i}`} class="cr__title" set:html={title(s.name)} />
               <dl class="cr__rows">
                 <div><dt>{L.plate}</dt><dd class="ltr">{n2(s.i + 1)} / {n2(items.length)}</dd></div>
                 <div><dt>{L.makes}</dt><dd>{s.makes.map((x) => <span>{x}</span>)}</dd></div>
@@ -109,8 +111,8 @@ const Q = locale === 'ar' ? ['«', '»'] : ['“', '”'];
 
   /* ---------- gallery (no motion; screen readers) ---------- */
   .pl__gallery { width: min(100% - var(--gutter) * 2, var(--maxw)); margin-inline: auto; display: grid; gap: var(--space-4); }
-  .pl__eyebrow { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--grey); }
-  .pl__title { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(2.6rem, 1.8rem + 3vw, 5rem); line-height: 0.88; margin-block-start: 0.3rem; }
+  .pl__eyebrow { font-family: var(--font-body); font-weight: 600; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--grey); }
+  .pl__title { font-family: var(--font-serif); font-weight: 400; text-transform: uppercase; font-size: clamp(2.8rem, 2rem + 3vw, 5.4rem); line-height: 0.92; letter-spacing: 0.005em; margin-block-start: 0.4rem; }
   html[lang='ar'] .pl__title { font-family: var(--font-display); font-weight: 700; text-transform: none; line-height: 1.2; }
   .pl__items { display: grid; gap: var(--space-5); }
   .pl-item { display: grid; gap: var(--space-3); align-items: center; }
@@ -120,14 +122,15 @@ const Q = locale === 'ar' ? ['«', '»'] : ['“', '”'];
 
   /* credits blocks (A24 film pages): condensed caps title, ruled label/value rows */
   .cr { display: grid; gap: 0.5rem; width: min(100%, 22rem); }
-  .cr__title { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem); line-height: 0.9; text-wrap: balance; }
+  .cr__title { font-family: var(--font-serif); font-weight: 400; text-transform: uppercase; font-size: clamp(2.2rem, 1.6rem + 1.8vw, 3.2rem); line-height: 0.94; letter-spacing: 0.005em; text-wrap: balance; }
+  .cr__title :global(.amp) { font-style: italic; text-transform: none; padding-inline: 0.04em; }
   html[lang='ar'] .cr__title { font-family: var(--font-display); font-weight: 700; text-transform: none; line-height: 1.25; font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem); }
   .cr__rows { margin: 0; display: grid; border-block-end: 1px solid var(--ink); }
-  .cr__rows > div { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; padding-block: 0.3rem; border-block-start: 1px solid var(--ink); }
-  .cr__rows dt { font-weight: 700; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.08em; padding-block-start: 0.18rem; }
+  .cr__rows > div { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: baseline; padding-block: 0.45rem; border-block-start: 1px solid var(--ink); }
+  .cr__rows dt { font-weight: 700; font-size: 0.58rem; line-height: 1; text-transform: uppercase; letter-spacing: 0.16em; }
   .cr__rows dd { margin: 0; display: grid; justify-items: end; text-align: end; font-size: 0.84rem; line-height: 1.3; }
   html[lang='ar'] .cr__rows dt { text-transform: none; letter-spacing: 0; font-size: 0.74rem; }
-  .cr__link { justify-self: end; font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+  .cr__link { justify-self: end; font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.4em; }
   html[lang='ar'] .cr__link { text-transform: none; letter-spacing: 0; font-size: 0.82rem; }
 
   /* ---------- carousel (motion on) ---------- */
@@ -141,23 +144,24 @@ const Q = locale === 'ar' ? ['«', '»'] : ['“', '”'];
   .pl-car::before, .pl-car::after { content: ''; position: absolute; pointer-events: none; z-index: 190; }
   .pl-car::before { inset-block: 0; inset-inline-start: 0; width: min(27rem, 34vw); background: linear-gradient(to var(--origin-end), var(--paper) 45%, transparent); }
   .pl-car::after { inset-inline: 0; inset-block-end: 0; height: 9rem; background: linear-gradient(to top, var(--paper) 35%, transparent); }
-  .pl-car__eyebrow { position: absolute; inset-block-start: calc(var(--header-h) + 1.6rem); inset-inline-start: var(--gutter); display: flex; gap: 0.6rem; margin: 0; font-family: var(--font-mono); font-size: 0.7rem; line-height: 1; text-transform: uppercase; letter-spacing: 0.14em; color: var(--grey); z-index: 200; }
-  .pl-car__eyebrow b { font-weight: 400; color: var(--ink); }
+  .pl-car__eyebrow { position: absolute; inset-block-start: calc(var(--header-h) + 1.6rem); inset-inline-start: var(--gutter); display: flex; gap: 0.6rem; margin: 0; font-family: var(--font-body); font-weight: 600; font-size: 0.64rem; line-height: 1; text-transform: uppercase; letter-spacing: 0.2em; color: var(--grey); z-index: 200; }
+  .pl-car__eyebrow b { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
   html[lang='ar'] .pl-car__eyebrow { text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-size: 0.8rem; }
   .pl-car__credits { position: absolute; inset-block-start: calc(var(--header-h) + 3.6rem); inset-inline-start: var(--gutter); width: min(22rem, 34vw); z-index: 200; display: grid; }
   .pl-car__credits .cr { grid-area: 1 / 1; width: 100%; gap: 0.9rem; opacity: 0; transform: translateY(12px); transition: opacity 0.4s var(--ease-out), transform 0.5s var(--ease-out); pointer-events: none; }
   .pl-car__credits .cr:global(.is-on) { opacity: 1; transform: none; pointer-events: auto; }
-  .pl-car__credits .cr__title { font-size: clamp(2.4rem, 1.5rem + 2.2vw, 3.8rem); line-height: 0.92; letter-spacing: 0.01em; }
+  .pl-car__credits .cr__title { font-size: clamp(2.6rem, 1.7rem + 2.4vw, 4.2rem); line-height: 0.92; letter-spacing: 0.005em; }
   html[lang='ar'] .pl-car__credits .cr__title { font-size: clamp(1.9rem, 1.3rem + 1.6vw, 2.8rem); line-height: 1.3; letter-spacing: 0; }
-  .pl-car__credits .cr__rows > div { padding-block: 0.5rem; gap: 1.5rem; }
-  .pl-car__credits .cr__rows dt { font-size: 0.62rem; letter-spacing: 0.14em; padding-block-start: 0.2rem; }
-  .pl-car__credits .cr__rows dd { font-size: 0.92rem; line-height: 1.45; }
-  .pl-car__credits .cr__link { font-size: 0.7rem; letter-spacing: 0.14em; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.35em; }
+  .pl-car__credits .cr__rows > div { padding-block: 0.6rem; gap: 1.5rem; }
+  .pl-car__credits .cr__rows dt { font-size: 0.6rem; letter-spacing: 0.18em; }
+  .pl-car__credits .cr__rows dd { font-size: 0.9rem; line-height: 1.5; font-variant-numeric: tabular-nums; }
+  .pl-car__credits .cr__link { font-size: 0.64rem; letter-spacing: 0.18em; }
   html[lang='ar'] .pl-car__credits .cr__rows dt, html[lang='ar'] .pl-car__credits .cr__link { letter-spacing: 0; font-size: 0.8rem; }
   .pl-car__index { position: absolute; inset-block-start: calc(var(--header-h) + 1.3rem); inset-inline-end: var(--gutter); list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; z-index: 200; }
-  .pl-car__index button { all: unset; cursor: pointer; display: block; padding: 0.3rem 0.6rem; font-family: var(--font-mono); font-size: 0.72rem; line-height: 1; letter-spacing: 0.08em; border: 1px solid transparent; }
+  .pl-car__index button { all: unset; cursor: pointer; display: block; padding: 0.32rem 0.6rem; font-family: var(--font-body); font-weight: 600; font-size: 0.66rem; line-height: 1; letter-spacing: 0.12em; font-variant-numeric: tabular-nums; color: var(--grey); border: 1px solid transparent; }
   .pl-car__index button:hover { border-color: var(--ink); }
   .pl-car__index button:global(.is-on) { background: var(--ink); color: var(--lime); }
+  .pl-car__index button:hover { color: var(--ink); }
 
   /* full bleed: no card frames, the plate is drawn straight on the page, as large as the screen allows */
   .pl-car__stage { position: absolute; inset: 0; }
@@ -174,11 +178,11 @@ const Q = locale === 'ar' ? ['«', '»'] : ['“', '”'];
   .pl-q { grid-area: 1 / 1; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; text-align: center; opacity: 0; transition: opacity 0.4s var(--ease-out); }
   .pl-q:global(.is-on) { opacity: 1; }
   .pl-q p { display: grid; gap: 0.5rem; margin: 0; }
-  .pl-q small { font-size: 0.62rem; font-weight: 700; line-height: 1; text-transform: uppercase; letter-spacing: 0.16em; color: var(--grey); }
-  .pl-q span { font-family: var(--font-num); text-transform: uppercase; font-size: 1.35rem; line-height: 1.08; letter-spacing: 0.015em; text-wrap: balance; }
+  .pl-q small { font-size: 0.58rem; font-weight: 700; line-height: 1; text-transform: uppercase; letter-spacing: 0.2em; color: var(--grey); }
+  .pl-q span { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.35rem, 1rem + 0.9vw, 1.85rem); line-height: 1.1; letter-spacing: 0; text-wrap: balance; }
   html[lang='ar'] .pl-q small { text-transform: none; letter-spacing: 0; font-size: 0.78rem; }
   html[lang='ar'] .pl-q span { font-family: var(--font-display); font-weight: 600; text-transform: none; font-size: 1.05rem; line-height: 1.55; letter-spacing: 0; }
-  .pl-car__hint { position: absolute; inset-block-end: 1.9rem; inset-inline-start: var(--gutter); width: 13rem; margin: 0; font-family: var(--font-mono); font-size: 0.66rem; line-height: 1.5; letter-spacing: 0.04em; color: var(--grey); z-index: 200; }
+  .pl-car__hint { position: absolute; inset-block-end: 2rem; inset-inline-start: var(--gutter); max-width: 16rem; margin: 0; font-family: var(--font-body); font-size: 0.72rem; line-height: 1.45; color: var(--grey); z-index: 200; }
   html[lang='ar'] .pl-car__hint { font-family: var(--font-body); letter-spacing: 0; font-size: 0.78rem; }
   .pl-car__bar { position: absolute; inset-block-end: 2.2rem; inset-inline-end: var(--gutter); margin: 0; z-index: 200; }
   .pl-car__bar i { display: block; width: 8rem; height: 2px; background: var(--hairline); }
@@ -195,7 +199,7 @@ const Q = locale === 'ar' ? ['«', '»'] : ['“', '”'];
   @keyframes pl-pulse { 0% { box-shadow: 0 0 0 0 rgba(187, 212, 64, 0.75); } 70%, 100% { box-shadow: 0 0 0 12px rgba(187, 212, 64, 0); } }
   .pl-spot__card { position: absolute; left: 18px; top: 0; transform: translateY(-50%); display: grid; gap: 0.15rem; width: max-content; max-width: 15rem; padding: 0.45rem 0.6rem; background: var(--white); border: 1px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; z-index: 2; }
   .pl-spots li.is-flip .pl-spot__card { left: auto; right: 18px; }
-  .pl-spot__card b { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: 1.05rem; line-height: 1; }
+  .pl-spot__card b { font-family: var(--font-serif); font-weight: 400; text-transform: uppercase; font-size: 1.25rem; line-height: 1; letter-spacing: 0.01em; }
   html[lang='ar'] .pl-spot__card b { font-family: var(--font-display); font-weight: 700; text-transform: none; font-size: 0.95rem; }
   .pl-spot__card small { font-size: 0.74rem; color: var(--grey); line-height: 1.35; }
   .pl-spots li:global(.is-open) .pl-spot__card { opacity: 1; visibility: visible; }
