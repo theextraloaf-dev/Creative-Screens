@@ -12,7 +12,7 @@ npm run build      # static export to out/, then the size report
 - `src/app/(en)` and `src/app/ar`: one root layout per language (`lang`/`dir` on `<html>`). Pages: `/`, `/lab/`, `/ar/`, `/ar/lab/`.
 - `src/components`: server components, each with its own `.css`. Markup keeps the `data-*` hooks the motion scripts use.
 - `src/behaviors`: small DOM behaviours (loader, menu, CTA bar, hero video, hotspot discovery), started from `Behaviors.tsx` after hydration.
-- `src/scripts`: motion, 3D stage and warehouse (unchanged from the Astro build; loaded lazily by `motion.js`).
+- `src/scripts`: motion, 3D stage and warehouse (loaded lazily by `motion.js`).
 - `src/i18n`: dictionaries and route table. `src/config/site.ts`: placeholder contact details.
 - `3d/`: Blender sources for `public/models/car.json`.
 
