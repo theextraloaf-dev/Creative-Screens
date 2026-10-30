@@ -5,13 +5,16 @@ import { messages, type Locale } from '../i18n';
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const n = messages(locale).numbers;
+// English heading: two lines, "Done" over "so far" (the second line never breaks). Arabic keeps its own wrapping.
+const [first, ...rest] = n.title.split(' ');
+const twoLines = locale !== 'ar' && rest.length > 0;
 ---
 
 <section class="num" aria-labelledby="num-title">
   <div class="wrap num__grid">
     <div class="num__head">
       <p class="eyebrow num__eyebrow" data-reveal="fade">{n.eyebrow}</p>
-      <h2 id="num-title" class="num__title" data-reveal>{n.title}</h2>
+      <h2 id="num-title" class="num__title" data-reveal>{twoLines ? <><span class="num__l1">{first}</span> <span class="num__l2">{rest.join(' ')}</span></> : n.title}</h2>
     </div>
     <ol class="num__cols">
       {n.items.map((it, i) => (
@@ -31,6 +34,7 @@ const n = messages(locale).numbers;
   .num__grid { display: grid; gap: var(--space-5); }
   .num__eyebrow { color: rgba(255, 255, 255, 0.7); margin-block-end: var(--space-3); }
   .num__title { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(4.5rem, 13vw, 11rem); line-height: 0.88; letter-spacing: 0.005em; }
+  .num__l1, .num__l2 { display: block; white-space: nowrap; }
   html[lang='ar'] .num__title { font-family: var(--font-display); font-weight: 700; text-transform: none; line-height: 1.15; font-size: clamp(3rem, 9vw, 8rem); }
   .num__cols { list-style: none; margin: 0; padding: 0; display: grid; }
   .num__cols li {
@@ -44,7 +48,8 @@ const n = messages(locale).numbers;
   html[lang='ar'] .num__lab { letter-spacing: 0; text-transform: none; font-size: var(--step-0); }
   .num__note { font-family: var(--font-mono); font-size: var(--step--1); color: rgba(255, 255, 255, 0.5); }
   @media (min-width: 900px) {
-    .num__grid { grid-template-columns: minmax(0, 0.7fr) minmax(0, 2.3fr); align-items: end; gap: var(--space-4) var(--space-5); }
+    .num__grid { grid-template-columns: minmax(0, 0.9fr) minmax(0, 2.1fr); align-items: end; gap: var(--space-4) var(--space-5); }
+    .num__title { font-size: clamp(3.5rem, 9vw, 11rem); }
     .num__note { grid-column: 1 / -1; }
     .num__cols { grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: end; min-height: 30rem; }
     .num__cols li {
