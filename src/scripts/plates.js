@@ -137,16 +137,16 @@ export function initPlates(gsap, ScrollTrigger) {
   let lastP = 0;
   const update = (p = lastP) => {
     lastP = p;
-    const spacing = cards[0].offsetWidth * (window.innerWidth < 760 ? 0.82 : 0.74);
+    const spacing = cards[0].offsetWidth * (window.innerWidth < 760 ? 0.9 : 0.78);
     const f = settle(p, n);
-    place(cards, f, spacing, rtl);
+    place(cards, f, spacing, rtl, { tilt: 9, depth: 40, shrink: 0.12 }); // full bleed: flatter, the plate is the page
     const a = Math.round(f);
     setActive(a);
     // the centre plate draws in as it arrives; the first one draws while the section rises into view
     const raw = p * (n - 1);
-    draw = a === 0 ? Math.min(1, approach + Math.max(0, raw) / 0.2) : Math.min(Math.max((raw - (a - 0.5)) / 0.6, 0), 1);
+    draw = a === 0 ? Math.min(1, approach + Math.max(0, raw) / 0.2) : Math.min(Math.max((raw - (a - 0.5)) / 0.42, 0), 1);
     const c = centred(f);
-    cards[a].classList.toggle('is-ready', draw >= 1 && c > 0.9);
+    cards[a].classList.toggle('is-ready', draw >= 1 && c > 0.8);
     ring.style.setProperty('--ring', (1 - Math.min(Math.max((c - 0.55) / 0.45, 0), 1) * Math.min(draw * 1.4, 1)).toFixed(3));
     hudBar.style.width = `${(p * 100).toFixed(1)}%`;
     render();

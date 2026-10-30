@@ -4,18 +4,18 @@
 export function settle(p, n) {
   const raw = Math.min(Math.max(p, 0), 1) * (n - 1);
   const i = Math.floor(raw);
-  const t = Math.min(Math.max((raw - i - 0.22) / 0.56, 0), 1);
+  const t = Math.min(Math.max((raw - i - 0.3) / 0.4, 0), 1); // dwell on each card for ~60% of its share
   return Math.min(i + t * t * (3 - 2 * t), n - 1);
 }
 
-export function place(cards, f, spacing, rtl) {
+export function place(cards, f, spacing, rtl, { tilt = 24, depth = 90, shrink = 0.14 } = {}) {
   const dir = rtl ? -1 : 1;
   cards.forEach((el, i) => {
     const d = i - f;
     const a = Math.abs(d);
     const turn = Math.max(-1.6, Math.min(1.6, d));
     // each card carries its own perspective so the stacking order (z-index) decides what sits in front
-    el.style.transform = `translate(-50%, -50%) perspective(1600px) translateX(${(d * spacing * dir).toFixed(1)}px) translateZ(${(-a * 90).toFixed(1)}px) rotateY(${(-turn * 24 * dir).toFixed(2)}deg) rotateZ(${(-3 + d * 1.5).toFixed(2)}deg) scale(${(1 - Math.min(a, 2) * 0.14).toFixed(3)})`;
+    el.style.transform = `translate(-50%, -50%) perspective(1600px) translateX(${(d * spacing * dir).toFixed(1)}px) translateZ(${(-a * depth).toFixed(1)}px) rotateY(${(-turn * tilt * dir).toFixed(2)}deg) rotateZ(${((-3 + d * 1.5) * tilt / 24).toFixed(2)}deg) scale(${(1 - Math.min(a, 2) * shrink).toFixed(3)})`;
     el.style.zIndex = String(100 - Math.round(a * 10));
     el.style.opacity = a > 2.6 ? '0' : a < 0.5 ? '1' : String(Math.max(0.35, 1 - (a - 0.5) * 0.45).toFixed(2));
     el.classList.toggle('is-center', a < 0.5);
