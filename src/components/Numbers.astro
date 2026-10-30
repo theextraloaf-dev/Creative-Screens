@@ -44,12 +44,12 @@ const n = messages(locale).numbers;
   html[lang='ar'] .num__lab { letter-spacing: 0; text-transform: none; font-size: var(--step-0); }
   .num__note { font-family: var(--font-mono); font-size: var(--step--1); color: rgba(255, 255, 255, 0.5); }
   @media (min-width: 900px) {
-    .num__grid { grid-template-columns: minmax(0, 0.75fr) minmax(0, 2.25fr); align-items: end; gap: var(--space-4) var(--space-4); }
+    .num__grid { grid-template-columns: minmax(0, 0.7fr) minmax(0, 2.3fr); align-items: end; gap: var(--space-4) var(--space-5); }
     .num__note { grid-column: 1 / -1; }
     .num__cols { grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: end; min-height: 30rem; }
     .num__cols li {
-      display: grid; grid-template-columns: 1fr; grid-template-areas: 'idx' 'val' 'lab'; align-content: end; gap: 0.7rem;
-      border-block-start: 0; border-inline-start: 1px solid rgba(255, 255, 255, 0.28); padding: var(--space-3) 0.75rem var(--space-3) 0.75rem; min-width: 0; container-type: inline-size;
+      display: grid; grid-template-columns: 1fr; grid-template-areas: 'idx' 'val' 'lab'; align-content: end; gap: 1rem;
+      border-block-start: 0; border-inline-start: 1px solid rgba(255, 255, 255, 0.28); padding: var(--space-4) clamp(0.75rem, 1.6vw, 2rem) var(--space-4); min-width: 0; container-type: inline-size;
     }
     .num__cols li:nth-child(1) { min-height: 17rem; }
     .num__cols li:nth-child(2) { min-height: 30rem; }
@@ -57,6 +57,6 @@ const n = messages(locale).numbers;
     .num__cols li:nth-child(4) { min-height: 26rem; }
     .num__cols li:nth-child(5) { min-height: 15rem; }
     .num__idx { align-self: start; }
-    .num__val { font-size: clamp(2.5rem, 34cqi, 7rem); white-space: nowrap; }
+    .num__val { font-size: clamp(2.5rem, 42cqi, 9rem); white-space: nowrap; }
   }
 </style>
