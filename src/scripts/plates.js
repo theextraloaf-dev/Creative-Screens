@@ -1,7 +1,8 @@
-/* What we make: exploded-view plates that draw themselves. The section is pinned; scroll walks plate to plate.
-   Per plate (one equal share of the scroll): draw in 0-0.45, hold 0.45-0.85 (part hotspots shown), un-draw 0.85-1.
-   Drawing: public/plates/<slug>-order.png holds ink (alpha) and drawing order (grey); a WebGL shader shows ink whose
-   order is below the progress, with a lime pen tip on the leading edge. Without WebGL the plate image wipes in. */
+/* What we make: exploded-view plates in an A24-style carousel (carousel.js). The section is pinned; scroll slides
+   one plate at a time into the middle. The centre plate draws itself in: public/plates/<slug>-order.png holds ink
+   (alpha) and drawing order (grey); a WebGL shader shows ink whose order is below the progress, with a lime pen tip
+   on the leading edge. Neighbours show the finished plate, faded. Without WebGL the centre plate wipes in. */
+import { settle, place, centred } from './carousel.js';
 const VERT = `#version 300 es
 in vec2 p; out vec2 uv;
 void main() { uv = vec2(p.x * 0.5 + 0.5, 0.5 - p.y * 0.5); gl_Position = vec4(p, 0.0, 1.0); }`;
@@ -48,21 +49,27 @@ function makeGL(canvas) {
 export function initPlates(gsap, ScrollTrigger) {
   const sec = document.querySelector('[data-plates]');
   if (!sec) return;
-  const items = [...sec.querySelectorAll('.pl-item')];
+  const cards = [...sec.querySelectorAll('.pl-card')];
+  const credits = [...sec.querySelectorAll('[data-cr]')];
+  const quotes = [...sec.querySelectorAll('[data-q]')];
   const index = [...sec.querySelectorAll('[data-goto]')];
-  const n = items.length;
+  const ring = sec.querySelector('.pl-car__ring');
+  const n = cards.length;
   sec.style.setProperty('--n', n);
+  const rtl = document.documentElement.dir === 'rtl';
   const hudN = sec.querySelector('[data-hud-n]');
   const hudBar = sec.querySelector('[data-hud-bar]');
 
   const canvas = document.createElement('canvas');
   canvas.setAttribute('aria-hidden', 'true');
   const G = makeGL(canvas);
-  if (G) sec.classList.add('has-gl');
   const tex = new Map(); // slug -> texture (or 'loading')
+  let active = -1;
+  let draw = 0;
+  let approach = 0; // 0..1 while the section rises into view, so the first plate starts drawing on arrival
 
   const load = (slug) => {
-    if (!G || tex.has(slug)) return;
+    if (!G || !slug || tex.has(slug)) return;
     tex.set(slug, 'loading');
     const img = new Image();
     img.decoding = 'async';
@@ -77,86 +84,84 @@ export function initPlates(gsap, ScrollTrigger) {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       tex.set(slug, t);
-      render(true);
+      render();
     };
     img.src = `/plates/${slug}-order.png`;
   };
 
-  let active = -1;
-  let draw = 0;
-  const size = () => {
-    const fig = canvas.parentElement;
-    if (!fig) return;
-    const r = fig.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const px = Math.max(1, Math.round(Math.min(r.width, r.height) * dpr));
-    if (canvas.width !== px) { canvas.width = px; canvas.height = px; }
-  };
   const render = () => {
-    const it = items[active];
-    if (!it) return;
-    const slug = it.dataset.slug;
+    const card = cards[active];
+    if (!card) return;
     if (G) {
       const { gl, uProg } = G;
-      size();
+      const r = card.getBoundingClientRect();
+      const px = Math.max(1, Math.round(card.offsetWidth * Math.min(window.devicePixelRatio || 1, 2)));
+      if (canvas.width !== px) { canvas.width = px; canvas.height = px; }
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
-      const t = tex.get(slug);
-      if (t && t !== 'loading') {
+      const t = tex.get(card.dataset.slug);
+      if (t && t !== 'loading' && r.width) {
         gl.bindTexture(gl.TEXTURE_2D, t);
         gl.uniform1f(uProg, draw);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
     } else {
-      const img = it.querySelector('.pl-item__img');
-      if (img) img.style.clipPath = `inset(0 ${(1 - draw) * 100}% 0 0)`;
+      const img = card.querySelector('img');
+      img.style.opacity = '1';
+      img.style.clipPath = `inset(0 ${((1 - draw) * 100).toFixed(1)}% 0 0)`;
     }
   };
 
   const setActive = (i) => {
     if (i === active) return;
+    const prev = cards[active];
+    if (prev) {
+      prev.classList.remove('is-live', 'is-ready');
+      prev.querySelectorAll('.is-open').forEach((o) => o.classList.remove('is-open'));
+      const img = prev.querySelector('img');
+      img.style.opacity = ''; img.style.clipPath = '';
+    }
     active = i;
-    items.forEach((it, k) => it.classList.toggle('is-on', k === i));
+    const card = cards[i];
+    credits.forEach((c, k) => c.classList.toggle('is-on', k === i));
+    quotes.forEach((q, k) => q.classList.toggle('is-on', k === i));
     index.forEach((b, k) => b.classList.toggle('is-on', k === i));
-    const it = items[i];
-    if (it.dataset.ready === '1') {
-      it.querySelector('.pl-item__fig').append(canvas);
-      load(it.dataset.slug);
-    } else canvas.remove();
-    // fetch the next plate's drawing ahead of time
-    if (items[i + 1]?.dataset.ready === '1') load(items[i + 1].dataset.slug);
+    if (G) { card.append(canvas); card.classList.add('is-live'); }
+    load(card.dataset.slug);
+    load(cards[i + 1]?.dataset.slug); // fetch the next drawing ahead of time
+    card.querySelectorAll('.pl-spots li').forEach((li, k) => li.style.setProperty('--d', (k * 0.07).toFixed(2)));
     hudN.textContent = String(i + 1).padStart(2, '0');
   };
 
-  const showSpots = (it, on) => it.querySelectorAll('.pl-spots li').forEach((li, k) => {
-    li.style.setProperty('--d', on ? (k * 0.08).toFixed(2) : 0);
-    li.style.opacity = on ? '1' : '';
-    li.style.transform = on ? 'none' : '';
-    if (!on) li.classList.remove('is-open');
-  });
-
-  const update = (p) => {
-    const f = Math.min(p * n, n - 0.0001);
-    const i = Math.floor(f);
-    const local = f - i;
-    setActive(i);
-    draw = local < 0.45 ? local / 0.45 : local < 0.85 || i === n - 1 ? 1 : 1 - (local - 0.85) / 0.15;
-    if (i === 0 && p === 0) draw = 0;
-    items.forEach((it, k) => showSpots(it, k === i && draw > 0.97));
+  let lastP = 0;
+  const update = (p = lastP) => {
+    lastP = p;
+    const spacing = cards[0].offsetWidth * (window.innerWidth < 760 ? 0.82 : 0.74);
+    const f = settle(p, n);
+    place(cards, f, spacing, rtl);
+    const a = Math.round(f);
+    setActive(a);
+    // the centre plate draws in as it arrives; the first one draws while the section rises into view
+    const raw = p * (n - 1);
+    draw = a === 0 ? Math.min(1, approach + Math.max(0, raw) / 0.2) : Math.min(Math.max((raw - (a - 0.5)) / 0.6, 0), 1);
+    const c = centred(f);
+    cards[a].classList.toggle('is-ready', draw >= 1 && c > 0.9);
+    ring.style.setProperty('--ring', (1 - Math.min(Math.max((c - 0.55) / 0.45, 0), 1) * Math.min(draw * 1.4, 1)).toFixed(3));
     hudBar.style.width = `${(p * 100).toFixed(1)}%`;
     render();
   };
 
   const st = ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', onUpdate: (self) => update(self.progress) });
+  ScrollTrigger.create({ trigger: sec, start: 'top 75%', end: 'top top', onUpdate: (self) => { approach = self.progress; update(); } });
 
-  // index: jump to the middle of that plate's hold
+  // index: jump so that plate sits in the middle
   index.forEach((b, k) => b.addEventListener('click', () => {
-    const y = st.start + (st.end - st.start) * ((k + 0.65) / n);
+    const y = st.start + (st.end - st.start) * (k / (n - 1));
     window.__lenis ? window.__lenis.scrollTo(y) : window.scrollTo({ top: y, behavior: 'smooth' });
   }));
 
-  // hotspots: hover or hold opens the part card; tap or Enter toggles it
+  // hotspots: hover or hold opens the part card; tap toggles it
   sec.querySelectorAll('.pl-spots li').forEach((li) => {
     const b = li.querySelector('button');
     const open = (v) => {
@@ -166,10 +171,8 @@ export function initPlates(gsap, ScrollTrigger) {
     b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') open(true); });
     b.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') open(false); });
     b.addEventListener('click', () => open(!li.classList.contains('is-open')));
-    b.addEventListener('focus', () => open(true));
-    b.addEventListener('blur', () => open(false));
   });
 
-  window.addEventListener('resize', () => render(), { passive: true });
+  window.addEventListener('resize', () => update(), { passive: true });
   update(st.progress); // the module can load after the visitor has already scrolled
 }

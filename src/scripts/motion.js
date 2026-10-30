@@ -116,6 +116,11 @@ function init() {
     import('./stage.js').then((m) => m.initStage(gsap, ScrollTrigger));
   }
 
+  /* ---------- Job tickets: carousel over the 3D print works (lazy) ---------- */
+  if (document.querySelector('[data-story] .chapter')) {
+    import('./tickets.js').then((m) => m.initTickets(gsap, ScrollTrigger));
+  }
+
   /* ---------- What we make: exploded-view plates that draw themselves (lazy) ---------- */
   if (document.querySelector('[data-plates]')) {
     import('./plates.js').then((m) => m.initPlates(gsap, ScrollTrigger));

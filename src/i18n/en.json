@@ -230,6 +230,32 @@
           "Indoor LED walls",
           "Outdoor LED walls",
           "Installation"
+        ],
+        "parts": [
+          {
+            "name": "LED modules",
+            "line": "Tiles of pixels; swap one in minutes."
+          },
+          {
+            "name": "Cabinet",
+            "line": "Die-cast aluminium, light and rigid."
+          },
+          {
+            "name": "Receiving card",
+            "line": "Takes the video signal for its cabinet."
+          },
+          {
+            "name": "Power supply",
+            "line": "Powers the modules, cooled by its vents."
+          },
+          {
+            "name": "Locking pins",
+            "line": "Lock cabinets together in seconds."
+          },
+          {
+            "name": "Assembled wall",
+            "line": "Cabinets stacked into one screen on a ground stand."
+          }
         ]
       },
       {
@@ -242,6 +268,32 @@
           "Pens",
           "Caps",
           "Uniforms"
+        ],
+        "parts": [
+          {
+            "name": "Polo shirt",
+            "line": "Embroidered or printed with your logo."
+          },
+          {
+            "name": "Cap",
+            "line": "Front-panel embroidery."
+          },
+          {
+            "name": "Notebook",
+            "line": "Debossed cover, elastic band."
+          },
+          {
+            "name": "Mug",
+            "line": "Printed all the way round."
+          },
+          {
+            "name": "Pen",
+            "line": "Laser-engraved metal pen."
+          },
+          {
+            "name": "Insert tray",
+            "line": "A foam insert cut to fit each item."
+          }
         ]
       },
       {
@@ -254,6 +306,32 @@
           "Plaques",
           "Trophies",
           "Display stands"
+        ],
+        "parts": [
+          {
+            "name": "Acrylic blade",
+            "line": "Clear acrylic with polished, bevelled edges."
+          },
+          {
+            "name": "Printed layer",
+            "line": "Reverse-printed so the colour sits behind the face."
+          },
+          {
+            "name": "Engraving plate",
+            "line": "Names and dates, laser-engraved."
+          },
+          {
+            "name": "Base",
+            "line": "Solid base block, drilled for the pins."
+          },
+          {
+            "name": "Plaque panels",
+            "line": "Clear face, printed panel, backing."
+          },
+          {
+            "name": "Stand-offs",
+            "line": "Hold the plaque off the wall."
+          }
         ]
       }
     ],

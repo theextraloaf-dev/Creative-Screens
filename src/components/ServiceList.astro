@@ -1,10 +1,14 @@
 ---
-/* What we make: one exploded-view plate per service. With motion on, the section pins and each plate draws itself
-   in like a pen (src/scripts/plates.js: a WebGL shader reveals the ink in a precomputed drawing order), holds while
-   its part hotspots appear, then un-draws as the next one starts. Without motion it is a plain gallery: plate,
-   credits block and the parts list. Plates are concept illustrations (GPT line art, scripts/plates/make_plate.py). */
+/* What we make: one exploded-view plate per service, presented like the A24 film library.
+   Motion on: the section pins; the plates sit in a tilted, overlapping row and page scroll slides one at a time into
+   the middle (src/scripts/plates.js + carousel.js). The centre plate draws itself in like a pen (WebGL), a hand-drawn
+   ring loops around it, its credits block swaps in at the top left and two of its parts sit at the bottom like
+   review quotes. Hold or tap a point on the plate to see the part.
+   Motion off: a plain gallery (plate, credits, parts). The gallery is also what screen readers get.
+   Plates are concept illustrations (GPT line art processed by scripts/plates/make_plate.py). */
 import { messages, type Locale } from '../i18n';
 import { plates } from '../data/plates';
+import { ringPath } from '../scripts/carousel.js';
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const m = messages(locale);
@@ -12,50 +16,84 @@ const sv = m.services;
 const L = sv.labels;
 const n2 = (i: number) => String(i).padStart(2, '0');
 const items = sv.items.map((s, i) => ({ ...s, i, plate: plates[s.slug] }));
+const ring = ringPath();
+const Q = locale === 'ar' ? ['«', '»'] : ['“', '”'];
 ---
 
 <section class="pl" id="services" aria-labelledby="pl-title" data-plates>
   <div class="pl__pin">
-    <div class="pl__grid">
-      <header class="pl__head">
-        <p class="pl__eyebrow">{sv.concept}</p>
-        <h2 id="pl-title" class="pl__title">{sv.title}</h2>
-        <ol class="pl__index" aria-label={sv.title}>
-          {items.map((s) => (
-            <li><button type="button" data-goto={s.i} class={s.plate ? '' : 'is-pending'}><span class="ltr">{n2(s.i + 1)}</span> <b>{s.name}</b></button></li>
-          ))}
-        </ol>
-        <p class="pl__hud ltr" aria-hidden="true"><span>{L.plate} <b data-hud-n>01</b>/{n2(items.length)}</span><i><em data-hud-bar></em></i></p>
-      </header>
-
-      <div class="pl__items">
+    <!-- carousel (motion only; the gallery below carries the same content for assistive tech) -->
+    <div class="pl-car" aria-hidden="true">
+      <p class="pl-car__eyebrow"><span>{sv.title}</span> <span class="ltr">— <b data-hud-n>01</b>/{n2(items.length)}</span></p>
+      <div class="pl-car__credits">
         {items.map((s) => (
-          <article class="pl-item" data-item={s.i} data-slug={s.slug} data-ready={s.plate ? '1' : '0'} aria-labelledby={`pl-${s.i}`}>
-            <figure class="pl-item__fig">
-              {s.plate ? (
-                <img class="pl-item__img" src={`/plates/${s.slug}.png`} alt="" width="1254" height="1254" loading="lazy" decoding="async" />
-              ) : (
-                <div class="pl-item__pending"><span>{L.pending}</span></div>
-              )}
-              {s.plate && s.parts && (
-                <ul class="pl-spots" aria-hidden="true">
+          <div class="cr" data-cr={s.i}>
+            <p class="cr__title">{s.name}</p>
+            <dl class="cr__rows">
+              <div><dt>{L.plate}</dt><dd class="ltr">{n2(s.i + 1)} / {n2(items.length)}</dd></div>
+              <div><dt>{L.makes}</dt><dd>{s.makes.map((x) => <span>{x}</span>)}</dd></div>
+            </dl>
+            <a class="cr__link" href="#quote" data-service={s.slug} tabindex="-1">{sv.quote} <span class="arrow">→</span></a>
+          </div>
+        ))}
+      </div>
+      <ol class="pl-car__index">
+        {items.map((s) => <li><button type="button" tabindex="-1" data-goto={s.i} title={s.name}><span class="ltr">{n2(s.i + 1)}</span></button></li>)}
+      </ol>
+
+      <div class="pl-car__stage">
+        <svg class="pl-car__ring" viewBox="0 0 200 200" preserveAspectRatio="none"><path d={ring} pathLength="1"></path></svg>
+        <div class="pl-car__track">
+          {items.map((s) => (
+            <div class="pl-card" data-card={s.i} data-slug={s.slug}>
+              <img src={`/plates/${s.slug}.png`} alt="" width="1254" height="1254" loading="lazy" decoding="async" />
+              {s.parts && (
+                <ul class="pl-spots">
                   {s.parts.map((p, k) => (
                     <li style={`--x:${s.plate.pts[k][0]};--y:${s.plate.pts[k][1]}`} class={s.plate.pts[k][0] > 0.6 ? 'is-flip' : ''}>
-                      <button type="button" tabindex="-1" aria-label={p.name}><i></i></button>
+                      <button type="button" tabindex="-1"><i></i></button>
                       <span class="pl-spot__card"><b>{p.name}</b><small>{p.line}</small></span>
                     </li>
                   ))}
                 </ul>
               )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="pl-car__quotes">
+        {items.map((s) => (
+          <div class="pl-q" data-q={s.i}>
+            {(s.parts ?? []).slice(0, 2).map((p) => (
+              <p><small>{p.name}</small><span>{Q[0]}{p.line.replace(/\.$/, '')}{Q[1]}</span></p>
+            ))}
+          </div>
+        ))}
+      </div>
+      <p class="pl-car__hint">{L.hold}</p>
+      <p class="pl-car__bar"><i><em data-hud-bar></em></i></p>
+    </div>
+
+    <!-- gallery: the readable version -->
+    <div class="pl__gallery">
+      <header class="pl__head">
+        <p class="pl__eyebrow">{sv.concept}</p>
+        <h2 id="pl-title" class="pl__title">{sv.title}</h2>
+      </header>
+      <div class="pl__items">
+        {items.map((s) => (
+          <article class="pl-item" aria-labelledby={`pl-${s.i}`}>
+            <figure class="pl-item__fig">
+              <img src={`/plates/${s.slug}.png`} alt="" width="1254" height="1254" loading="lazy" decoding="async" />
             </figure>
-            <div class="cr" style="--acc: var(--lime)">
+            <div class="cr">
               <h3 id={`pl-${s.i}`} class="cr__title">{s.name}</h3>
               <dl class="cr__rows">
                 <div><dt>{L.plate}</dt><dd class="ltr">{n2(s.i + 1)} / {n2(items.length)}</dd></div>
                 <div><dt>{L.makes}</dt><dd>{s.makes.map((x) => <span>{x}</span>)}</dd></div>
-                {s.parts && <div><dt>{L.parts}</dt><dd>{s.parts.map((p) => <span>{p.name}</span>)}</dd></div>}
+                {s.parts && <div><dt>{L.parts}</dt><dd>{s.parts.map((p) => <span>{p.name}: {p.line}</span>)}</dd></div>}
               </dl>
-              {s.parts && <p class="cr__hint">{L.hold}</p>}
               <a class="cr__link" href="#quote" data-service={s.slug}>{sv.quote} <span class="arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
@@ -67,52 +105,80 @@ const items = sv.items.map((s, i) => ({ ...s, i, plate: plates[s.slug] }));
 
 <style>
   .pl { position: relative; z-index: 1; background: var(--paper); padding-block: var(--space-6); }
-  .pl__grid { width: min(100% - var(--gutter) * 2, var(--maxw)); margin-inline: auto; display: grid; gap: var(--space-3); }
-  .pl__eyebrow { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--grey); }
-  .pl__title { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(2.6rem, 1.8rem + 3vw, 5rem); line-height: 0.88; margin-block: 0.3rem 1rem; }
-  html[lang='ar'] .pl__title { font-family: var(--font-display); font-weight: 700; text-transform: none; line-height: 1.2; }
-  .pl__index { list-style: none; margin: 0; padding: 0; display: grid; border-block-start: 1px solid var(--ink); }
-  .pl__index li { border-block-end: 1px solid var(--ink); }
-  .pl__index button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; gap: 0.6rem; align-items: baseline; width: 100%; padding-block: 0.32rem; font-size: 0.8rem; }
-  .pl__index button span { font-family: var(--font-mono); font-size: 0.66rem; color: var(--grey); }
-  .pl__index button b { font-weight: 500; }
-  .pl__index button.is-pending b { color: var(--grey); }
-  .pl__index button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  .pl__index button:global(.is-on) { background: var(--lime); }
-  .pl__index button:global(.is-on) b { font-weight: 700; }
-  .pl__hud { display: none; }
+  .pl-car { display: none; }
 
-  /* gallery (no motion): plate, credits and parts per service */
+  /* ---------- gallery (no motion; screen readers) ---------- */
+  .pl__gallery { width: min(100% - var(--gutter) * 2, var(--maxw)); margin-inline: auto; display: grid; gap: var(--space-4); }
+  .pl__eyebrow { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--grey); }
+  .pl__title { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(2.6rem, 1.8rem + 3vw, 5rem); line-height: 0.88; margin-block-start: 0.3rem; }
+  html[lang='ar'] .pl__title { font-family: var(--font-display); font-weight: 700; text-transform: none; line-height: 1.2; }
   .pl__items { display: grid; gap: var(--space-5); }
   .pl-item { display: grid; gap: var(--space-3); align-items: center; }
-  .pl-item__fig { position: relative; margin: 0; aspect-ratio: 1; max-width: 40rem; width: 100%; }
-  .pl-item__img { width: 100%; height: auto; display: block; }
-  .pl-item__pending { position: absolute; inset: 8%; display: grid; place-items: center; border: 1.5px dashed var(--ink); color: var(--grey); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
-    background: repeating-linear-gradient(135deg, transparent 0 14px, rgba(19, 29, 39, 0.05) 14px 15px); }
-  html[lang='ar'] .pl-item__pending { text-transform: none; letter-spacing: 0; }
+  .pl-item__fig { margin: 0; width: 100%; max-width: 38rem; }
+  .pl-item__fig img { width: 100%; height: auto; display: block; }
   @media (min-width: 900px) { .pl-item { grid-template-columns: 1.4fr 1fr; } }
 
-  /* credits blocks (as in the A24 film pages) */
-  .cr { display: grid; gap: 0.55rem; width: min(100%, 23rem); }
+  /* credits blocks (A24 film pages): condensed caps title, ruled label/value rows */
+  .cr { display: grid; gap: 0.5rem; width: min(100%, 22rem); }
   .cr__title { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem); line-height: 0.9; text-wrap: balance; }
   html[lang='ar'] .cr__title { font-family: var(--font-display); font-weight: 700; text-transform: none; line-height: 1.25; font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem); }
   .cr__rows { margin: 0; display: grid; border-block-end: 1px solid var(--ink); }
-  .cr__rows > div { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; padding-block: 0.32rem; border-block-start: 1px solid var(--ink); }
-  .cr__rows dt { font-weight: 700; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; padding-block-start: 0.18rem; }
-  .cr__rows dd { margin: 0; display: grid; justify-items: end; text-align: end; font-size: 0.86rem; line-height: 1.3; }
+  .cr__rows > div { display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start; padding-block: 0.3rem; border-block-start: 1px solid var(--ink); }
+  .cr__rows dt { font-weight: 700; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.08em; padding-block-start: 0.18rem; }
+  .cr__rows dd { margin: 0; display: grid; justify-items: end; text-align: end; font-size: 0.84rem; line-height: 1.3; }
   html[lang='ar'] .cr__rows dt { text-transform: none; letter-spacing: 0; font-size: 0.74rem; }
-  .cr__hint { display: none; font-family: var(--font-mono); font-size: 0.64rem; color: var(--grey); }
-  .cr__link { justify-self: end; font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+  .cr__link { justify-self: end; font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
   html[lang='ar'] .cr__link { text-transform: none; letter-spacing: 0; font-size: 0.82rem; }
 
-  /* hotspots: lime point with a plus; hold, hover or tap to open the part card */
+  /* ---------- carousel (motion on) ---------- */
+  :global(html.motion) .pl { padding: 0; height: calc(var(--n, 8) * 70svh + 100svh); }
+  :global(html.motion) .pl__pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+  :global(html.motion) .pl__gallery { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  :global(html.motion) .pl-car { display: block; position: absolute; inset: 0; }
+
+  .pl-car__eyebrow { position: absolute; inset-block-start: calc(var(--header-h) + 1.1rem); inset-inline-start: var(--gutter); font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em; z-index: 200; }
+  .pl-car__eyebrow b { font-weight: 400; }
+  html[lang='ar'] .pl-car__eyebrow { text-transform: none; letter-spacing: 0; }
+  .pl-car__credits { position: absolute; inset-block-start: calc(var(--header-h) + 2.6rem); inset-inline-start: var(--gutter); width: min(19rem, 40vw); z-index: 200; display: grid; }
+  .pl-car__credits .cr { grid-area: 1 / 1; width: 100%; opacity: 0; transform: translateY(10px); transition: opacity 0.35s var(--ease-out), transform 0.45s var(--ease-out); pointer-events: none; }
+  .pl-car__credits .cr:global(.is-on) { opacity: 1; transform: none; pointer-events: auto; }
+  .pl-car__credits .cr__title { font-size: clamp(1.9rem, 1.3rem + 1.4vw, 2.7rem); }
+  .pl-car__index { position: absolute; inset-block-start: calc(var(--header-h) + 1rem); inset-inline-end: var(--gutter); list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; z-index: 200; }
+  .pl-car__index button { all: unset; cursor: pointer; display: block; padding: 0.15rem 0.45rem; font-family: var(--font-mono); font-size: 0.66rem; border: 1px solid transparent; }
+  .pl-car__index button:hover { border-color: var(--ink); }
+  .pl-car__index button:global(.is-on) { background: var(--ink); color: var(--lime); }
+
+  .pl-car__stage { position: absolute; inset: 0; }
+  .pl-car__track { position: absolute; left: 50%; top: 53%; width: 0; height: 0; }
+  .pl-card { --card: min(40vw, 60svh); position: absolute; left: 0; top: 0; width: var(--card); aspect-ratio: 1; background: #fff; border: 1px solid rgba(19, 29, 39, 0.18); border-radius: 3px;
+    box-shadow: 0 30px 50px -30px rgba(19, 29, 39, 0.45), 0 2px 0 rgba(19, 29, 39, 0.04); will-change: transform; transition: opacity 0.2s; }
+  .pl-card img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.55; transition: opacity 0.3s; }
+  .pl-card:global(.is-live) img { opacity: 0.14; } /* a faint pencil underdrawing that the pen inks over */
+  .pl-card :global(canvas) { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .pl-car__ring { position: absolute; left: 50%; top: 53%; width: calc(min(40vw, 60svh) * 1.22); height: calc(min(40vw, 60svh) * 1.16); transform: translate(-50%, -50%) rotate(-4deg); overflow: visible; pointer-events: none; z-index: 150; }
+  .pl-car__ring path { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: var(--ring, 1); }
+
+  .pl-car__quotes { position: absolute; inset-block-end: 1.4rem; left: 50%; transform: translateX(-50%); width: min(44rem, 70vw); display: grid; z-index: 200; }
+  .pl-q { grid-area: 1 / 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: center; opacity: 0; transition: opacity 0.35s var(--ease-out); }
+  .pl-q:global(.is-on) { opacity: 1; }
+  .pl-q p { display: grid; gap: 0.25rem; }
+  .pl-q small { font-size: 0.56rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+  .pl-q span { font-family: var(--font-num); text-transform: uppercase; font-size: 1.05rem; line-height: 1.05; }
+  html[lang='ar'] .pl-q small { text-transform: none; letter-spacing: 0; font-size: 0.72rem; }
+  html[lang='ar'] .pl-q span { font-family: var(--font-display); font-weight: 600; text-transform: none; font-size: 0.95rem; line-height: 1.5; }
+  .pl-car__hint { position: absolute; inset-block-end: 1.4rem; inset-inline-start: var(--gutter); width: 12rem; font-family: var(--font-mono); font-size: 0.62rem; color: var(--grey); z-index: 200; }
+  .pl-car__bar { position: absolute; inset-block-end: 1.6rem; inset-inline-end: var(--gutter); z-index: 200; }
+  .pl-car__bar i { display: block; width: 7rem; height: 3px; background: var(--hairline); }
+  .pl-car__bar em { display: block; height: 100%; width: 0; background: var(--ink); }
+
+  /* hotspots on the centre plate: lime point with a plus; hold, hover or tap for the part card */
   .pl-spots { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; pointer-events: none; }
   .pl-spots li { position: absolute; left: calc(var(--x) * 100%); top: calc(var(--y) * 100%); opacity: 0; transform: scale(0.4); transition: opacity 0.3s var(--ease-out), transform 0.35s var(--ease-out); transition-delay: calc(var(--d, 0) * 1s); }
-  .pl-spots button { all: unset; position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: var(--lime); border: 1px solid var(--ink); cursor: pointer; pointer-events: auto; }
+  .pl-card:global(.is-ready) .pl-spots li { opacity: 1; transform: none; }
+  .pl-spots button { all: unset; position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: var(--lime); border: 1px solid var(--ink); cursor: pointer; pointer-events: none; animation: pl-pulse 2.4s var(--ease-out) infinite; }
+  .pl-card:global(.is-ready) .pl-spots button { pointer-events: auto; }
   .pl-spots button i::before, .pl-spots button i::after { content: ''; position: absolute; inset: 50% 5px auto; height: 1.5px; margin-top: -0.75px; background: var(--ink); }
   .pl-spots button i::after { inset: 5px auto 5px 50%; width: 1.5px; height: auto; margin: 0 0 0 -0.75px; }
-  .pl-spots button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-  :global(html.motion) .pl-spots button { animation: pl-pulse 2.4s var(--ease-out) infinite; }
   @keyframes pl-pulse { 0% { box-shadow: 0 0 0 0 rgba(187, 212, 64, 0.75); } 70%, 100% { box-shadow: 0 0 0 12px rgba(187, 212, 64, 0); } }
   .pl-spot__card { position: absolute; left: 18px; top: 0; transform: translateY(-50%); display: grid; gap: 0.15rem; width: max-content; max-width: 15rem; padding: 0.45rem 0.6rem; background: var(--white); border: 1px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; z-index: 2; }
   .pl-spots li.is-flip .pl-spot__card { left: auto; right: 18px; }
@@ -121,45 +187,17 @@ const items = sv.items.map((s, i) => ({ ...s, i, plate: plates[s.slug] }));
   .pl-spot__card small { font-size: 0.74rem; color: var(--grey); line-height: 1.35; }
   .pl-spots li:global(.is-open) .pl-spot__card { opacity: 1; visibility: visible; }
   .pl-spots li:global(.is-open) { z-index: 3; }
-  /* without motion the points are simply there */
-  :global(html:not(.motion)) .pl-spots li { opacity: 1; transform: none; }
 
-  /* ---- motion on: pinned stage; one plate at a time (src/scripts/plates.js) ---- */
-  :global(html.motion) .pl { padding: 0; height: calc(var(--n, 8) * 85svh + 100svh); }
-  :global(html.motion) .pl__pin { position: sticky; top: 0; height: 100svh; padding-block: calc(var(--header-h) + 1.25rem) 1.25rem; }
-  :global(html.motion) .pl__grid { height: 100%; grid-template-columns: minmax(11rem, 14rem) minmax(16rem, 22rem) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); align-items: center; gap: clamp(1rem, 3vw, 3rem); }
-  :global(html.motion) .pl__head { grid-column: 1; align-self: center; }
-  :global(html.motion) .pl__items { grid-column: 2 / 4; grid-row: 1; display: grid; height: 100%; min-height: 0; }
-  :global(html.motion) .pl-item { grid-area: 1 / 1; grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr); gap: clamp(1rem, 3vw, 3rem); height: 100%; min-height: 0; opacity: 0; visibility: hidden; transition: opacity 0.35s var(--ease-out), visibility 0.35s; }
-  :global(html.motion) .pl-item:global(.is-on) { opacity: 1; visibility: visible; }
-  :global(html.motion) .pl-item .cr { grid-column: 1; grid-row: 1; }
-  :global(html.motion) .pl-item__fig { grid-column: 2; grid-row: 1; justify-self: center; width: min(100%, calc(100svh - var(--header-h) - 4rem)); max-width: none; }
-  :global(html.motion) .cr__hint { display: block; }
-  /* with WebGL the canvas draws the plate; the image is the no-WebGL fallback (a wipe) */
-  :global(html.motion) .pl.has-gl .pl-item__img { visibility: hidden; }
-  .pl-item__fig :global(canvas) { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-  :global(html.motion) .pl__hud { margin-block-start: 1rem; display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; }
-  .pl__hud b { font-weight: 400; }
-  .pl__hud i { display: block; width: 6rem; height: 3px; background: var(--hairline); }
-  .pl__hud em { display: block; height: 100%; width: 0; background: var(--ink); }
-  :global(html.motion) .pl-item__fig { pointer-events: none; }
-  :global(html.motion) .pl-item.is-on .pl-item__fig { pointer-events: auto; }
-  /* phones and narrow tablets: index becomes a number strip, plate on top, credits below */
-  @media (max-width: 900px) {
-    :global(html.motion) .pl__grid { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); gap: 0.6rem; }
-    :global(html.motion) .pl__head { grid-row: 1; }
-    :global(html.motion) .pl__title { font-size: 2.2rem; margin-block: 0.1rem 0.5rem; }
-    :global(html.motion) .pl__eyebrow { display: none; }
-    :global(html.motion) .pl__index { grid-auto-flow: column; border: 0; gap: 0.25rem; }
-    :global(html.motion) .pl__index li { border: 1px solid var(--ink); }
-    :global(html.motion) .pl__index button { justify-content: center; padding: 0.3rem 0; }
-    :global(html.motion) .pl__index button b { display: none; }
-    :global(html.motion) .pl__items { grid-column: 1; grid-row: 2; }
-    :global(html.motion) .pl-item { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; align-content: stretch; gap: 0.4rem; }
-    :global(html.motion) .pl-item__fig { grid-column: 1; grid-row: 1; width: min(100%, 52svh); align-self: center; }
-    :global(html.motion) .pl-item .cr { grid-column: 1; grid-row: 2; width: 100%; padding-block-end: 4.5rem; }
-    :global(html.motion) .cr__rows > div:nth-child(3), :global(html.motion) .cr__hint { display: none; }
-    :global(html.motion) .cr__title { font-size: 1.8rem; }
-    :global(html.motion) .pl__hud { display: none; }
+  /* phones: bigger plate, credits compact on top, quotes hidden, index as a strip */
+  @media (max-width: 760px) {
+    .pl-card { --card: min(80vw, 46svh); }
+    .pl-car__ring { width: calc(min(80vw, 46svh) * 1.18); height: calc(min(80vw, 46svh) * 1.12); top: 56%; }
+    .pl-car__track { top: 56%; }
+    .pl-car__credits { width: calc(100% - var(--gutter) * 2); inset-block-start: calc(var(--header-h) + 2.4rem); }
+    .pl-car__credits .cr__rows > div:nth-child(2) { display: none; }
+    .pl-car__credits .cr__title { font-size: 1.7rem; }
+    .pl-car__index { inset-block-start: auto; inset-block-end: 5.2rem; inset-inline: var(--gutter); grid-auto-flow: column; justify-content: space-between; }
+    .pl-car__quotes, .pl-car__hint { display: none; }
+    .pl-car__bar { display: none; }
   }
 </style>

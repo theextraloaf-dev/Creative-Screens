@@ -7,12 +7,14 @@ import Numbers from '../Numbers.astro';
 import Why from '../Why.astro';
 import { hl, messages, whatsappHref, type Locale } from '../../i18n';
 import { site } from '../../config/site';
+import { ringPath } from '../../scripts/carousel.js';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const m = messages(locale);
 const wa = whatsappHref(site.whatsapp, m.wa.general);
 const T = m.story.ticket;
+const ring = ringPath(100, 100, 92, 86, 5);
 ---
 
 <Base title={m.meta.homeTitle} description={m.meta.homeDesc} locale={locale} routeKey="home">
@@ -46,12 +48,16 @@ const T = m.story.ticket;
   <!-- What we make: the workshop builds itself behind the service cards, right after the hero -->
   <ServiceList locale={locale} />
 
-  <div data-story>
+  <!-- How a job runs: four print-shop job tickets in an A24-style carousel over the 3D print works
+       (src/scripts/tickets.js); the warehouse fly-through follows the scroll through this block -->
+  <div class="story" data-story>
+    <div class="story__pin">
+      <svg class="story__ring" viewBox="0 0 200 200" preserveAspectRatio="none" aria-hidden="true"><path d={ring} pathLength="1"></path></svg>
+      <div class="story__track">
     {m.story.chapters.map((c, i) => (
       <section class="chapter" data-chapter={i + 1} aria-labelledby={`ch-${i}`}>
-        <div class="wrap chapter__in">
           <!-- a print-shop job ticket: docket header, big numeral, ruled stage rows, a rubber stamp, tear-off barcode -->
-          <div class="chapter__text ticket">
+          <div class="ticket">
             <p class="ticket__head"><span>{T.label}</span><span class="ltr">{T.no} CS-0421 · {c.n}</span></p>
             <p class="ticket__no ltr" aria-hidden="true">{c.n}<small>/04</small></p>
             <h2 id={`ch-${i}`} class="ticket__title">{c.title}</h2>
@@ -64,9 +70,10 @@ const T = m.story.ticket;
             <p class="ticket__stamp" aria-hidden="true"><span>{T.stamps[i]}</span></p>
             <p class="ticket__tear" aria-hidden="true"><i></i></p>
           </div>
-        </div>
       </section>
     ))}
+      </div>
+    </div>
   </div>
 
   <Stage locale={locale} />
@@ -85,13 +92,6 @@ const T = m.story.ticket;
 </Base>
 
 <script>
-  /* Job tickets: the stamp thumps on once its chapter is mostly on screen */
-  const chapters = document.querySelectorAll('.chapter');
-  if (chapters.length && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('is-stamped', e.isIntersecting)), { threshold: 0.55 });
-    chapters.forEach((c) => io.observe(c));
-  }
-
   /* Play the hero film only when motion is welcome; otherwise the poster stays. */
   const v = document.querySelector<HTMLVideoElement>('[data-hero-video]');
   const conn = (navigator as any).connection;
@@ -129,8 +129,17 @@ const T = m.story.ticket;
   @keyframes cue { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .hero__cue i { animation: none; } }
 
-  /* chapters: plain cards without the warehouse; a sticky text card that rides over the fly-through with it */
-  .chapter { padding-block: var(--space-4); }
+  /* job tickets: a row of tickets without motion; with motion an A24-style carousel over the 3D print works */
+  .story__pin { width: min(100% - var(--gutter) * 2, var(--maxw)); margin-inline: auto; padding-block: var(--space-5); }
+  .story__track { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); justify-items: center; }
+  .story__ring { display: none; }
+  :global(html.motion) .story { height: 440svh; }
+  :global(html.motion) .story__pin { position: sticky; top: 0; width: auto; height: 100svh; padding: 0; overflow: hidden; }
+  :global(html.motion) .story__track { display: block; position: absolute; left: 50%; top: 55%; width: 0; height: 0; }
+  :global(html.motion) .chapter { position: absolute; left: 0; top: 0; width: min(84vw, 23rem); will-change: transform; }
+  :global(html.motion) .chapter .ticket { width: 100%; }
+  :global(html.motion) .story__ring { display: block; position: absolute; left: 50%; top: 55%; width: calc(min(84vw, 23rem) * 1.32); height: min(44rem, 84svh); transform: translate(-50%, -50%) rotate(-5deg); overflow: visible; pointer-events: none; z-index: 150; }
+  .story__ring path { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: var(--ring, 1); }
   .ticket {
     position: relative; display: grid; gap: 0.6rem; width: min(100%, 23rem); padding: 1rem 1.15rem 0; background: var(--white); color: var(--ink);
     border: 1px solid var(--ink); box-shadow: 0 22px 40px -26px rgba(0, 0, 0, 0.45);
@@ -166,9 +175,6 @@ const T = m.story.ticket;
   html[lang='ar'] .ticket__stamp span { font-family: var(--font-display); font-weight: 700; text-transform: none; font-size: 1.05rem; }
   :global(html.motion) .ticket__stamp span { opacity: 0; transform: rotate(-9deg) scale(1.9); transition: opacity 0.18s ease-out, transform 0.32s cubic-bezier(0.2, 1.4, 0.4, 1); }
   :global(html.motion) .chapter:global(.is-stamped) .ticket__stamp span { opacity: 1; transform: rotate(-9deg) scale(1); }
-  :global(html.has-warehouse) .chapter { min-height: 110svh; padding: 0; }
-  :global(html.has-warehouse) .chapter:last-child { min-height: 125svh; }
-  :global(html.has-warehouse) .chapter__in { position: sticky; top: 0; height: 100svh; display: grid; align-content: end; padding-block-end: calc(var(--space-4) + 4rem); }
 
   .cta { background: var(--lime); color: var(--navy); }
   .cta :global(h2), .cta :global(p) { color: var(--navy); }
@@ -183,8 +189,6 @@ const T = m.story.ticket;
     .hero__cta { grid-template-columns: auto auto; width: auto; }
     .hero__proof { max-width: 20rem; text-align: end; }
     .hero__cue { display: flex; }
-    :global(html.has-warehouse) .chapter__in { align-content: center; padding-block-end: 0; }
-    :global(html.has-warehouse) .chapter__text { max-width: 24rem; }
     .cta__box { grid-template-columns: 1.4fr 1fr; align-items: end; }
   }
 </style>
