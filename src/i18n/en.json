@@ -490,7 +490,9 @@
         "Printed",
         "Delivered"
       ],
-      "last": "Your site"
+      "last": "Your site",
+      "queue": "Job queue",
+      "done": "Done"
     }
   },
   "wh": {
