@@ -1,8 +1,8 @@
 /* Services background story. The workshop drawing is a sticky full-screen layer behind the service cards.
    1. While the section rises out of the hero, the building assembles: floor, walls, partitions.
-   2. While it is pinned, each card that scrolls past builds its bay one part at a time and the camera frames it.
-   Main timeline units 0 to 100; card k (0 intro, 1-8 services, 9 outro) is centred on screen at k * 100 / 9. */
-const at = (k) => (k * 100) / 9;
+   2. While it is pinned, each card (two services) builds its two bays one part at a time while the camera frames them.
+   Main timeline units 0 to 100; card k (0 intro, 1-4 bay pairs, 5 outro) is centred on screen at k * 20. */
+const at = (k) => k * 20;
 
 export function initServices(gsap, ScrollTrigger) {
   const sec = document.querySelector('[data-svc]');
@@ -27,8 +27,8 @@ export function initServices(gsap, ScrollTrigger) {
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     const phone = r.width < 700;
     layout = phone
-      ? { all: { fx: 0.5, fy: 0.36, s: 1.3 }, bay: { fx: 0.5, fy: 0.3, s: 3.4 } }
-      : { all: { fx: rtl ? 0.4 : 0.6, fy: 0.55, s: Math.min(0.88, (H * 0.72) / 600) * 1.2 }, bay: { fx: rtl ? 0.34 : 0.66, fy: 0.56, s: Math.min(1.9, (H * 0.6) / 300) } };
+      ? { all: { fx: 0.5, fy: 0.36, s: 1.3 }, bay: { fx: 0.5, fy: 0.3, s: 2.5 } }
+      : { all: { fx: rtl ? 0.4 : 0.6, fy: 0.55, s: Math.min(0.88, (H * 0.72) / 600) * 1.2 }, bay: { fx: rtl ? 0.36 : 0.64, fy: 0.56, s: Math.min(1.35, (H * 0.62) / 330) } };
   };
   measure();
 
@@ -55,27 +55,29 @@ export function initServices(gsap, ScrollTrigger) {
   /* 2. pinned: each service builds its bay part by part while the camera frames it */
   const tl = gsap.timeline({ defaults: { ease: 'none' } });
   let prev = shotAll();
-  anchors.forEach((_, i) => {
-    const c = at(i + 1);
-    const next = shotBay(i);
-    tl.fromTo(cam, { ...prev }, { ...next, duration: 5, ease: 'power2.inOut', onUpdate: place, immediateRender: false }, c - 8);
-    const parts = group(String(i));
-    gsap.set(parts, { opacity: 0, y: -40 });
-    tl.to(parts, { opacity: 1, y: 0, duration: 1.2, stagger: 6 / Math.max(parts.length, 1), ease: 'back.out(1.6)' }, c - 7);
+  anchors.forEach((_, j) => {
+    const c = at(j + 1);
+    const next = shotBay(j);
+    tl.fromTo(cam, { ...prev }, { ...next, duration: 8, ease: 'power2.inOut', onUpdate: place, immediateRender: false }, c - 15);
+    [j * 2, j * 2 + 1].forEach((i, n) => {
+      const parts = group(String(i));
+      gsap.set(parts, { opacity: 0, y: -40 });
+      tl.to(parts, { opacity: 1, y: 0, duration: 1.4, stagger: 7 / Math.max(parts.length, 1), ease: 'back.out(1.6)' }, c - 14 + n * 7);
+    });
     prev = next;
   });
-  tl.fromTo(cam, { ...prev }, { ...shotAll(), duration: 6, ease: 'power2.inOut', onUpdate: place, immediateRender: false }, at(9) - 8);
+  tl.fromTo(cam, { ...prev }, { ...shotAll(), duration: 10, ease: 'power2.inOut', onUpdate: place, immediateRender: false }, at(5) - 15);
   tl.set({}, {}, 100);
 
   const pad = (n, l) => String(Math.max(0, Math.round(n))).padStart(l, '0');
   const update = () => {
     const t = tl.time();
-    const bay = Math.round((t * 9) / 100) - 1; // card nearest the middle of the screen
-    const on = bay >= 0 && bay < 8 ? bay : -1;
-    hls.forEach((h, i) => h.classList.toggle('is-on', i === on));
+    const card = Math.round(t / 20) - 1; // card nearest the middle of the screen
+    const on = card >= 0 && card < 4 ? card : -1;
+    hls.forEach((h, i) => h.classList.toggle('is-on', on >= 0 && Math.floor(i / 2) === on));
     hx.textContent = pad(cam.x * 10, 4);
     hy.textContent = pad(cam.y * 10, 4);
-    hb.textContent = pad(on + 1, 2);
+    hb.textContent = on >= 0 ? `${pad(on * 2 + 1, 2)}–${pad(on * 2 + 2, 2)}` : '00';
     hp.textContent = pad(t, 3);
     bar.style.width = `${t}%`;
   };
