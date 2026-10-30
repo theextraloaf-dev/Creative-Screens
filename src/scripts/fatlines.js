@@ -1,4 +1,4 @@
-import { Geometry } from 'ogl';
+import { bufferGeometry } from './three-kit.js';
 
 /* Thick screen-space lines with a LINE HIERARCHY, so a drawing reads as designed instead of random.
    Each segment optionally knows the two face normals it joins (nrm: 6 floats per segment). The vertex shader
@@ -6,7 +6,7 @@ import { Geometry } from 'ogl';
    interior creases (both toward the camera) light, and hidden back edges not at all.
    Segments without normals (dimension lines, outlines, hatching) draw at a steady middle weight.
    pos: flat xyz array; idx: pairs of vertex indices (one pair per segment); nrm: optional per-segment normals. */
-export function fatLines(gl, pos, idx, nrm) {
+export function fatLines(pos, idx, nrm) {
   const n = idx.length / 2;
   const A = new Float32Array(n * 12), O = new Float32Array(n * 12), S = new Float32Array(n * 4), E = new Float32Array(n * 4);
   const N1 = new Float32Array(n * 12), N2 = new Float32Array(n * 12), I = new Uint32Array(n * 6);
@@ -25,10 +25,7 @@ export function fatLines(gl, pos, idx, nrm) {
     }
     const q = k * 4; I.set([q, q + 1, q + 2, q + 1, q + 3, q + 2], k * 6);
   }
-  return new Geometry(gl, {
-    position: { size: 3, data: A }, other: { size: 3, data: O }, side: { size: 1, data: S }, endf: { size: 1, data: E },
-    n1: { size: 3, data: N1 }, n2: { size: 3, data: N2 }, index: { data: I },
-  });
+  return bufferGeometry({ position: [A, 3], other: [O, 3], side: [S, 1], endf: [E, 1], n1: [N1, 3], n2: [N2, 3] }, I);
 }
 
 /* Face normals for the lines of an indexed mesh (the exported car parts): each line takes the normals of the

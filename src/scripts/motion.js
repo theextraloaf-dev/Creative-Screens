@@ -116,6 +116,11 @@ function init() {
     import('./stage.js').then((m) => m.initStage(gsap, ScrollTrigger));
   }
 
+  /* ---------- How a job runs: step captions over the 3D print works (lazy) ---------- */
+  if (document.querySelector('[data-story] .chapter')) {
+    import('./journey.js').then((m) => m.initJourney(gsap, ScrollTrigger));
+  }
+
   /* ---------- The print works: one persistent 3D warehouse the page scroll flies through (lazy) ---------- */
   if (document.querySelector('[data-warehouse]')) {
     import('./warehouse.js').then((m) => m.initWarehouse({ gsap, ScrollTrigger })).catch((e) => console.warn('Warehouse unavailable', e));

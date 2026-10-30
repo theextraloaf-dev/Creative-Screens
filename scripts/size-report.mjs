@@ -3,10 +3,11 @@
 // "all font files" figure is an upper bound; measure real transfer in the browser for the true first view.
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, extname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
-const dist = new URL('../dist/', import.meta.url).pathname;
-if (!existsSync(dist)) { console.error('No dist/ folder. Run `npm run build` first.'); process.exit(1); }
+const dist = fileURLToPath(new URL('../out/', import.meta.url));
+if (!existsSync(dist)) { console.error('No out/ folder. Run `npm run build` first.'); process.exit(1); }
 
 const walk = (d) => readdirSync(d).flatMap((n) => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : [p]; });
 const gz = (p) => gzipSync(readFileSync(p)).length;
@@ -17,7 +18,7 @@ const sum = (pred) => files.filter(pred).reduce((a, p) => a + gz(p), 0);
 const ext = (p) => extname(p).toLowerCase();
 
 const jsFiles = files.filter((p) => ext(p) === '.js');
-const isEager = (p) => p.includes('Base.astro_astro_type_script');
+const isEager = (p) => p.includes('/_next/static/chunks/');
 const eager = jsFiles.filter(isEager).reduce((a, p) => a + gz(p), 0);
 const lazy = jsFiles.filter((p) => !isEager(p)).reduce((a, p) => a + gz(p), 0);
 

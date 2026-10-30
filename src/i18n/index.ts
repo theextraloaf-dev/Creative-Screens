@@ -4,9 +4,10 @@ import ar from './ar.json';
 export type Locale = 'en' | 'ar';
 export const locales: Locale[] = ['en', 'ar'];
 
-const dictionaries = { en, ar } as const;
+export type Messages = typeof en;
+const dictionaries: Record<Locale, Messages> = { en, ar };
 
-export const messages = (locale: Locale) => dictionaries[locale];
+export const messages = (locale: Locale): Messages => dictionaries[locale];
 export const dirOf = (locale: Locale) => (locale === 'ar' ? 'rtl' : 'ltr');
 export const otherLocale = (locale: Locale): Locale => (locale === 'ar' ? 'en' : 'ar');
 

@@ -1,5 +1,6 @@
-import { Renderer, Camera, Transform, Geometry, Program, Mesh, Vec3 } from 'ogl';
+import { Group, LineSegments, Mesh, PerspectiveCamera, Scene, Vector3 } from 'three';
 import { dir } from './motion-tokens.js';
+import { bufferGeometry, createRenderer, inkMaterial } from './three-kit.js';
 import { FILL_VS, FILL_FS, lineVS, fatLineVS, LINE_FS } from './shaders.js';
 import { fatLines, edgeNormals } from './fatlines.js';
 import { declutter } from './callouts.js';
@@ -58,17 +59,14 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
   canvas.setAttribute('aria-hidden', 'true');
   holder.appendChild(canvas);
 
-  const renderer = new Renderer({ canvas, alpha: true, antialias: true, depth: true, dpr: Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2), webgl: 2 });
-  const gl = renderer.gl;
-  if (!renderer.isWebgl2) throw new Error('webgl2');
-  gl.clearColor(0, 0, 0, 0);
+  const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2);
+  let renderer;
+  try { renderer = createRenderer(canvas, dpr); } catch (e) { canvas.remove(); throw e; }   // no WebGL2: the caller falls back to the 2D stage
 
-  const camera = new Camera(gl, { fov: 28, near: 0.5, far: 60 });
+  const camera = new PerspectiveCamera(28, 1, 0.5, 60);
   camera.up.set(0, 0, 1);
-  const scene = new Transform();
-  const blend = { src: gl.SRC_ALPHA, dst: gl.ONE_MINUS_SRC_ALPHA };
+  const scene = new Scene();
   const fogCommon = { uFog: { value: PAPER }, uFogRange: { value: [7, 22] } };
-  const dpr = renderer.dpr;
   const lineRes = { value: [1, 1] };
 
   /* ---------- parts ---------- */
@@ -81,8 +79,8 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
     const isGlass = /glass|windshield/.test(name);
     const isWheel = name.startsWith('wheel');
 
-    const node = new Transform();
-    node.setParent(scene);
+    const node = new Group();
+    scene.add(node);
     const base = [d.o[0] / 1000, d.o[1] / 1000, d.o[2] / 1000];
 
     const fillColor = isArt ? LIME : isFilm ? FILM_TINT[name] : isGlass ? GLASS : isWheel ? TIRE : SOLID;
@@ -90,9 +88,9 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
       uColor: { value: fillColor }, uAlpha: { value: 1 }, uSweep: { value: -1 },
       uXr: { value: [DOOR_X[0] + 0.1, DOOR_X[1] - 0.1, dir()] }, uYon: { value: 0 }, uYmin: { value: 0 }, ...fogCommon,
     };
-    const fillProg = new Program(gl, { vertex: FILL_VS, fragment: FILL_FS, uniforms: fillU, transparent: true, blendFunc: blend, cullFace: null, depthWrite: true });
-    const fillGeo = new Geometry(gl, { position: { size: 3, data: pos }, index: { data: new Uint16Array(d.t) } });
-    const fill = new Mesh(gl, { geometry: fillGeo, program: fillProg }); fill.setParent(node); fill.frustumCulled = false;
+    const fillProg = inkMaterial({ vertex: FILL_VS, fragment: FILL_FS, uniforms: fillU, blended: true });
+    const fillGeo = bufferGeometry({ position: [pos, 3] }, new Uint16Array(d.t));
+    const fill = new Mesh(fillGeo, fillProg); node.add(fill); fill.frustumCulled = false;
 
     let along = null;
     if (isArt) {  // outline draws itself: ring vertices come first in order
@@ -103,19 +101,16 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
       uColor: { value: isFilm ? FILM_LINE[name] : INK }, uAlpha: { value: 1 }, uDraw: { value: 2 }, ...fogCommon,
     };
     let lines;
+    let lineProg;
     if (along) {   // the artwork outline draws itself: thin line with a per-vertex progress attribute
-      const lineProg = new Program(gl, { vertex: lineVS(true), fragment: LINE_FS, uniforms: lineU, transparent: true, blendFunc: blend, depthWrite: false });
-      const lineAttrs = { position: { size: 3, data: pos }, index: { data: new Uint16Array(d.l) }, along: { size: 1, data: along } };
-      lines = new Mesh(gl, { geometry: new Geometry(gl, lineAttrs), program: lineProg, mode: gl.LINES });
-      var lineProgRef = lineProg;
+      lineProg = inkMaterial({ vertex: lineVS(true), fragment: LINE_FS, uniforms: lineU, blended: true, depthWrite: false });
+      lines = new LineSegments(bufferGeometry({ position: [pos, 3], along: [along, 1] }, new Uint16Array(d.l)), lineProg);
     } else {       // everything else: thick screen-space lines
       Object.assign(lineU, { uRes: lineRes, uWidth: { value: 1.15 * dpr } });
-      const lineProg = new Program(gl, { vertex: fatLineVS, fragment: LINE_FS, uniforms: lineU, cullFace: null, transparent: true, blendFunc: blend, depthWrite: false });
-      lines = new Mesh(gl, { geometry: fatLines(gl, pos, d.l, edgeNormals(pos, d.t, d.l, name.startsWith('wheel') ? [0, 0, 0] : [-base[0], -base[1], 0.6 - base[2]])), program: lineProg });
-      var lineProgRef = lineProg;
+      lineProg = inkMaterial({ vertex: fatLineVS, fragment: LINE_FS, uniforms: lineU, blended: true, depthWrite: false });
+      lines = new Mesh(fatLines(pos, d.l, edgeNormals(pos, d.t, d.l, name.startsWith('wheel') ? [0, 0, 0] : [-base[0], -base[1], 0.6 - base[2]])), lineProg);
     }
-    lines.setParent(node); lines.frustumCulled = false; lines.renderOrder = 5;   // lines after fills
-    const lineProg = lineProgRef;
+    node.add(lines); lines.frustumCulled = false; lines.renderOrder = 5;   // lines after fills
     // s = animated state, driven by the timeline
     const s = { x: 0, y: 0, z: 0, a: isFilm ? 0 : 1, la: isFilm ? 0 : 1 };
     parts[name] = { node, base, s, fillProg, lineProg, fillU, lineU, isFilm, isArt };
@@ -129,13 +124,13 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
     const q = [[0, 1, 3, 2], [4, 5, 7, 6], [0, 1, 5, 4], [2, 3, 7, 6], [0, 2, 6, 4], [1, 3, 7, 5]];
     q.forEach(([a, b, c, e]) => { I.push(a, b, c, a, c, e); L.push(a, b, b, c, c, e, e, a); });
     const pos = new Float32Array(V);
-    const node = new Transform(); node.setParent(scene);
+    const node = new Group(); scene.add(node);
     const fu = { uColor: { value: LIME }, uAlpha: { value: 1 }, uSweep: { value: -1 }, uXr: { value: [0, 1, 1] }, uYon: { value: 0 }, uYmin: { value: 0 }, ...fogCommon };
     const lu = { uColor: { value: INK }, uAlpha: { value: 1 }, uDraw: { value: 2 }, ...fogCommon };
-    const fp = new Program(gl, { vertex: FILL_VS, fragment: FILL_FS, uniforms: fu, transparent: true, blendFunc: blend, cullFace: null });
-    const lp = new Program(gl, { vertex: lineVS(false), fragment: LINE_FS, uniforms: lu, transparent: true, blendFunc: blend, depthWrite: false });
-    new Mesh(gl, { geometry: new Geometry(gl, { position: { size: 3, data: pos }, index: { data: new Uint16Array(I) } }), program: fp }).setParent(node);
-    new Mesh(gl, { geometry: new Geometry(gl, { position: { size: 3, data: pos }, index: { data: new Uint16Array(L) } }), program: lp, mode: gl.LINES }).setParent(node);
+    const fp = inkMaterial({ vertex: FILL_VS, fragment: FILL_FS, uniforms: fu, blended: true });
+    const lp = inkMaterial({ vertex: lineVS(false), fragment: LINE_FS, uniforms: lu, blended: true, depthWrite: false });
+    node.add(new Mesh(bufferGeometry({ position: [pos, 3] }, new Uint16Array(I)), fp));
+    node.add(new LineSegments(bufferGeometry({ position: [pos, 3] }, new Uint16Array(L)), lp));
     return { node, s: { x: DOOR_X[0], a: 0 }, fu, lu };
   })();
 
@@ -144,10 +139,10 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
     const V = [], L = []; const R = 14, step = 1;
     let n = 0;
     for (let i = -R; i <= R; i += step) { V.push(i, -R, 0, i, R, 0, -R, i, 0, R, i, 0); L.push(n, n + 1, n + 2, n + 3); n += 4; }
-    const node = new Transform(); node.setParent(scene); node.position.z = 0.0;
+    const node = new Group(); scene.add(node); node.position.z = 0.0;
     const u = { uColor: { value: INK }, uAlpha: { value: 0.12 }, uDraw: { value: 2 }, ...fogCommon };
-    const p = new Program(gl, { vertex: lineVS(false), fragment: LINE_FS, uniforms: u, transparent: true, blendFunc: blend, depthWrite: false });
-    new Mesh(gl, { geometry: new Geometry(gl, { position: { size: 3, data: new Float32Array(V) }, index: { data: new Uint16Array(L) } }), program: p, mode: gl.LINES }).setParent(node);
+    const p = inkMaterial({ vertex: lineVS(false), fragment: LINE_FS, uniforms: u, blended: true, depthWrite: false });
+    node.add(new LineSegments(bufferGeometry({ position: [new Float32Array(V), 3] }, new Uint16Array(L)), p));
     return { node };
   })();
 
@@ -157,7 +152,7 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
 
   /* ---------- callouts (HTML) ---------- */
   const co = {};
-  calloutRoot?.querySelectorAll('[data-co]').forEach((el) => { co[el.dataset.co] = { el, on: false, v: new Vec3() }; });
+  calloutRoot?.querySelectorAll('[data-co]').forEach((el) => { co[el.dataset.co] = { el, on: false }; });
 
   /* ---------- camera state ---------- */
   const cam = { az: 0.62, el: 0.2, dist: 7.0, tx: 0, ty: 0, tz: 0.72 };
@@ -168,7 +163,8 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
     const r = holder.getBoundingClientRect();
     W = Math.max(1, r.width); H = Math.max(1, r.height); aspect = W / H;
     renderer.setSize(W, H);
-    camera.perspective({ aspect });
+    camera.aspect = aspect;
+    camera.updateProjectionMatrix();
     lineRes.value = [W * dpr, H * dpr];
   }
   const ro = new ResizeObserver(resize); ro.observe(holder); resize();
@@ -230,7 +226,7 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
   stage.dataset.step = '0';
 
   /* ---------- render loop ---------- */
-  const v3 = new Vec3(); const tgt = new Vec3();
+  const v3 = new Vector3(); const tgt = new Vector3();
   let visible = false, frames = 0, slow = 0, last = performance.now(), dead = false;
 
   function frame() {
@@ -266,7 +262,7 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
     squeegee.fu.uAlpha.value = squeegee.s.a; squeegee.lu.uAlpha.value = squeegee.s.a;
     squeegee.node.visible = squeegee.s.a > 0.01;
 
-    renderer.render({ scene, camera, sort: true, frustumCull: false });
+    renderer.render(scene, camera);
 
     // callouts follow their parts; labels that would overlap are pushed apart
     const prog = (trigger.progress ?? 0) * 100;
@@ -277,7 +273,7 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
       if (on !== o.on) { o.on = on; o.el.classList.toggle('is-on', on); }
       if (!on) continue;
       v3.set(c.at[0] + part.s.x, c.at[1] + part.s.y, c.at[2] + part.s.z);
-      camera.project(v3);
+      v3.project(camera);
       shown.push({ o, x: Math.min(Math.max((v3.x * 0.5 + 0.5) * W, 14), W - 14), y: Math.min(Math.max((1 - (v3.y * 0.5 + 0.5)) * H, 12), H - 12) });
     }
     declutter(shown, 26, 190);
@@ -304,7 +300,8 @@ export async function initStage3D({ stage, gsap, ScrollTrigger, onSlow }) {
       trigger.kill(); tl.kill(); canvas.remove();
       calloutRoot?.querySelectorAll('[data-co]').forEach((el) => el.classList.remove('is-on'));
       stage.dataset.mode = '2d';
-      renderer.gl.getExtension('WEBGL_lose_context')?.loseContext();
+      renderer.dispose();
+      renderer.forceContextLoss();
     },
   };
 }

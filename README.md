@@ -1,32 +1,25 @@
-# creativescreens-site
+# creativescreens-site (Next.js)
 
-Static bilingual (English default, Arabic RTL) site for Creative Screens. Astro 7, plain CSS with logical properties, GSAP + ScrollTrigger + SplitText + Lenis (all from npm, pinned). Plan: `../docs/BUILD-PLAN.md`. Architecture: `../docs/ARCHITECTURE.md`.
+Static bilingual (English default, Arabic RTL) site for Creative Screens. Next.js 16 (App Router, `output: 'export'`), React 19, plain CSS with logical properties, GSAP + ScrollTrigger + SplitText + Lenis, Three.js for the 3D scenes (raw-shader line art; see `src/scripts/three-kit.js`).
 
 ```bash
 npm install
-npm run dev        # http://localhost:4321
-npm run build      # builds dist/ and prints the size report
-npm run preview    # serves dist/
+npm run dev        # http://localhost:3000
+npm run build      # static export to out/, then the size report
 ```
 
-## What is here (Phase A, the base)
-- `/` and `/ar/`: placeholder home (hero, 8 service tiles, car sticker stage, process, quote area).
-- `/lab/` and `/ar/lab/`: motion lab, noindex. Every primitive plus the colour contrast report.
-- `src/styles/tokens.css`: light theme tokens, type scale, Arabic overrides. Placeholder fonts until the brand is confirmed.
-- `src/scripts/motion.js`: Lenis, reveal, text lines, blur-in, clip image, count-up. `stage.js` (lazy): the car sequence timeline.
-- Reduced motion or no JS: the `motion` class is never set, so every start state is absent and the content shows in its final form.
-
-## 3D car (exploded view)
-- Source: `3d/build_car.py` + `3d/wrap_and_export.py` (run inside Blender with the MCP add-on, same exec namespace) and `3d/car.blend`.
-- Output: `public/models/car.json` (mm integers: positions, triangles, line segments per named part).
-- Web: `src/scripts/stage3d.js` (OGL), loaded by `stage.js` only when the section is near; falls back to the 2D stage. `?stage=2d` forces 2D.
+## Layout
+- `src/app/(en)` and `src/app/ar`: one root layout per language (`lang`/`dir` on `<html>`). Pages: `/`, `/lab/`, `/ar/`, `/ar/lab/`.
+- `src/components`: server components, each with its own `.css`. Markup keeps the `data-*` hooks the motion scripts use.
+- `src/behaviors`: small DOM behaviours (loader, menu, CTA bar, hero video, hotspot discovery), started from `Behaviors.tsx` after hydration.
+- `src/scripts`: motion, 3D stage and warehouse (unchanged from the Astro build; loaded lazily by `motion.js`).
+- `src/i18n`: dictionaries and route table. `src/config/site.ts`: placeholder contact details.
+- `3d/`: Blender sources for `public/models/car.json`.
 
 ## Rules baked in
-- Logical CSS properties only; one `dir()` helper for sideways motion; the car is never mirrored.
-- No per-letter animation (lines only), none in Arabic.
-- Staging is `noindex` unless `PUBLIC_STAGING=false` (set at launch only).
-- Contact details in `src/config/site.ts` are placeholders. Arabic strings in `src/i18n/ar.json` are drafts pending native review.
-- No secrets in the repo.
+- Logical CSS properties only; the car is never mirrored; no per-letter animation, none in Arabic.
+- Staging is `noindex` unless `NEXT_PUBLIC_STAGING=false` (set at launch only).
+- Reduced motion or no JS: the `motion` class is never set, so content shows in its final form.
 
-## Not built yet
-Sanity admin, quote form, hub/work/about pages, real photos, Cloudflare Pages deploy (needs the Extra Loaf Cloudflare project), analytics.
+## Next
+Compress the car model to glTF + Draco, then Sanity admin, quote form, hub/work/about pages, Cloudflare Pages deploy.

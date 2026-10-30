@@ -7,5 +7,5 @@ export const site = {
   email: 'hello@creativescreens.co',
 };
 
-// Staging is noindex until PUBLIC_STAGING=false is set at launch.
-export const isStaging = import.meta.env.PUBLIC_STAGING !== 'false';
+// Staging is noindex until NEXT_PUBLIC_STAGING=false is set at launch.
+export const isStaging = process.env.NEXT_PUBLIC_STAGING !== 'false';
