@@ -1,71 +1,88 @@
-/* Services workshop: the section pins and one camera walks the isometric floor bay by bay.
-   Time units 0 to 100: overview 0-6, eight bays of 11 units each (6-94), overview again 94-100. */
-const START = 6;
-const SPAN = 11;
+/* Services background story. The workshop drawing is a sticky full-screen layer behind the service cards.
+   1. While the section rises out of the hero, the building assembles: floor, walls, partitions.
+   2. While it is pinned, each card that scrolls past builds its bay one part at a time and the camera frames it.
+   Main timeline units 0 to 100; card k (0 intro, 1-8 services, 9 outro) is centred on screen at k * 100 / 9. */
+const at = (k) => (k * 100) / 9;
 
 export function initServices(gsap, ScrollTrigger) {
   const sec = document.querySelector('[data-svc]');
   const svg = sec?.querySelector('.svc__art');
   if (!sec || !svg) return;
 
+  const bg = sec.querySelector('.svc__bg');
   const world = svg.querySelector('.svc-world');
-  const frame = sec.querySelector('.svc__frame');
-  const pins = [...svg.querySelectorAll('.bay-pin')];
   const hls = [...svg.querySelectorAll('.bay-hl')];
-  const cards = [...sec.querySelectorAll('.svc-card')];
+  const group = (g) => [...svg.querySelectorAll(`.pc[data-g="${g}"]`)];
   const hud = (k) => sec.querySelector(`[data-hud-${k}]`);
-  const hx = hud('x'), hy = hud('y'), hb = hud('bay'), hp = hud('pct'), bar = hud('bar'), cue = hud('scroll');
+  const hx = hud('x'), hy = hud('y'), hb = hud('bay'), hp = hud('pct'), bar = hud('bar');
+  const rtl = document.documentElement.dir === 'rtl';
   const [ox, oy] = sec.dataset.overview.split(',').map(Number);
-  const pinXY = pins.map((p) => p.getAttribute('transform').match(/translate\(([\d.]+) ([\d.]+)\)/).slice(1).map(Number));
+  const anchors = sec.dataset.anchors.split(';').map((a) => a.split(',').map(Number));
 
-  const zoom = () => (window.innerWidth < 700 ? 2.6 : 2.05);
-  const overview = () => ({ x: ox, y: oy, s: window.innerWidth < 700 ? 1.3 : 1.3 });
-  const bayShot = (i) => ({ x: pinXY[i][0], y: pinXY[i][1] + 20, s: zoom() });
-  const cam = { ...overview() };
-  const place = () => world.setAttribute('transform', `translate(${600 - cam.x * cam.s} ${320 - cam.y * cam.s}) scale(${cam.s})`);
+  /* the view matches the screen's shape, 1200 units wide; framing depends on the layout */
+  let W = 1200, H = 640, layout = {};
+  const measure = () => {
+    const r = bg.getBoundingClientRect();
+    H = Math.round((1200 * r.height) / Math.max(r.width, 1));
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const phone = r.width < 700;
+    layout = phone
+      ? { all: { fx: 0.5, fy: 0.36, s: 1.3 }, bay: { fx: 0.5, fy: 0.3, s: 3.4 } }
+      : { all: { fx: rtl ? 0.4 : 0.6, fy: 0.55, s: Math.min(0.88, (H * 0.72) / 600) * 1.2 }, bay: { fx: rtl ? 0.34 : 0.66, fy: 0.56, s: Math.min(1.9, (H * 0.6) / 300) } };
+  };
+  measure();
 
+  const cam = { x: ox, y: oy, s: 1, f: 0 }; // f blends overview framing (0) to bay framing (1)
+  const place = () => {
+    const a = layout.all, b = layout.bay;
+    const fx = a.fx + (b.fx - a.fx) * cam.f;
+    const fy = a.fy + (b.fy - a.fy) * cam.f;
+    world.setAttribute('transform', `translate(${fx * W - cam.x * cam.s} ${fy * H - cam.y * cam.s}) scale(${cam.s})`);
+  };
+  const shotAll = () => ({ x: ox, y: oy, s: layout.all.s, f: 0 });
+  const shotBay = (i) => ({ x: anchors[i][0], y: anchors[i][1], s: layout.bay.s, f: 1 });
+  Object.assign(cam, shotAll());
+
+  /* 1. building assembles as the section rises out of the hero */
+  const rise = (els) => gsap.set(els, { opacity: 0, y: 30 });
+  ['floor', 'wall', 'part'].forEach((g) => rise(group(g)));
+  const build = gsap.timeline({ defaults: { ease: 'power2.out' } })
+    .to(group('floor'), { opacity: 1, y: 0, duration: 0.3, stagger: 0.02 }, 0)
+    .to(group('wall'), { opacity: 1, y: 0, duration: 0.3, stagger: 0.1 }, 0.3)
+    .to(group('part'), { opacity: 1, y: 0, duration: 0.25, stagger: 0.03 }, 0.55);
+  ScrollTrigger.create({ trigger: sec, start: 'top 85%', end: 'top 5%', scrub: 0.5, animation: build });
+
+  /* 2. pinned: each service builds its bay part by part while the camera frames it */
   const tl = gsap.timeline({ defaults: { ease: 'none' } });
-  let prev = overview();
-  pins.forEach((_, i) => {
-    const next = bayShot(i);
-    tl.fromTo(cam, { ...prev }, { ...next, duration: 3.5, ease: 'power2.inOut', onUpdate: place, immediateRender: false }, START + i * SPAN);
+  let prev = shotAll();
+  anchors.forEach((_, i) => {
+    const c = at(i + 1);
+    const next = shotBay(i);
+    tl.fromTo(cam, { ...prev }, { ...next, duration: 5, ease: 'power2.inOut', onUpdate: place, immediateRender: false }, c - 8);
+    const parts = group(String(i));
+    gsap.set(parts, { opacity: 0, y: -40 });
+    tl.to(parts, { opacity: 1, y: 0, duration: 1.2, stagger: 6 / Math.max(parts.length, 1), ease: 'back.out(1.6)' }, c - 7);
     prev = next;
   });
-  tl.fromTo(cam, { ...prev }, { ...overview(), duration: 4, ease: 'power2.inOut', onUpdate: place, immediateRender: false }, START + 8 * SPAN);
+  tl.fromTo(cam, { ...prev }, { ...shotAll(), duration: 6, ease: 'power2.inOut', onUpdate: place, immediateRender: false }, at(9) - 8);
   tl.set({}, {}, 100);
 
   const pad = (n, l) => String(Math.max(0, Math.round(n))).padStart(l, '0');
   const update = () => {
     const t = tl.time();
-    const bay = t >= START && t < START + 8 * SPAN ? Math.floor((t - START) / SPAN) : -1;
-    const settled = bay >= 0 && t - (START + bay * SPAN) > 2.6;
-    hls.forEach((h, i) => h.classList.toggle('is-on', i === bay));
-    pins.forEach((p, i) => p.classList.toggle('is-on', i === bay && settled));
-    cards.forEach((c, i) => c.classList.toggle('is-on', i === bay && settled));
+    const bay = Math.round((t * 9) / 100) - 1; // card nearest the middle of the screen
+    const on = bay >= 0 && bay < 8 ? bay : -1;
+    hls.forEach((h, i) => h.classList.toggle('is-on', i === on));
     hx.textContent = pad(cam.x * 10, 4);
     hy.textContent = pad(cam.y * 10, 4);
-    hb.textContent = pad(bay + 1, 2);
+    hb.textContent = pad(on + 1, 2);
     hp.textContent = pad(t, 3);
     bar.style.width = `${t}%`;
-    cue.style.opacity = t < 3 ? '1' : '0';
-
-    // the card sits beside the pin; it flips to the other side near the right edge
-    if (bay >= 0 && settled && window.innerWidth >= 700) {
-      const box = frame.getBoundingClientRect();
-      const pt = new DOMPoint(pinXY[bay][0], pinXY[bay][1]).matrixTransform(world.getScreenCTM());
-      const x = pt.x - box.left;
-      const y = pt.y - box.top;
-      const card = cards[bay];
-      const flip = x > box.width * 0.55;
-      const cx = flip ? x - card.offsetWidth - 28 : x + 28;
-      const cy = Math.min(Math.max(y - card.offsetHeight / 2, 36), box.height - card.offsetHeight - 36);
-      card.style.transform = `translate(${cx}px, ${cy}px)`;
-    }
   };
   tl.eventCallback('onUpdate', update);
-  window.addEventListener('resize', update, { passive: true });
-
   ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', scrub: 0.5, animation: tl });
+
+  window.addEventListener('resize', () => { measure(); place(); }, { passive: true });
   place();
   update();
 }

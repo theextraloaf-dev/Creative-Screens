@@ -85,7 +85,8 @@
     "lead": "One workshop, eight trades. Scroll through the floor.",
     "scroll": "[Scroll to continue]",
     "bay": "Bay",
-    "quote": "Get a quote"
+    "quote": "Get a quote",
+    "outro": "Everything under one roof."
   },
   "sequence": {
     "title": "From artwork to finished vehicle",

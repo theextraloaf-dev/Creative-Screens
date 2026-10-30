@@ -42,6 +42,9 @@ const wa = whatsappHref(site.whatsapp, m.wa.general);
     <p class="hero__cue eyebrow" aria-hidden="true"><span>{m.numbers.scroll}</span><i></i></p>
   </section>
 
+  <!-- What we make: the workshop builds itself behind the service cards, right after the hero -->
+  <ServiceList locale={locale} />
+
   <div data-story>
     {m.story.chapters.map((c, i) => (
       <section class="chapter" data-chapter={i + 1} aria-labelledby={`ch-${i}`}>
@@ -59,7 +62,6 @@ const wa = whatsappHref(site.whatsapp, m.wa.general);
   <Stage locale={locale} />
   <Numbers locale={locale} />
   <Why locale={locale} />
-  <ServiceList locale={locale} />
 
   <section class="section cta" id="quote" aria-labelledby="quote-title">
     <div class="wrap cta__box">
