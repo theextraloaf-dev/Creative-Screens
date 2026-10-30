@@ -40,12 +40,15 @@ const pillArt = 'M114 185 H146 L118 255 H86 Z M166 185 H182 L154 255 H138 Z';
           data-dy={dy}
           data-sq-start={sqStart}
           data-sq-end={sqEnd}
+          data-car-x={carX}
           data-rtl={rtl ? '1' : '0'}>
           <defs>
             <clipPath id={`${id}-pill`}><path d={pill}></path></clipPath>
             <clipPath id={`${id}-ink`}><rect class="ink-rect" x="55" y="175" width="190" height="90"></rect></clipPath>
             <filter id={`${id}-soft`} x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="6"></feGaussianBlur></filter>
           </defs>
+
+          <g class="world">
 
           <!-- ground -->
           <ellipse cx={carX + 405} cy="352" rx="330" ry="14" fill="#111" opacity="0.09"></ellipse>
@@ -61,6 +64,8 @@ const pillArt = 'M114 185 H146 L118 255 H86 Z M166 185 H182 L154 255 H138 Z';
             <rect x="312" y="234" width="174" height="62" rx="8" fill="none" stroke="#111" stroke-opacity="0.25" stroke-dasharray="5 6" stroke-width="2"></rect>
             <circle cx="215" cy="302" r="40" fill="#111"></circle><circle cx="215" cy="302" r="16" fill="#e3e0d8" stroke="none"></circle>
             <circle cx="600" cy="302" r="40" fill="#111"></circle><circle cx="600" cy="302" r="16" fill="#e3e0d8" stroke="none"></circle>
+            <path class="spoke" data-wx="215" d="M215 290 V314 M203 302 H227" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none"></path>
+            <path class="spoke" data-wx="600" d="M600 290 V314 M588 302 H612" stroke="#111" stroke-width="3" stroke-linecap="round" fill="none"></path>
 
             <!-- Final applied frame: shown when motion is off -->
             <g class="static-only" transform="translate(271.5 78) scale(0.85)" stroke="none">
@@ -93,6 +98,21 @@ const pillArt = 'M114 185 H146 L118 255 H86 Z M166 185 H182 L154 255 H138 Z';
             <!-- waste vinyl with the shape cut out, peels away in the Cut beat -->
             <path class="waste" fill-rule="evenodd" fill="#fff" fill-opacity="0.92" stroke="#e3e0d8" stroke-width="2"
               d={`M26 116 H286 V326 H26 Z ${pill}`}></path>
+            <!-- colour check chips (top band) and print registration ticks (bottom band): ephemeral, fade before the cut -->
+            <g class="anim-only chips" opacity="0">
+              {[['#c8f31d', 62], ['#111111', 112], ['#e8432a', 162], ['#ffffff', 212]].map(([c, x]) => (
+                <g class="chip" opacity="0">
+                  <circle cx={x} cy="146" r="12" fill={c} stroke="#111" stroke-width="2"></circle>
+                  <path class="tick" d={`M${Number(x) - 5} 146 L${Number(x) - 1} 150 L${Number(x) + 6} 141`} pathLength="1" fill="none" stroke={c === '#111111' ? '#fff' : '#111'} stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1" stroke-dashoffset="1"></path>
+                </g>
+              ))}
+            </g>
+            <g class="anim-only regs" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round">
+              {[70, 150, 230].map((x) => (
+                <g class="reg" opacity="0.25"><circle cx={x} cy="296" r="7"></circle><path d={`M${x - 11} 296 H${x + 11} M${x} 285 V307`}></path></g>
+              ))}
+            </g>
+            <circle class="knife" r="7" cx="0" cy="0" fill="#e8432a" stroke="#fff" stroke-width="2" opacity="0"></circle>
             <!-- crop marks -->
             <g stroke="#111" stroke-width="2" fill="none">
               <path d="M16 106 H34 M16 106 V124"></path><path d="M296 106 H278 M296 106 V124"></path>
@@ -107,6 +127,7 @@ const pillArt = 'M114 185 H146 L118 255 H86 Z M166 185 H182 L154 255 H138 Z';
           <g class="anim-only squeegee" opacity="0">
             <rect x={sqStart - 6} y="226" width="12" height="76" rx="5" fill="#111"></rect>
             <rect x={sqStart - 6} y="226" width="12" height="9" rx="4" fill="#c8f31d"></rect>
+          </g>
           </g>
         </svg>
         <ul class="stage__callouts" data-callouts aria-hidden="true">
