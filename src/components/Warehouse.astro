@@ -1,0 +1,145 @@
+---
+/* Fixed canvas behind the home page: the 3D print works the scroll flies through (see src/scripts/warehouse.js),
+   framed as a drawing sheet: border, registration marks and a title block that changes per station.
+   Hidden when motion is off or WebGL is unavailable; the chapters read fine as plain text without it. */
+import { messages, type Locale } from '../i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const m = messages(locale);
+const w = m.wh, sh = m.sheet;
+const disc = w.disc as Record<string, string>;
+const items = [['brief', w.brief], ['artwork', w.artwork], ['dimensions', w.dimensions], ['press', w.press], ['cmyk', w.cmyk], ['printer', w.printer], ['roll', w.roll],
+  ['dimW', 'W'], ['laminator', w.laminator], ['finishing', w.finishing], ['applied', w.applied], ['dimL', 'L'], ['dock', w.dock]];
+---
+
+<div class="wh" data-warehouse data-station="0" aria-hidden="true">
+  <canvas></canvas>
+  <nav class="stations" aria-label={sh.station}>
+    {sh.stations.map((s, i) => <a href={`#ch-${i}`}><span>0{i + 1}</span><span>{s}</span></a>)}
+  </nav>
+  <div class="hud" dir="ltr" aria-hidden="true">
+    <span class="hud__n">{sh.stations.map((_, i) => <b data-st={i}>0{i + 1}</b>)}</span>
+    <span class="hud__bar">{sh.stations.map((_, i) => <i style={`--i:${i}`}><u></u></i>)}</span>
+    <span class="hud__f"><b data-found>0</b>/{items.length - 2} {w.of}</span>
+  </div>
+  <div class="sheet">
+    <i class="reg reg--tl"></i><i class="reg reg--tr"></i><i class="reg reg--bl"></i><i class="reg reg--br"></i>
+    <div class="tb">
+      <p class="tb__brand">{sh.company}</p>
+      <dl>
+        <div><dt>{sh.drawing}</dt><dd>{sh.title}</dd></div>
+        <div><dt>{sh.no}</dt><dd class="ltr">CS-PW-01</dd></div>
+        <div><dt>{sh.scale}</dt><dd>{sh.nts}</dd></div>
+        <div><dt>{sh.station}</dt><dd>{sh.stations.map((s, i) => <span data-st={i}>{s}</span>)}</dd></div>
+        <div><dt>{sh.sheetLabel}</dt><dd class="ltr">{sh.stations.map((_, i) => <span data-st={i}>{i + 1} / 4</span>)}</dd></div>
+      </dl>
+    </div>
+  </div>
+  <ul class="wh__callouts">
+    {items.map(([k, t]) => <li data-co={k}><span class="co"><i></i><b><span class="co__t">{t}</span><span class="co__h">{w.hold}</span><span class="co__d">{disc[k] ?? ''}</span><span class="co__bar"></span></b></span></li>)}
+  </ul>
+</div>
+
+<style>
+  .wh { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity 0.7s var(--ease-out); }
+  .wh:global(.is-on):global(.is-ready) { opacity: 1; }
+  .wh:global(.is-off) { display: none; }
+  :global(html:not(.motion)) .wh { display: none; }
+  canvas { width: 100%; height: 100%; display: block; }
+  /* paper grain over the drawing (static, no blur) */
+  .wh::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.55; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3 0 0 0 0 .3 0 0 0 0 .27 0 0 0 1.1 -.42'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); }
+
+  /* clean title block (white card, black text); no frame or ruler ticks */
+  .sheet { position: absolute; inset: 0; }
+  .reg { display: none; }
+  .tb {
+    display: none; position: absolute; inset-block-end: 1.25rem; inset-inline-end: 1.25rem; min-width: 14.5rem;
+    background: var(--white); color: var(--ink); box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.4);
+    font-family: var(--font-mono); font-size: 0.68rem; line-height: 1.55; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .tb::before, .tb::after { content: ''; position: absolute; inset-block: 0; width: 7px; border-block: 1px solid var(--ink); }
+  .tb::before { inset-inline-start: 0; border-inline-start: 1px solid var(--ink); }
+  .tb::after { inset-inline-end: 0; border-inline-end: 1px solid var(--ink); }
+  .tb__brand { padding: 0.55rem 0.9rem 0.35rem; font-family: var(--font-display); font-weight: 600; font-size: 0.78rem; text-transform: none; letter-spacing: 0; }
+  .tb dl { margin: 0; padding: 0 0.9rem 0.6rem; }
+  .tb dl > div { display: grid; grid-template-columns: 4.4rem 1fr; padding-block: 0.12rem; }
+  .tb dt { opacity: 0.5; }
+  .tb dd { margin: 0; }
+  .tb [data-st] { display: none; }
+  .wh[data-station='0'] [data-st='0'], .wh[data-station='1'] [data-st='1'], .wh[data-station='2'] [data-st='2'], .wh[data-station='3'] [data-st='3'] { display: inline; }
+  @media (min-width: 900px) { .tb { display: block; } .stations { display: grid; } }
+
+  /* station selector (desktop): white cards, the active one black, like a floor selector */
+  .stations { display: none; position: absolute; inset-block-end: 1.25rem; inset-inline-start: 1.25rem; gap: 0.35rem; pointer-events: auto; min-width: 15rem; }
+  .stations a {
+    display: grid; grid-template-columns: 1.9rem 1fr; align-items: baseline; padding: 0.5rem 0.8rem; background: var(--white); color: var(--ink); text-decoration: none;
+    font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; transition: background 0.25s, color 0.25s;
+  }
+  .stations a span:first-child { opacity: 0.5; }
+  .stations a:hover { background: var(--paper-2); }
+  .wh[data-station='0'] .stations a:nth-child(1), .wh[data-station='1'] .stations a:nth-child(2), .wh[data-station='2'] .stations a:nth-child(3), .wh[data-station='3'] .stations a:nth-child(4) { background: var(--ink); color: var(--white); }
+
+  /* HUD (nocturnaldream-style corner): chapter number, one segment per station, found counter. Blended by difference so it reads on any ground. */
+  .wh { --pct: 0; }
+  .hud { position: absolute; inset-block-start: 5.2rem; inset-inline-end: 1.25rem; display: none; align-items: center; gap: 0.8rem; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase; color: #f1f4f6; mix-blend-mode: difference; }
+  .hud__n b { display: none; font-weight: 400; font-size: 1rem; }
+  .wh[data-station='0'] .hud__n [data-st='0'], .wh[data-station='1'] .hud__n [data-st='1'], .wh[data-station='2'] .hud__n [data-st='2'], .wh[data-station='3'] .hud__n [data-st='3'] { display: inline; }
+  .hud__bar { display: flex; gap: 2px; width: 9rem; height: 7px; }
+  .hud__bar i { position: relative; flex: 1; background: rgba(241, 244, 246, 0.24); }
+  .hud__bar u { position: absolute; inset: 0 auto 0 0; background: currentColor; width: clamp(0%, calc((var(--pct) - 25 * var(--i)) * 4%), 100%); }
+  .hud__f { opacity: 0.85; }
+  @media (min-width: 900px) { .hud { display: flex; } }
+
+  /* callouts: lime "+" hotspots with a pulse ring, white label chips with an arrow */
+  .wh__callouts { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; overflow: hidden; }
+  .wh__callouts li { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity 0.35s var(--ease-out); will-change: transform; }
+  .wh__callouts li:global(.is-on) { opacity: 1; pointer-events: auto; touch-action: pan-y; }
+  .wh__callouts li[data-co='dimW'], .wh__callouts li[data-co='dimL'] { display: none; }   /* bare W / L chips read as noise; the dimension lines stay */
+  .co { direction: ltr; display: flex; align-items: center; gap: 0.5rem; transform: translate(-5px, -50%); white-space: nowrap; font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink); }
+  .co i { position: relative; width: 18px; height: 18px; border-radius: 50%; background: var(--lime); border: 1px solid var(--ink); flex: none; }
+  .co i::before, .co i::after { content: ''; position: absolute; inset: 50% 4px auto; height: 1.5px; margin-top: -0.75px; background: var(--ink); }
+  .co i::after { inset: 4px auto 4px 50%; width: 1.5px; height: auto; margin: 0 0 0 -0.75px; }
+  :global(html.motion) .co i { animation: hs 2.4s var(--ease-out) infinite; }
+  @keyframes hs { 0% { box-shadow: 0 0 0 0 rgba(187, 212, 64, 0.7); } 70%, 100% { box-shadow: 0 0 0 11px rgba(187, 212, 64, 0); } }
+  .co b { position: relative; display: grid; gap: 0.15rem; max-width: 15rem; white-space: normal; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .co__t::after { content: ' \2197'; opacity: 0.6; }
+  .co__h { display: none; font-size: 0.6rem; opacity: 0.55; }
+  .wh__callouts li:hover .co__h, li:global(.is-holding) .co__h { display: block; }
+  .co__d { display: none; font-size: 0.68rem; line-height: 1.45; text-transform: none; letter-spacing: 0; opacity: 0.85; }
+  .co__bar { position: absolute; inset: auto 0 0 0; height: 2px; width: 0; background: var(--lime); }
+  li:global(.is-found) .co__h { display: none; }
+  li:global(.is-found) .co__d { display: block; }
+  li:global(.is-found) .co b { border-inline-start: 2px solid var(--lime); }
+  li:global(.is-holding) .co i { transform: scale(1.25); }
+  .co b { unicode-bidi: plaintext; font-weight: 400; background: var(--white); color: var(--ink); padding: 0.28rem 0.6rem; box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.35); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; }
+  li:global(.is-flip) .co { flex-direction: row-reverse; transform: translate(calc(-100% + 5px), -50%); }
+</style>
+
+<script>
+  /* press and hold a hotspot for one second to discover it (nocturnaldream-style); found parts stay open */
+  const HOLD_MS = 1000;
+  const root = document.querySelector<HTMLElement>('[data-warehouse]');
+  const countEl = root?.querySelector<HTMLElement>('[data-found]');
+  const found = new Set<string>();
+  root?.querySelectorAll<HTMLElement>('.wh__callouts li').forEach((li) => {
+    const key = li.dataset.co ?? '';
+    if (key === 'dimW' || key === 'dimL') return;
+    const bar = li.querySelector<HTMLElement>('.co__bar');
+    let raf = 0, t0 = 0;
+    const stop = () => { cancelAnimationFrame(raf); li.classList.remove('is-holding'); if (bar && !found.has(key)) bar.style.width = '0'; };
+    const tick = (now: number) => {
+      const k = Math.min(1, (now - t0) / HOLD_MS);
+      if (bar) bar.style.width = k * 100 + '%';
+      if (k >= 1) {
+        li.classList.remove('is-holding'); li.classList.add('is-found'); found.add(key);
+        if (countEl) countEl.textContent = String(found.size);
+        if (bar) bar.style.width = '0';
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    li.addEventListener('pointerdown', (e) => { if (found.has(key)) return; e.preventDefault(); li.classList.add('is-holding'); t0 = performance.now(); raf = requestAnimationFrame(tick); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => li.addEventListener(ev, stop));
+  });
+</script>

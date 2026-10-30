@@ -1,0 +1,84 @@
+---
+import { messages, whatsappHref, type Locale } from '../i18n';
+import { site } from '../config/site';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const m = messages(locale);
+const wa = whatsappHref(site.whatsapp, m.wa.general);
+---
+
+<!-- Phones: bottom bar after the hero. Desktop: floating WhatsApp button. -->
+<div class="cta-bar" data-cta-bar>
+  <a class="btn" href="#quote">{m.cta.quote}</a>
+  <a class="btn btn--ghost" href={wa} rel="noopener" target="_blank">{m.cta.whatsapp}</a>
+</div>
+<a class="wa-float" href={wa} rel="noopener" target="_blank" aria-label={m.cta.whatsapp}>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5Z" />
+    <path d="M9 9.2c.3 2.6 2.4 4.9 5.8 5.8l1.4-1.5-2.1-1.1-.9.8c-1-.5-1.8-1.4-2.2-2.3l.8-.9-1.1-2.1Z" fill="currentColor" stroke="none" />
+  </svg>
+</a>
+
+<style>
+  .cta-bar {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 0.5rem;
+    padding: 0.6rem var(--gutter) calc(0.6rem + env(safe-area-inset-bottom));
+    background: var(--paper);
+    border-block-start: 1px solid var(--hairline);
+    transition: transform 0.4s var(--ease-out);
+  }
+  :global(.js) .cta-bar {
+    transform: translateY(110%);
+  }
+  :global(.js) .cta-bar.is-on {
+    transform: none;
+  }
+  .cta-bar .btn {
+    min-height: 46px;
+    padding-inline: 0.75rem;
+    font-size: var(--step--1);
+  }
+  .wa-float {
+    display: none;
+    position: fixed;
+    inset-inline-end: 1.25rem;
+    inset-block-end: 1.25rem;
+    z-index: 40;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    place-items: center;
+    background: var(--navy);
+    border: 1px solid var(--lime);
+    color: var(--lime);
+    box-shadow: 0 10px 28px -10px rgba(17, 17, 17, 0.55);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .wa-float:hover {
+    transform: scale(1.06);
+  }
+  @media (min-width: 900px) {
+    .cta-bar {
+      display: none;
+    }
+    .wa-float {
+      display: grid;
+    }
+  }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-cta-bar]');
+  if (bar) {
+    const update = () => bar.classList.toggle('is-on', window.scrollY > window.innerHeight * 0.6);
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+</script>

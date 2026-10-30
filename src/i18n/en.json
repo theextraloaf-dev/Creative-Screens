@@ -1,0 +1,279 @@
+{
+  "meta": {
+    "homeTitle": "Creative Screens | Printing, signage and LED screens in Muscat",
+    "homeDesc": "Printing, branding, signage, LED screens, gifts and acrylic, produced in-house in Muscat, Oman. Request a quote.",
+    "labTitle": "Motion lab | Creative Screens"
+  },
+  "nav": {
+    "services": "Services",
+    "work": "Our Work",
+    "about": "About us",
+    "contact": "Contact us",
+    "menu": "Menu",
+    "close": "Close",
+    "primary": "Main navigation"
+  },
+  "cta": {
+    "quote": "Get a Quote",
+    "whatsapp": "WhatsApp us",
+    "skip": "Skip to quote",
+    "quoteTitle": "Tell us what you need. We'll send a quote."
+  },
+  "lang": {
+    "label": "العربية",
+    "aria": "Switch to Arabic"
+  },
+  "hero": {
+    "eyebrow": "Muscat, Oman",
+    "title": "Branding, signage and screens, made {in-house} in Muscat.",
+    "lead": "Tell us what you need. We'll send a quote.",
+    "proof": "In-house production, one team from design to installation."
+  },
+  "services": {
+    "title": "What we make",
+    "items": [
+      {
+        "slug": "print-stationery",
+        "name": "Print & Stationery"
+      },
+      {
+        "slug": "signage",
+        "name": "Signage"
+      },
+      {
+        "slug": "graphics",
+        "name": "Window, Wall, Floor & Vehicle Graphics"
+      },
+      {
+        "slug": "flags-banners",
+        "name": "Flags & Banners"
+      },
+      {
+        "slug": "exhibitions-events",
+        "name": "Exhibitions & Events"
+      },
+      {
+        "slug": "led-screens",
+        "name": "LED Screens"
+      },
+      {
+        "slug": "gifts-apparel",
+        "name": "Gifts & Apparel"
+      },
+      {
+        "slug": "acrylic-awards",
+        "name": "Acrylic & Awards"
+      }
+    ]
+  },
+  "sequence": {
+    "title": "From artwork to finished vehicle",
+    "concept": "Concept illustration, not client work",
+    "static": "How a vehicle graphic is made",
+    "steps": [
+      {
+        "title": "Design",
+        "caption": "Your artwork, checked and prepared."
+      },
+      {
+        "title": "Print",
+        "caption": "Printed in-house, colour-matched."
+      },
+      {
+        "title": "Cut",
+        "caption": "Cut precisely to shape."
+      },
+      {
+        "title": "Apply",
+        "caption": "Applied smoothly, bubble-free."
+      }
+    ],
+    "proof": "Before / After: client photo pending",
+    "cta": "Get a quote for vehicle branding"
+  },
+  "anatomy": {
+    "hood": "Hood",
+    "windshield": "Windshield",
+    "roof": "Roof",
+    "glass": "Side glass",
+    "door": "Door panel",
+    "wheel": "Wheel",
+    "bumper": "Bumper",
+    "boot": "Boot lid",
+    "applied": "Applied graphic"
+  },
+  "layers": {
+    "backing": "Backing paper",
+    "adhesive": "Adhesive",
+    "vinyl": "Printed vinyl",
+    "laminate": "Overlaminate"
+  },
+  "stage3d": {
+    "note": "Generic sedan, illustrative. Layer names are placeholders."
+  },
+  "story": {
+    "chapters": [
+      {
+        "n": "01",
+        "title": "A brief comes",
+        "text": "You tell us what you need: a vehicle, a shopfront, an event, a run of gifts."
+      },
+      {
+        "n": "02",
+        "title": "We analyze",
+        "text": "We check the artwork, sizes and materials, and send you a clear quote."
+      },
+      {
+        "n": "03",
+        "title": "We print",
+        "text": "Large-format printing, cutting and finishing on our own production floor."
+      },
+      {
+        "n": "04",
+        "title": "We deliver",
+        "text": "Delivered or installed, ready to use."
+      }
+    ]
+  },
+  "wh": {
+    "brief": "Brief",
+    "artwork": "Artwork check",
+    "dimensions": "Dimensions",
+    "printer": "Wide-format printer",
+    "roll": "Vinyl roll",
+    "cmyk": "CMYK ink units",
+    "finishing": "Cutting table",
+    "applied": "Applied graphic",
+    "dock": "Loading dock",
+    "press": "Offset press",
+    "laminator": "Laminator",
+    "hold": "Press and hold",
+    "found": "Found",
+    "of": "found",
+    "disc": {
+      "brief": "Every job starts as a brief: what, how many, where, by when.",
+      "artwork": "Artwork is checked for size, resolution and colour before anything is printed.",
+      "dimensions": "Sizes are confirmed on the drawing so the quote and the print match.",
+      "press": "The offset press prints stationery and brochures in volume.",
+      "cmyk": "Cyan, magenta, yellow and black: the four inks behind every colour.",
+      "printer": "The wide-format printer handles vinyl, banners and large graphics.",
+      "roll": "Vinyl on the roll, ready to be printed and cut to shape.",
+      "laminator": "Lamination protects the print from scuffs and sun.",
+      "finishing": "The cutting table trims each print to its outline.",
+      "applied": "The finished graphic, applied. Concept art, not client work.",
+      "dock": "Checked, packed and out the door: delivered or installed."
+    }
+  },
+  "sheet": {
+    "company": "Creative Screens",
+    "drawing": "Drawing",
+    "title": "Print works",
+    "no": "No.",
+    "scale": "Scale",
+    "nts": "NTS",
+    "station": "Station",
+    "sheetLabel": "Sheet",
+    "stations": [
+      "Brief intake",
+      "Analysis",
+      "Printing",
+      "Delivery"
+    ]
+  },
+  "loader": {
+    "label": "years of experience"
+  },
+  "numbers": {
+    "eyebrow": "In numbers",
+    "title": "Done so far",
+    "scroll": "Scroll",
+    "note": "Figures marked * are placeholders until Creative Screens confirms them.",
+    "items": [
+      {
+        "v": 21,
+        "l": "Years of experience"
+      },
+      {
+        "v": 1200,
+        "l": "Projects delivered *"
+      },
+      {
+        "v": 350,
+        "l": "Vehicles branded *"
+      },
+      {
+        "v": 480,
+        "l": "Signs installed *"
+      },
+      {
+        "v": 260,
+        "l": "Events supported *"
+      }
+    ]
+  },
+  "process": {
+    "title": "How an order works",
+    "steps": [
+      "Enquiry",
+      "Quotation",
+      "Mock-up",
+      "Production",
+      "Delivery and installation"
+    ]
+  },
+  "footer": {
+    "city": "Muscat, Oman",
+    "hours": "Working days and hours",
+    "hoursValue": "Saturday to Thursday (to confirm)",
+    "rights": "All rights reserved",
+    "privacy": "Privacy policy",
+    "phone": "Phone",
+    "email": "Email"
+  },
+  "wa": {
+    "general": "Hello, I'd like to ask about your services."
+  },
+  "placeholder": "Photo placeholder",
+  "lab": {
+    "title": "Motion lab",
+    "intro": "Every motion primitive in one place, in this language. Scroll to see each one play. Not indexed.",
+    "type": "Type and colour",
+    "buttons": "Buttons",
+    "reveal": "Reveal (rise, fade, inline)",
+    "text": "Text lines",
+    "blur": "Blur-in (short statements only)",
+    "clip": "Image clip reveal",
+    "count": "Count-up",
+    "stage": "Car sticker stage (skeleton)",
+    "years": "Years (placeholder, to confirm)",
+    "clients": "Clients (placeholder)",
+    "projects": "Projects (placeholder)",
+    "textSample": "Every job runs through our own production floor, from artwork to installation.",
+    "blurSample": "Made in Muscat, by one team.",
+    "reduced": "If your device is set to reduce motion, everything below shows in its final state."
+  },
+  "why": {
+    "eyebrow": "Why us",
+    "title": "Built around your brief",
+    "items": [
+      {
+        "stat": "21",
+        "unit": "yrs",
+        "t": "Printing in Muscat",
+        "d": "Two decades of jobs from a single banner to a full fleet."
+      },
+      {
+        "stat": "8",
+        "unit": "services",
+        "t": "One team, one quote",
+        "d": "Print, signage, graphics, LED and gifts priced together."
+      },
+      {
+        "stat": "1",
+        "unit": "roof",
+        "t": "Brief to installation",
+        "d": "We design, print, finish and fit, so nothing gets lost between suppliers."
+      }
+    ]
+  }
+}
