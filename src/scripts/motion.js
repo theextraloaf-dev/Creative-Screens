@@ -24,6 +24,9 @@ function init() {
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
+  // Keep Lenis's scroll limit in sync whenever ScrollTrigger recalculates (fonts, images, the 3D
+  // warehouse scene and the car stage all resize the page after first paint).
+  ScrollTrigger.addEventListener('refresh', () => lenis.resize());
 
   const done = (el) => {
     el.classList.add('is-in');
