@@ -47,13 +47,22 @@ html[lang='ar'] .sc__name { font-weight: 700; line-height: 1.4; }
 .sd .btn { justify-self: start; margin-block-start: 0.6rem; }
 @media (min-width: 820px) { .sd__in { grid-template-columns: 1fr 1fr; } .sd__art { display: grid; align-items: center; } .sd__art img { max-height: none; } }
 
-/* real product photos in a service's detail view */
-.sd__photos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
-.sd__photos li { background: #fff; aspect-ratio: 1; }
+/* real product photos in a service's detail view: a smooth, swipeable strip instead of a tall
+   grid, so browsing many photos never fights the modal's own vertical scroll. */
+.sd__photos {
+  list-style: none; margin: 0; padding-block: 0.2rem; display: flex; gap: 0.6rem;
+  overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: 0.2rem;
+  -webkit-overflow-scrolling: touch; overscroll-behavior-inline: contain; scrollbar-width: none;
+}
+.sd__photos::-webkit-scrollbar { display: none; }
+.sd__photos li {
+  background: #fff; flex: 0 0 auto; width: 104px; aspect-ratio: 1; scroll-snap-align: start;
+  border: 1px solid var(--hairline); border-radius: 10px; overflow: hidden;
+}
 .sd__photos img { width: 100%; height: 100%; object-fit: contain; display: block; }
-@media (max-width: 480px) { .sd__photos { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 560px) { .sd__photos li { width: 124px; } }
 
 /* one or two photos: show them wide instead of as small tiles */
-.sd__photos--few { grid-template-columns: 1fr; }
-.sd__photos--few li { aspect-ratio: 3 / 2; }
+.sd__photos--few { overflow-x: visible; }
+.sd__photos--few li { width: auto; flex-basis: 100%; aspect-ratio: 3 / 2; scroll-snap-align: none; border: none; border-radius: var(--radius); }
 .sd__photos--few img { object-fit: cover; }
