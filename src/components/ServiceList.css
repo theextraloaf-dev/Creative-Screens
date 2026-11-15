@@ -50,11 +50,17 @@ html[lang='ar'] .sc__name { font-weight: 700; line-height: 1.4; }
 /* real product photos in a service's detail view: a smooth, swipeable strip instead of a tall
    grid, so browsing many photos never fights the modal's own vertical scroll. */
 .sd__photos {
-  list-style: none; margin: 0; padding-block: 0.2rem; display: flex; gap: 0.6rem;
+  list-style: none; margin: 0; padding-block: 0.2rem 0.6rem; display: flex; gap: 0.6rem;
   overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: 0.2rem;
-  -webkit-overflow-scrolling: touch; overscroll-behavior-inline: contain; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; overscroll-behavior-inline: contain;
+  scrollbar-width: thin; scrollbar-color: var(--grey) transparent;
+  /* a right-edge fade hints there is more to scroll to, not just a dead end */
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
 }
-.sd__photos::-webkit-scrollbar { display: none; }
+.sd__photos::-webkit-scrollbar { height: 6px; }
+.sd__photos::-webkit-scrollbar-thumb { background: var(--hairline); border-radius: 999px; }
+.sd__photos::-webkit-scrollbar-track { background: transparent; }
 .sd__photos li {
   background: #fff; flex: 0 0 auto; width: 104px; aspect-ratio: 1; scroll-snap-align: start;
   border: 1px solid var(--hairline); border-radius: 10px; overflow: hidden;
@@ -63,6 +69,6 @@ html[lang='ar'] .sc__name { font-weight: 700; line-height: 1.4; }
 @media (min-width: 560px) { .sd__photos li { width: 124px; } }
 
 /* one or two photos: show them wide instead of as small tiles */
-.sd__photos--few { overflow-x: visible; }
+.sd__photos--few { overflow-x: visible; mask-image: none; -webkit-mask-image: none; }
 .sd__photos--few li { width: auto; flex-basis: 100%; aspect-ratio: 3 / 2; scroll-snap-align: none; border: none; border-radius: var(--radius); }
 .sd__photos--few img { object-fit: cover; }
