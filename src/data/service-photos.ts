@@ -9,5 +9,8 @@ export const servicePhotos: Record<string, string[]> = {
     'notebook', 'notebook-spiral', 'speaker', 'earbuds', 'travel-adapter', 'uae-flag',
     'tumbler-glass', 'tumbler-navy', 'tumbler-red', 'bottle-blue', 'mug-pink',
     'mug-grey', 'mug-cork', 'bottle-aluminium', 'bottle-lavender',
+    'tumbler-duo', 'tumbler-black-cork', 'tumbler-pink-handle', 'tumbler-bronze-straw',
+    'tumbler-blue', 'mug-black-cork', 'bottle-aluminium-black', 'bottle-aluminium-silver',
+    'bottle-olive', 'bottle-forest-loop', 'bottle-temp-display',
   ].map((n) => `/gifts/${n}.webp`),
 };
