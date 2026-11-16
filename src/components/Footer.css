@@ -55,6 +55,9 @@
   .ftr__logo { display: block; height: 15px; aspect-ratio: 997 / 66; background: var(--lime); -webkit-mask: url('/img/logo-wordmark.svg') no-repeat left center / contain; mask: url('/img/logo-wordmark.svg') no-repeat left center / contain; }
   .ftr__tag { display: block; margin-block-start: 0.7rem; height: 9px; aspect-ratio: 700 / 37; background: rgba(255, 255, 255, 0.75); -webkit-mask: url('/img/logo-tagline.svg') no-repeat left center / contain; mask: url('/img/logo-tagline.svg') no-repeat left center / contain; }
   .ftr__city { margin-block-start: 0.7rem; }
+  .ftr__socials { list-style: none; margin: 0.6rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .ftr__socials a { color: #b9b6ad; text-decoration: none; font-size: var(--step--1); border: 1px solid #55544f; border-radius: var(--pill); padding: 0.3rem 0.8rem; }
+  .ftr__socials a:hover { color: var(--paper); border-color: var(--lime); }
   .ftr__base {
     margin-block-start: var(--space-5);
     padding-block-start: var(--space-3);

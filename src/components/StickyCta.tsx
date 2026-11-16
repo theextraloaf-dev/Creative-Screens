@@ -1,4 +1,4 @@
-import { messages, whatsappHref, type Locale } from '@/i18n';
+import { hrefFor, messages, whatsappHref, type Locale } from '@/i18n';
 import { site } from '@/config/site';
 import './StickyCta.css';
 
@@ -10,7 +10,7 @@ export function StickyCta({ locale }: { locale: Locale }) {
   return (
     <>
       <div className="cta-bar" data-cta-bar>
-        <a className="btn" href="#quote">{m.cta.quote}</a>
+        <a className="btn" href={`${hrefFor('home', locale)}#quote`}>{m.cta.quote}</a>
         <a className="btn btn--ghost" href={wa} rel="noopener" target="_blank">{m.cta.whatsapp}</a>
       </div>
       <a className="wa-float" href={wa} rel="noopener" target="_blank" aria-label={m.cta.whatsapp}>

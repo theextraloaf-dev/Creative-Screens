@@ -15,6 +15,9 @@ export const otherLocale = (locale: Locale): Locale => (locale === 'ar' ? 'en' :
 export const routes = {
   home: { en: '/', ar: '/ar/' },
   lab: { en: '/lab/', ar: '/ar/lab/' },
+  work: { en: '/work/', ar: '/ar/work/' },
+  about: { en: '/about/', ar: '/ar/about/' },
+  privacy: { en: '/privacy/', ar: '/ar/privacy/' },
 } as const;
 export type RouteKey = keyof typeof routes;
 

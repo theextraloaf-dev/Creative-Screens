@@ -8,13 +8,22 @@ export function Footer({ locale, routeKey }: Props) {
   const m = messages(locale);
   const other = otherLocale(locale);
 
+  const socials = Object.entries(site.socials).filter(([, href]) => href);
+
   return (
     <footer className="ftr" id="contact">
       <div className="wrap ftr__grid">
         <div>
           <span className="ftr__logo" role="img" aria-label={site.name}></span>
           <span className="ftr__tag" aria-hidden="true"></span>
-          <p className="ftr__muted ftr__city">{m.footer.city}</p>
+          <p className="ftr__muted ftr__city">{site.address || m.footer.city}</p>
+          {socials.length > 0 && (
+            <ul className="ftr__socials">
+              {socials.map(([key, href]) => (
+                <li key={key}><a href={href} target="_blank" rel="noopener noreferrer">{key[0].toUpperCase() + key.slice(1)}</a></li>
+              ))}
+            </ul>
+          )}
         </div>
         <dl className="ftr__list">
           <div><dt>{m.footer.phone}</dt><dd><span className="ltr">{site.phoneDisplay}</span></dd></div>
@@ -25,6 +34,7 @@ export function Footer({ locale, routeKey }: Props) {
       </div>
       <div className="wrap ftr__base">
         <span>© {new Date().getFullYear()} {locale === 'ar' ? 'كرييتف سكرينز' : 'Creative Screens'}. {m.footer.rights}.</span>
+        <a className="ftr__muted" href={hrefFor('privacy', locale)}>{m.footer.privacy}</a>
         <span className="ftr__muted">{locale === 'ar' ? 'محتوى مؤقت قيد الإعداد' : 'Staging build: placeholder content'}</span>
       </div>
       <div className="ftr__word" aria-hidden="true" data-reveal data-offset="90">

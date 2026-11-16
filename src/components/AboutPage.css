@@ -1,0 +1,7 @@
+.ap { position: relative; z-index: 1; background: var(--paper); padding-block-start: calc(var(--header-h) + var(--space-5)); }
+.ap h1 { font-size: var(--step-3); max-width: 28ch; margin-block: 0.5rem var(--space-2); }
+.ap__notice { color: var(--grey); max-width: 48ch; margin-block-end: var(--space-4); font-style: italic; }
+.ap__sections { display: grid; gap: var(--space-3); max-width: 60ch; }
+.ap__block { border-block-start: 1px solid var(--hairline); padding-block-start: var(--space-2); }
+.ap__block h2 { font-size: var(--step-1); margin-block-end: 0.4rem; }
+.ap__block p { color: var(--grey); }

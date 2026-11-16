@@ -1,7 +1,11 @@
 /* "Done so far": big condensed numerals in vertical hairline columns (after Hello World's "Done so far").
-   Only "21 years" is confirmed by the client; the other figures are PLACEHOLDERS, marked with * on the page. */
+   The numbers themselves live in src/data/company-stats.ts (one place, not per-language); this file only
+   supplies the translated labels, in the same order. Only "years" is confirmed by the client. */
 import { messages, type Locale } from '@/i18n';
+import { companyStats } from '@/data/company-stats';
 import './Numbers.css';
+
+const order = ['years', 'projects', 'vehicles', 'signs', 'events'] as const;
 
 export function Numbers({ locale }: { locale: Locale }) {
   const n = messages(locale).numbers;
@@ -19,13 +23,16 @@ export function Numbers({ locale }: { locale: Locale }) {
           </h2>
         </div>
         <ol className="num__cols">
-          {n.items.map((it, i) => (
-            <li key={it.l} data-reveal data-delay={i * 0.08}>
-              <span className="num__idx ltr">0{i + 1}</span>
-              <span className="num__val ltr" data-count={it.v}>{it.v}</span>
-              <span className="num__lab">{it.l}</span>
-            </li>
-          ))}
+          {n.items.map((it, i) => {
+            const stat = companyStats[order[i]];
+            return (
+              <li key={it.l} data-reveal data-delay={i * 0.08}>
+                <span className="num__idx ltr">0{i + 1}</span>
+                <span className="num__val ltr" data-count={stat.value}>{stat.value}</span>
+                <span className="num__lab">{it.l}</span>
+              </li>
+            );
+          })}
         </ol>
         <p className="num__note">{n.note}</p>
       </div>

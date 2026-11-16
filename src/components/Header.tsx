@@ -8,11 +8,11 @@ export function Header({ locale, routeKey }: Props) {
   const m = messages(locale);
   const other = otherLocale(locale);
   const home = hrefFor('home', locale);
-  // Pages that do not exist yet render as muted text instead of dead links.
+  const quoteHref = `${home}#quote`;
   const nav: { label: string; href: string | null }[] = [
     { label: m.nav.services, href: `${home}#services` },
-    { label: m.nav.work, href: null },
-    { label: m.nav.about, href: null },
+    { label: m.nav.work, href: hrefFor('work', locale) },
+    { label: m.nav.about, href: hrefFor('about', locale) },
     { label: m.nav.contact, href: '#contact' },
   ];
 
@@ -35,7 +35,7 @@ export function Header({ locale, routeKey }: Props) {
             lang={other}
             aria-label={m.lang.aria}
             data-lang-switch={other}>{m.lang.label}</a>
-          <a className="btn hdr__quote" href="#quote">{m.cta.quote}</a>
+          <a className="btn hdr__quote" href={quoteHref}>{m.cta.quote}</a>
           <button className="hdr__menu" type="button" aria-expanded="false" aria-controls="menu-panel" data-menu-toggle>
             <span className="sr-only">{m.nav.menu}</span>
             <span className="hdr__burger" aria-hidden="true"></span>
@@ -47,7 +47,7 @@ export function Header({ locale, routeKey }: Props) {
         <nav aria-label={m.nav.primary}>
           {nav.map((i) => (i.href ? <a key={i.label} href={i.href} data-menu-link>{i.label}</a> : <span key={i.label} className="is-soon">{i.label}</span>))}
         </nav>
-        <a className="btn" href="#quote" data-menu-link>{m.cta.quote}</a>
+        <a className="btn" href={quoteHref} data-menu-link>{m.cta.quote}</a>
       </div>
     </header>
   );

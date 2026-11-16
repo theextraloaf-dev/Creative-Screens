@@ -1,0 +1,9 @@
+.wp { position: relative; z-index: 1; background: var(--paper); padding-block-start: calc(var(--header-h) + var(--space-5)); }
+.wp h1 { font-size: var(--step-3); max-width: 28ch; margin-block: 0.5rem var(--space-2); }
+.wp .lead { color: var(--grey); max-width: 48ch; margin-block-end: var(--space-4); }
+.wp__grid { list-style: none; margin: 0 0 var(--space-4); padding: 0; display: grid; gap: var(--space-2); }
+.wp__ph { min-height: 11rem; aspect-ratio: 4 / 3; }
+.wp__cap { margin-block-start: 0.5rem; font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.06em; }
+html[lang='ar'] .wp__cap { text-transform: none; letter-spacing: 0; font-family: var(--font-body); }
+@media (min-width: 720px) { .wp__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .wp__grid { grid-template-columns: repeat(4, 1fr); } }
