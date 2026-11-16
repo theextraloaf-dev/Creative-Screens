@@ -1318,8 +1318,9 @@
   "pages": {
     "work": {
       "eyebrow": "Our work",
-      "title": "Every category, photos pending.",
-      "lead": "A dedicated page is ready for each category below — once real project photos come in, this becomes the portfolio.",
+      "titleBold": "Eight trades.",
+      "titleMuted": "One workshop. Real project photos are on the way.",
+      "lead": "A dedicated row is ready for each category below — once real project photos come in, this becomes the portfolio.",
       "ph": "Photos pending",
       "cta": "Get a quote"
     },
