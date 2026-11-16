@@ -13,7 +13,7 @@ export function Header({ locale, routeKey }: Props) {
     { label: m.nav.services, href: `${home}#services` },
     { label: m.nav.work, href: hrefFor('work', locale) },
     { label: m.nav.about, href: hrefFor('about', locale) },
-    { label: m.nav.contact, href: '#contact' },
+    { label: m.nav.contact, href: quoteHref },
   ];
 
   return (
