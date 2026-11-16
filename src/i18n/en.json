@@ -3,6 +3,7 @@
     "homeTitle": "Creative Screens | Printing, signage and LED screens in Muscat",
     "homeDesc": "Printing, branding, signage, LED screens, gifts and acrylic, produced in-house in Muscat, Oman. Request a quote.",
     "labTitle": "Motion lab | Creative Screens",
+    "servicesTitle": "Our Services | Creative Screens",
     "workTitle": "Our Work | Creative Screens",
     "aboutTitle": "About Us | Creative Screens",
     "privacyTitle": "Privacy Policy | Creative Screens"
@@ -34,6 +35,7 @@
   },
   "services": {
     "title": "What we make",
+    "viewAll": "See all categories in detail",
     "items": [
       {
         "slug": "print-stationery",
@@ -264,13 +266,17 @@
       {
         "slug": "gifts-apparel",
         "name": "Gifts & Apparel",
-        "line": "Branded mugs, pens, caps and uniforms.",
+        "line": "Drinkware, bags, headwear, tech, office, home and outdoor gifts, plus culture-themed giveaways, branded to order.",
         "machine": "Heat press",
         "makes": [
-          "Mugs",
-          "Pens",
-          "Caps",
-          "Uniforms"
+          "Drinkware",
+          "Bags & Travel",
+          "Headwear",
+          "Technology",
+          "Office & Writing",
+          "Home & Living",
+          "Outdoor & Recreation",
+          "Culture Gifts"
         ],
         "parts": [
           {
@@ -1316,6 +1322,18 @@
     "cta": "Get a quote like this"
   },
   "pages": {
+    "services": {
+      "eyebrow": "What we make",
+      "titleBold": "Eight trades,",
+      "titleMuted": "one workshop in Muscat.",
+      "lead": "Every category we offer. Pick one to see what's inside.",
+      "subLead": "Pick a range to see it",
+      "allLabel": "All categories",
+      "conceptLabel": "Concept illustration — real photos coming soon",
+      "comingSoon": "Product photos for this range are coming soon. Tell us what you need and we'll quote it anyway.",
+      "cta": "Get a quote for this",
+      "bottomCta": "Get a quote"
+    },
     "work": {
       "eyebrow": "Our work",
       "titleBold": "Eight trades.",

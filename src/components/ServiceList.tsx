@@ -3,7 +3,7 @@
    Plates are concept illustrations (GPT line art processed by scripts/plates/make_plate.py). */
 import { serviceFacts } from '@/data/service-facts';
 import { servicePhotos } from '@/data/service-photos';
-import { messages, type Locale } from '@/i18n';
+import { hrefFor, messages, type Locale } from '@/i18n';
 import { ServiceCards, type CardItem } from './ServiceCards';
 import './ServiceList.css';
 
@@ -36,6 +36,7 @@ export function ServiceList({ locale }: { locale: Locale }) {
           <p className="svc__lead" data-reveal>{card.lead}</p>
         </header>
         <ServiceCards items={items} copy={card} />
+        <a className="svc__all" href={hrefFor('services', locale)}>{sv.viewAll} <span className="arrow" aria-hidden="true">→</span></a>
       </div>
     </section>
   );

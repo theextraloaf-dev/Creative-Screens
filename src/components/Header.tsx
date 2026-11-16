@@ -10,7 +10,7 @@ export function Header({ locale, routeKey }: Props) {
   const home = hrefFor('home', locale);
   const quoteHref = `${home}#quote`;
   const nav: { label: string; href: string | null }[] = [
-    { label: m.nav.services, href: `${home}#services` },
+    { label: m.nav.services, href: hrefFor('services', locale) },
     { label: m.nav.work, href: hrefFor('work', locale) },
     { label: m.nav.about, href: hrefFor('about', locale) },
     { label: m.nav.contact, href: quoteHref },

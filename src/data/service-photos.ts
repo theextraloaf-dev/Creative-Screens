@@ -5,11 +5,15 @@ export const servicePhotos: Record<string, string[]> = {
   graphics: ['/services/printer-banner.webp'],
   'led-screens': ['/services/led-building.webp'],
   'gifts-apparel': [
-    // bags & apparel
-    'backpack', 'crossbody-bag', 'pouch', 'cap',
-    // office & tech
-    'notebook', 'notebook-spiral', 'speaker', 'earbuds', 'travel-adapter',
-    // culture
+    // bags & travel
+    'backpack', 'crossbody-bag', 'pouch',
+    // headwear
+    'cap',
+    // technology
+    'speaker', 'earbuds', 'travel-adapter',
+    // office & writing
+    'notebook', 'notebook-spiral',
+    // culture gifts
     'dallah-set', 'uae-flag',
     // tumblers
     'tumbler-glass', 'tumbler-navy', 'tumbler-red', 'tumbler-duo',

@@ -24,6 +24,9 @@ html[lang='ar'] .sc__name { font-weight: 700; line-height: 1.4; }
 .sc:hover .arrow { transform: translateX(calc(4px * var(--dir))); }
 .sc .arrow { display: inline-block; transition: transform var(--dur-ink) var(--ease-out); }
 .sc__note { margin-block-start: var(--space-3); font-family: var(--font-mono); font-size: var(--step--1); color: var(--grey); }
+.svc__all { display: inline-flex; align-items: center; gap: 0.35rem; margin-block-start: var(--space-2); font-weight: 700; }
+.svc__all:hover .arrow { transform: translateX(calc(4px * var(--dir))); }
+.svc__all .arrow { display: inline-block; transition: transform var(--dur-ink) var(--ease-out); }
 
 /* detail view */
 .sd { width: min(100% - 1.5rem, 56rem); max-height: calc(100svh - 2rem); padding: 0; border: 1.5px solid var(--ink); border-radius: 22px; background: var(--white); color: var(--ink); overflow: auto; }
