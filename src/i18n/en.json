@@ -1325,7 +1325,7 @@
     },
     "about": {
       "eyebrow": "About us",
-      "title": "About Creative Screens",
+      "title": "21 years of branding, made {in-house} in Muscat.",
       "intro": [
         "Creative Screens is a trusted partner in corporate gifts and advertising, delivering innovative branding solutions that help businesses connect, engage and grow.",
         "With a strong focus on creativity, quality and timely execution, we provide a wide range of customizable products and branding services tailored to meet diverse business needs.",
@@ -1333,6 +1333,9 @@
       ],
       "vision": { "h": "Vision", "body": "To be a leading branding and visual communication partner, creating impactful experiences for brands across industries." },
       "mission": { "h": "Mission", "body": "To deliver end-to-end branding and display solutions with creativity, quality, and reliability, helping brands stand out, engage better, and grow stronger." },
+      "experienceLabel": "Experience",
+      "experienceValue": "21 years, based in Muscat",
+      "hqLabel": "Headquarters",
       "valuesTitle": "Core values",
       "values": [
         { "h": "Integrity", "body": "Transparency and honesty in every interaction." },
