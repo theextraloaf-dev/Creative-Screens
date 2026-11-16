@@ -1326,11 +1326,22 @@
     "about": {
       "eyebrow": "About us",
       "title": "About Creative Screens",
-      "lead": "This page is a placeholder. Replace this text with the real company story, team and any certifications.",
-      "sections": [
-        { "h": "Our story", "body": "Add the real company story here — when it started, what it does, what makes it different." },
-        { "h": "Our team", "body": "Add a short team introduction or key people here, with photos if available." },
-        { "h": "Certifications", "body": "List any certifications, memberships or awards here, if relevant." }
+      "intro": [
+        "Creative Screens is a trusted partner in corporate gifts and advertising, delivering innovative branding solutions that help businesses connect, engage and grow.",
+        "With a strong focus on creativity, quality and timely execution, we provide a wide range of customizable products and branding services tailored to meet diverse business needs.",
+        "Driven by a passion for brand excellence, Creative Screens turns ideas into impactful solutions that leave a lasting impression."
+      ],
+      "vision": { "h": "Vision", "body": "To be a leading branding and visual communication partner, creating impactful experiences for brands across industries." },
+      "mission": { "h": "Mission", "body": "To deliver end-to-end branding and display solutions with creativity, quality, and reliability, helping brands stand out, engage better, and grow stronger." },
+      "valuesTitle": "Core values",
+      "values": [
+        { "h": "Integrity", "body": "Transparency and honesty in every interaction." },
+        { "h": "Reliability", "body": "Consistent and dependable service delivery." },
+        { "h": "Customer satisfaction", "body": "Tailored solutions that exceed expectations." },
+        { "h": "Quality", "body": "Uncompromising commitment to excellence." },
+        { "h": "Innovation", "body": "Embracing creative ideas and new technologies." },
+        { "h": "Growth", "body": "Continuous learning and capability expansion." },
+        { "h": "Sustainability", "body": "Promoting responsible, mindful business practices." }
       ]
     },
     "privacy": {
