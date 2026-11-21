@@ -1,0 +1,194 @@
+
+  .hdr {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-start: 0;
+    z-index: 50;
+    padding-block-start: 0.75rem;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+  /* Menu open: the floating pill becomes a flush bar so the whole screen (bar included)
+     is one seamless navy sheet, instead of leaving hero visible in the pill's own gutter. */
+  .hdr:has(.hdr__panel.is-open) {
+    padding-block-start: 0;
+  }
+  .hdr__bar {
+    pointer-events: auto;
+    width: min(100% - var(--gutter) * 2, 1120px);
+    margin-inline: auto;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.4rem;
+    padding-inline: 1.1rem;
+    background: rgb(239 230 207 / 0.92);
+    color: var(--sepia);
+    border: 1px solid rgba(74, 59, 44, 0.12);
+    border-radius: var(--pill);
+    box-shadow: 0 6px 24px rgba(74, 59, 44, 0.12);
+    backdrop-filter: blur(8px);
+  }
+  .hdr:has(.hdr__panel.is-open) .hdr__bar {
+    width: 100%;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+  .hdr__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--step--1);
+    white-space: nowrap;
+  }
+  .hdr__wordmark {
+    display: block; height: 11px; aspect-ratio: 997 / 66; background: var(--sepia);
+    -webkit-mask: url('/img/logo-wordmark.svg') no-repeat center / contain; mask: url('/img/logo-wordmark.svg') no-repeat center / contain;
+  }
+  @media (min-width: 420px) { .hdr__wordmark { height: 12px; } }
+  .hdr__nav {
+    display: none;
+    gap: 1.6rem;
+    font-weight: 600;
+    font-size: var(--step--1);
+  }
+  .hdr__nav a {
+    text-decoration: none;
+    padding-block: 0.4rem;
+    background: linear-gradient(var(--lime), var(--lime)) no-repeat;
+    background-size: 0 2px;
+    background-position: var(--origin-start) 100%;
+    transition: background-size var(--dur-ink) var(--ease-out);
+  }
+  .hdr__nav a:hover,
+  .hdr__nav a:focus-visible {
+    background-size: 100% 2px;
+  }
+  .is-soon {
+    display: inline-flex;
+    align-items: center;
+    padding-block: 0.4rem;
+    color: var(--sepia-2);
+    cursor: default;
+  }
+  .hdr__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .hdr__lang {
+    font-weight: 700;
+    font-size: var(--step--1);
+    text-decoration: none;
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--pill);
+    border: 1px solid rgba(74, 59, 44, 0.35);
+    color: var(--sepia);
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .hdr__lang:hover {
+    border-color: var(--lime);
+  }
+  .hdr__quote {
+    display: none;
+    min-height: 44px;
+    padding: 0.5rem 1.2rem;
+    font-size: var(--step--1);
+  }
+  .hdr__menu {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--navy);
+    background: var(--lime);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .hdr__burger,
+  .hdr__burger::before {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--navy);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .hdr__burger::before {
+    content: '';
+    transform: translateY(-6px);
+  }
+  .hdr__burger {
+    transform: translateY(3px);
+  }
+  .hdr__menu[aria-expanded='true'] .hdr__burger {
+    transform: translateY(0) rotate(45deg);
+  }
+  .hdr__menu[aria-expanded='true'] .hdr__burger::before {
+    transform: rotate(-90deg);
+  }
+  .hdr__panel {
+    pointer-events: auto;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding: 2rem var(--gutter) calc(var(--gutter) + 1rem);
+    background: var(--cream);
+    color: var(--sepia);
+    border-block-start: 1px solid rgba(74, 59, 44, 0.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.5rem;
+    overflow-y: auto;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 0.45s var(--ease-inout);
+  }
+  .hdr__panel[hidden] {
+    display: none;
+  }
+  .hdr__panel.is-open {
+    clip-path: inset(0 0 0 0);
+  }
+  .hdr__panel nav {
+    display: grid;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 600;
+  }
+  .hdr__panel nav a {
+    text-decoration: none;
+    padding-block: 0.85rem;
+    border-block-end: 1px solid rgba(74, 59, 44, 0.14);
+  }
+  .hdr__panel .is-soon {
+    padding-block: 0.85rem;
+    border-block-end: 1px solid rgba(74, 59, 44, 0.14);
+  }
+  .hdr__panel .btn {
+    flex-shrink: 0;
+    min-height: 56px;
+    font-size: var(--step-0);
+  }
+  @media (min-width: 900px) {
+    .hdr__nav {
+      display: flex;
+    }
+    .hdr__quote {
+      display: inline-flex;
+    }
+    .hdr__menu,
+    .hdr__panel {
+      display: none !important;
+    }
+  }

@@ -1,0 +1,55 @@
+.cgp { position: relative; z-index: 1; background: var(--paper); padding-block-start: calc(var(--header-h) + var(--space-5)); padding-block-end: var(--space-3); }
+.cgp__crumbs { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; font-family: var(--font-mono); font-size: 0.78rem; color: var(--grey); margin-block-end: var(--space-2); }
+.cgp__crumbs a { color: var(--grey); text-decoration: underline; text-underline-offset: 2px; }
+.cgp__crumbs a:hover { color: var(--ink); }
+.cgp__crumbs [aria-current] { color: var(--ink); font-weight: 700; }
+
+.cgp__intro { display: grid; gap: var(--space-3); }
+.cgp__art { display: block; aspect-ratio: 1; max-width: 18rem; overflow: hidden; border-radius: 14px; background: var(--paper-2); border: 1px solid var(--hairline); }
+.cgp__art img { width: 100%; height: 100%; object-fit: cover; }
+.cgp h1 { font-size: var(--step-3); margin-block: var(--space-2) 0.4rem; }
+.cgp__lead { color: var(--grey); max-width: 48ch; }
+@media (min-width: 640px) { .cgp__intro { grid-template-columns: 18rem 1fr; align-items: center; } .cgp h1 { margin-block-start: 0; } }
+
+.cgp__body { background: var(--paper-2); padding-block-end: var(--space-4); }
+
+/* sidebar on wide screens, horizontal scrollable tab row on narrow ones — switches the panel next
+   to/below it in place, no navigation, same idea as jasani.ae's shop category filter. */
+.cgp__layout { display: grid; gap: var(--space-3); align-items: start; }
+@media (min-width: 860px) { .cgp__layout { grid-template-columns: 15rem 1fr; } }
+
+.cgp__tabs {
+  display: flex; gap: 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  padding-block-end: 0.2rem;
+}
+.cgp__tabs::-webkit-scrollbar { display: none; }
+.cgp__tabs button {
+  all: unset; cursor: pointer; flex: 0 0 auto; padding: 0.65rem 1rem; border: 1.5px solid var(--ink); border-radius: var(--pill);
+  background: var(--white); font-weight: 700; font-size: 0.92rem; white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.cgp__tabs button:hover { background: var(--paper); }
+.cgp__tabs button:focus-visible { outline: 3px solid var(--lime); outline-offset: 2px; }
+.cgp__tabs button.is-active { background: var(--lime); }
+@media (min-width: 860px) {
+  .cgp__tabs { flex-direction: column; position: sticky; top: calc(var(--header-h) + var(--space-2)); }
+  .cgp__tabs button { width: 100%; text-align: start; }
+}
+
+.cgp__panel { min-width: 0; }
+.cgp__panelTitle { font-size: var(--step-1); margin: 0 0 var(--space-2); }
+
+/* a plain shop grid: image, name, nothing else — same spirit as jasani.ae/shop, minus price */
+.cgp__grid { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; gap: var(--space-2); grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 560px) { .cgp__grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1100px) { .cgp__grid { grid-template-columns: repeat(4, 1fr); } }
+.cgp__grid li { display: grid; gap: 0.5rem; }
+.cgp__itemArt { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 14px; background: var(--white); border: 1px solid var(--hairline); }
+.cgp__itemArt img { width: 100%; height: 100%; object-fit: contain; }
+.cgp__itemName { font-weight: 600; font-size: 0.92rem; }
+
+.cgp__plate { margin: 0 0 var(--space-2); max-width: 22rem; }
+.cgp__plate img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; background: var(--white); border: 1px solid var(--hairline); border-radius: 14px; }
+.cgp__plate figcaption { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--grey); text-align: center; padding-block-start: 0.5rem; }
+.cgp__note { color: var(--grey); max-width: 42ch; margin-block-end: var(--space-2); }
+.cgp__cta { margin-block-start: 0.4rem; }

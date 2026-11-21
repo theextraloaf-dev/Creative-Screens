@@ -1,0 +1,24 @@
+
+  .lab-page .head { padding-block-start: calc(var(--header-h) + var(--space-5)); }
+  .lab-page h1 { font-size: var(--step-4); margin-block: var(--space-2); }
+  .lab-page .lead { font-size: var(--step-1); color: var(--grey); max-width: 48ch; margin-block-end: var(--space-2); }
+  .lab-page .lab { border-block-start: 1px solid var(--hairline); padding-block: var(--space-5); }
+  .lab-page .lab h2 { font-size: var(--step-2); margin-block-end: var(--space-3); }
+  .lab-page .specimen { display: grid; gap: var(--space-2); max-width: 60rem; }
+  .lab-page .d1 { font-family: var(--font-display); font-weight: 600; font-size: var(--step-3); line-height: var(--lh-display); }
+  .lab-page .contrast { margin-block-start: var(--space-4); width: 100%; border-collapse: collapse; font-size: var(--step--1); }
+  .lab-page .contrast th, .lab-page .contrast td { text-align: start; padding: 0.6rem 0.5rem; border-block-end: 1px solid var(--hairline); }
+  .lab-page .chip { display: inline-grid; place-items: center; width: 2.4rem; height: 1.8rem; border-radius: 6px; border: 1px solid var(--hairline); font-weight: 700; margin-inline-end: 0.5rem; }
+  .lab-page .row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .lab-page .cards { display: grid; gap: 0.75rem; grid-template-columns: repeat(2, 1fr); }
+  .lab-page .card { padding: var(--space-4) var(--space-2); background: var(--white); border: 1px solid var(--hairline); border-radius: var(--radius); font-family: var(--font-mono); }
+  .lab-page .statement { font-family: var(--font-display); font-weight: 600; font-size: var(--step-3); line-height: var(--lh-display); max-width: 22ch; }
+  .lab-page .clip { border-radius: var(--radius); }
+  .lab-page .stats { display: grid; gap: var(--space-3); }
+  .lab-page .stat { display: grid; gap: 0.25rem; border-block-start: 1px solid var(--ink); padding-block-start: var(--space-2); }
+  .lab-page .n { font-family: var(--font-display); font-weight: 600; font-size: var(--step-4); line-height: 1; }
+  .lab-page .cta { background: var(--lime); border-block: 1.5px solid var(--ink); padding-block: var(--space-5); }
+  @media (min-width: 720px) {
+    .lab-page .cards { grid-template-columns: repeat(4, 1fr); }
+    .lab-page .stats { grid-template-columns: repeat(3, 1fr); }
+  }

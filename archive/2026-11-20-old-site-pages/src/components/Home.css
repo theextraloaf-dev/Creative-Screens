@@ -1,0 +1,83 @@
+
+  .hero {
+    position: relative; min-height: 100svh; display: grid; align-items: end; color: #fff; background: var(--deep);
+    padding-block: calc(var(--header-h) + var(--space-5)) calc(var(--space-5) + 1rem);
+  }
+  .hero__media { position: absolute; inset: 0; overflow: hidden; }
+  .hero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hero__scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(19, 29, 39, 0.9) 0%, rgba(19, 29, 39, 0.5) 48%, rgba(19, 29, 39, 0.42) 100%);
+  }
+  .hero__grid { position: relative; display: grid; gap: var(--space-4); }
+  .hero__copy { display: grid; gap: var(--space-3); justify-items: start; max-width: min(100%, 64rem); }
+  .hero .eyebrow { color: rgba(255, 255, 255, 0.78); }
+  .hero h1 { font-size: var(--step-4); color: #fff; }
+  .hero mark { background: var(--lime); color: var(--navy); padding: 0 0.14em; }
+  .hero__lead { font-size: var(--step-1); color: rgba(255, 255, 255, 0.86); max-width: 34ch; }
+  .hero__cta { display: grid; gap: 0.6rem; width: 100%; }
+  .hero .btn--ghost { color: #fff; border-color: rgba(255, 255, 255, 0.85); }
+  .hero .btn--ghost::before { background: #fff; }
+  .hero .btn--ghost:hover, .hero .btn--ghost:focus-visible { color: var(--navy); }
+  .hero__cue { position: absolute; inset-block-end: 1.25rem; inset-inline-end: var(--gutter); display: none; align-items: center; gap: 0.75rem; }
+  .hero__cue i { display: block; width: 1px; height: 3rem; background: rgba(255, 255, 255, 0.7); transform-origin: top; animation: cue 2.2s var(--ease-inout) infinite; }
+  @keyframes cue { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .hero__cue i { animation: none; } }
+
+  /* journey intro: a dark title card that hands over to the night-blueprint workshop */
+.jintro { position: relative; z-index: 1; display: grid; align-content: center; min-height: 78svh; background: var(--navy); color: #fff; padding-block: var(--space-6); }
+.jintro .eyebrow { color: rgba(255, 255, 255, 0.7); }
+.jintro h2 { font-family: var(--font-num); font-weight: 400; text-transform: uppercase; font-size: clamp(3.4rem, 1.5rem + 9vw, 10rem); line-height: 0.92; letter-spacing: 0.005em; max-width: 14ch; margin-block: 0.75rem var(--space-3); color: #fff; }
+html[lang='ar'] .jintro h2 { font-family: var(--font-display); font-weight: 700; text-transform: none; line-height: 1.25; font-size: clamp(2.4rem, 1.2rem + 6vw, 6rem); max-width: 16ch; }
+.jintro mark { background: var(--lime); color: var(--navy); padding: 0 0.1em; }
+.jintro__lead { color: rgba(255, 255, 255, 0.78); font-size: var(--step-1); max-width: 34ch; }
+.jintro__steps { list-style: none; margin: var(--space-5) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-2); }
+.jintro__steps li { display: grid; gap: 0.35rem; padding-block-start: 0.8rem; border-block-start: 1px solid rgba(255, 255, 255, 0.28); }
+.jintro__steps b { font-family: var(--font-num); font-weight: 400; font-size: clamp(2.6rem, 6vw, 5rem); line-height: 0.9; color: transparent; -webkit-text-stroke: 1.2px #fff; }
+.jintro__steps li:last-child b { color: var(--lime); -webkit-text-stroke: 0; }
+.jintro__steps span { font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255, 255, 255, 0.8); }
+html[lang='ar'] .jintro__steps span { text-transform: none; letter-spacing: 0; font-family: var(--font-body); }
+@media (min-width: 760px) { .jintro__steps { grid-template-columns: repeat(4, 1fr); } }
+
+/* the journey: one caption per step. Without motion it is four stacked panels on navy; with motion it pins over the 3D workshop. */
+.story { position: relative; z-index: 1; background: var(--navy); color: #fff; }
+.story__rail { display: none; }
+.story__track { display: grid; width: min(100% - var(--gutter) * 2, var(--maxw)); margin-inline: auto; }
+.chapter { display: grid; gap: 0.9rem; max-width: 40rem; padding-block: var(--space-5); border-block-start: 1px solid rgba(255, 255, 255, 0.2); }
+.chapter__meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; align-items: center; font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255, 255, 255, 0.78); }
+.chapter__meta span:first-child { color: var(--lime); }
+.chapter__time { padding: 0.15rem 0.6rem; border: 1px solid rgba(255, 255, 255, 0.4); border-radius: var(--pill); letter-spacing: 0.06em; }
+.chapter__title { font-size: clamp(2.3rem, 1rem + 5.6vw, 6.2rem); line-height: 1; color: #fff; }
+.chapter__text { font-size: var(--step-1); color: rgba(255, 255, 255, 0.82); max-width: 30ch; }
+.chapter__cta { justify-self: start; display: inline-flex; gap: 0.6rem; align-items: center; padding: 0.4rem 0; border-block-end: 2px solid var(--lime); font-weight: 700; color: #fff; text-decoration: none; }
+.chapter__cta:hover, .chapter__cta:focus-visible { color: var(--lime); }
+html[dir='rtl'] .chapter__cta .arrow { transform: scaleX(-1); }
+html[lang='ar'] .chapter__meta { text-transform: none; letter-spacing: 0; font-family: var(--font-body); }
+
+html.motion .story { background: transparent; height: 440svh; }
+html.motion .story__pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+/* a soft shadow in the reading corner, so the words hold over any part of the scene */
+html.motion .story__pin::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 85% 78% at 0% 100%, rgba(5, 9, 13, 0.94), transparent 74%); }
+html[dir='rtl'].motion .story__pin::before { background: radial-gradient(ellipse 85% 78% at 100% 100%, rgba(5, 9, 13, 0.94), transparent 74%); }
+html.motion .story__track { position: absolute; inset: 0; width: auto; margin: 0; display: block; }
+html.motion .chapter { position: absolute; inset-inline-start: var(--gutter); inset-block-end: calc(var(--space-5) + 3.2rem); width: min(44rem, calc(100% - var(--gutter) * 2)); max-width: none; padding: 0; border: 0; visibility: hidden; }
+html.motion .chapter__title { overflow: clip; padding-block-end: 0.06em; }
+
+/* step rail: four hairline ticks with the numeral and name of the step in progress */
+html.motion .story__rail { display: grid; position: absolute; z-index: 2; inset-block-start: calc(var(--header-h) + 2.6rem); inset-inline: var(--gutter); margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+html.motion .story__rail li { display: grid; gap: 0.35rem; padding-block-start: 0.55rem; border-block-start: 2px solid rgba(255, 255, 255, 0.28); font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255, 255, 255, 0.55); transition: color 0.4s var(--ease-out), border-color 0.4s var(--ease-out); }
+html.motion .story__rail li b { font-weight: 400; }
+html.motion .story__rail li span { display: none; }
+html.motion .story__rail li { text-shadow: 0 0 10px rgba(5, 9, 13, 0.95), 0 0 3px rgba(5, 9, 13, 0.9); }
+html.motion .story__rail li.is-on { color: #fff; border-color: var(--lime); }
+html.motion .story__rail li.is-on b { color: var(--lime); }
+html[lang='ar'].motion .story__rail li { text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-size: 0.8rem; }
+@media (min-width: 900px) {
+  /* wide screens: a named stepper along the top, left (start) side, clear of the scene on the right */
+  html.motion .story__rail { inset-inline-end: auto; width: min(36rem, 46vw); gap: 1rem; }
+  html.motion .story__rail li { grid-template-columns: auto 1fr; align-items: baseline; column-gap: 0.6rem; }
+  html.motion .story__rail li span { display: inline; }
+}
+
+/* Arabic: taller lines so the masked headline does not clip the descenders */
+html[lang='ar'] .chapter__title { line-height: 1.4; padding-block: 0.04em 0.1em; }

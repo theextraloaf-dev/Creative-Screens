@@ -1,0 +1,36 @@
+1:"$Sreact.fragment"
+2:"/_next/static/chunks/3qfy96eoyh-ek.js"
+3:I[39756,["$2"],"default"]
+4:I[37457,["$2"],"default"]
+f:"/_next/static/chunks/2u88it5k3eiyu.js"
+10:"/_next/static/chunks/3fnz4196t_8cb.js"
+11:I[49402,["$f","$10"],"CategoryPage"]
+12:I[97367,["$2"],"OutletBoundary"]
+13:"$Sreact.suspense"
+16:"ViewportBoundary"
+17:I[97367,["$2"],"$16"]
+18:"MetadataBoundary"
+19:I[97367,["$2"],"$18"]
+1a:I[27201,["$2"],"IconMark"]
+:HL["/_next/static/chunks/2l5432szjchve.css","style"]
+:HL["/_next/static/chunks/136sy6z23c0-d.css","style"]
+:HL["/_next/static/chunks/019zg3x7x-y8r.css","style"]
+6:X
+6:C
+7:X
+e:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$1","c",{"children":[["$","$L11",null,{"locale":"ar","category":"gifts-apparel"}],[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/136sy6z23c0-d.css","precedence":"next"}],["$","link","1",{"rel":"stylesheet","href":"/_next/static/chunks/019zg3x7x-y8r.css","precedence":"next"}],["$","script","script-0",{"src":"/_next/static/chunks/2u88it5k3eiyu.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/3fnz4196t_8cb.js","async":true}]],["$","$L12",null,{"children":["$","$13",null,{"name":"Next.MetadataOutlet","children":"$@14"}]}]]}],"p":"$@15","v":null,"s":"$7"}}]]
+c:[["children",{"s":{"n":"category","t":"d","k":"gifts-apparel","s":[]},"h":96,"d":{"r":["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L4",null,{}]}]]}],"p":"$@d","v":"$6","s":"$7"},"c":"$Qe"}]]
+a:[["children",{"s":"services","h":96,"d":{"r":["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L4",null,{}]}]]}],"p":"$@b","v":"$6","s":"$7"},"c":"$Qc"}]]
+8:[["children",{"s":"ar","h":112,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/2l5432szjchve.css","precedence":"next"}]],["$","html",null,{"lang":"ar","dir":"rtl","suppressHydrationWarning":true,"children":[["$","head",null,{"children":["$","script",null,{"dangerouslySetInnerHTML":{"__html":"(function () {\n  var d = document.documentElement;\n  d.classList.add('js');\n  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {\n    d.classList.add('motion');\n    var seen = false;\n    try { seen = sessionStorage.getItem('cs-loader') === '1'; } catch (e) {}\n    if (!seen) d.classList.add('loader-on');\n    setTimeout(function () {\n      if (!window.__motionReady) d.classList.remove('motion', 'loader-on');\n    }, 7000);\n  }\n})();"}}]}],["$","body",null,{"children":["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L4",null,{}]}]}]]}]]}],"p":"$@9","v":null,"s":"$7"},"c":"$Qa"}]]
+0:{"t":{"t":{"s":"","h":80,"d":{"r":["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L4",null,{}],"notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]]}]]}],"p":"$@5","v":"$6","s":"$7"},"c":"$Q8"},"h":{"r":["$","$1","h",{"children":[null,["$","$L17",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1, viewport-fit=cover"}],["$","meta","2",{"name":"theme-color","content":"#ededed"}]]}],["$","$L19",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$13",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"الهدايا والملابس الترويجية | كرييتف سكرينز"}],["$","meta","1",{"name":"description","content":"أدوات شرب، حقائب، قبعات، تقنية، هدايا مكتبية ومنزلية وخارجية، وهدايا بطابع محلي، تُطبع بشعارك."}],["$","meta","2",{"property":"og:title","content":"الهدايا والملابس الترويجية | كرييتف سكرينز"}],["$","meta","3",{"property":"og:description","content":"أدوات شرب، حقائب، قبعات، تقنية، هدايا مكتبية ومنزلية وخارجية، وهدايا بطابع محلي، تُطبع بشعارك."}],["$","meta","4",{"property":"og:image","content":"http://localhost:3000/opengraph-image?e6577f73818d2565"}],["$","meta","5",{"property":"og:image:type","content":"image/png"}],["$","meta","6",{"property":"og:image:width","content":"1200"}],["$","meta","7",{"property":"og:image:height","content":"630"}],["$","meta","8",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","9",{"name":"twitter:title","content":"الهدايا والملابس الترويجية | كرييتف سكرينز"}],["$","meta","10",{"name":"twitter:description","content":"أدوات شرب، حقائب، قبعات، تقنية، هدايا مكتبية ومنزلية وخارجية، وهدايا بطابع محلي، تُطبع بشعارك."}],["$","meta","11",{"name":"twitter:image","content":"http://localhost:3000/opengraph-image?e6577f73818d2565"}],["$","meta","12",{"name":"twitter:image:type","content":"image/png"}],["$","meta","13",{"name":"twitter:image:width","content":"1200"}],["$","meta","14",{"name":"twitter:image:height","content":"630"}],["$","link","15",{"rel":"icon","href":"/icon.svg?icon.2hv6gc4svwyrz.svg","sizes":"any","type":"image/svg+xml"}],["$","$L1a","16",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@1b","v":null,"s":"$7"}},"a":"$@1c","u":"$@1d","b":"TgLisfX-LB-mSksIY_sFQ"}
+14:null
+7:300
+1d:true
+7:C
+1c:0
+d:"$undefined"
+b:"$undefined"
+9:"$undefined"
+5:"$undefined"
+1b:"$undefined"
+15:"$undefined"

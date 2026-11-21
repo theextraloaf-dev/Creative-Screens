@@ -1,0 +1,106 @@
+
+  .stage { position: relative; background: var(--paper); }
+  .stage__pin { padding-block: calc(var(--header-h) + var(--space-4)) var(--space-4); }
+  .stage__inner { display: grid; gap: var(--space-2); }
+  .stage__art svg { width: 100%; height: auto; max-height: 46svh; margin-inline: auto; direction: ltr; overflow: hidden; }
+  .stage__live { display: none; }
+  .stage__top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .stage__skip {
+    font-weight: 700;
+    font-size: var(--step--1);
+    white-space: nowrap;
+  }
+  .stage__proof { display: grid; gap: var(--space-2); align-items: center; }
+  .stage__proof .ph { min-height: 5rem; }
+  .stage__list {
+    list-style: none;
+    margin-block: var(--space-4) 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+  .stage__list li { padding: var(--space-3); border: 1px solid var(--hairline); border-radius: var(--radius); background: var(--white); }
+  .stage__list h3 { font-size: var(--step-1); margin-block: 0.4rem; }
+  .stage__list p { color: var(--grey); }
+  @media (min-width: 720px) {
+    .stage__list { grid-template-columns: repeat(3, 1fr); }
+    .stage__proof { grid-template-columns: 1fr auto; }
+  }
+
+  /* ---- Motion on: sticky stage, scrubbed by stage.js ---- */
+  html:not(.motion) .anim-only { display: none; }
+  /* still frame: centre the finished truck */
+  html:not(.motion) .stage__art .world { transform: translateX(var(--static-shift)); }
+  html.motion .static-only { display: none; }
+  html.motion .stage { height: 560vh; }
+  html.motion .stage[data-mode='3d'] { height: 250vh; }
+  /* bottom clearance keeps the proof CTA above the phone bar */
+  html.motion .stage__pin { position: sticky; top: 0; height: 100svh; padding-block: calc(var(--header-h) + var(--space-2)) 5rem; display: grid; align-content: safe center; }
+  html.motion .stage__inner { gap: var(--space-1); }
+  html.motion .stage__proof .ph { min-height: 3rem; padding: 0.5rem 1rem; }
+  html.motion .stage h2 { font-size: var(--step-2); }
+  html.motion .stage[data-mode='3d'] .stage__live { display: grid; gap: var(--space-2); }
+  .stage__live2 { display: none; }
+  html.motion .stage:not([data-mode='3d']) .stage__live2 { display: grid; gap: var(--space-2); }
+  .cap2 { grid-area: 1 / 1; opacity: 0; transform: translateY(8px); transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out); font-size: var(--step-1); }
+  .cap2 strong { font-family: var(--font-display); }
+  .cap2.is-on { opacity: 1; transform: none; }
+  .stage__rail.stage__rail--6 { grid-template-columns: repeat(6, 1fr); gap: 0.35rem; }
+  .stage__rail--6 li.is-done { border-color: var(--ink); color: var(--ink); }
+  @media (max-width: 600px) { .stage__rail.stage__rail--6 li { font-size: 0.62rem; } .stage__rail--6 li::before { content: '0' counter(s); display: block; } }
+  html.motion .stage__list { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0; }
+  html.motion .stage__art svg { max-height: 36svh; }
+  .stage__caption { display: grid; min-height: 3.4em; }
+  .cap { grid-area: 1 / 1; opacity: 0; transform: translateY(8px); transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out); font-size: var(--step-1); }
+  .cap strong { font-family: var(--font-display); }
+  .stage[data-step='0'] .cap-0, .stage[data-step='1'] .cap-1, .stage[data-step='2'] .cap-2, .stage[data-step='3'] .cap-3 { opacity: 1; transform: none; }
+  .stage__rail { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; counter-reset: s; }
+  .stage__rail li { counter-increment: s; border-block-start: 3px solid var(--hairline); padding-block-start: 0.5rem; font-family: var(--font-mono); font-size: var(--step--1); color: var(--grey); transition: border-color 0.3s, color 0.3s; }
+  .stage__rail li::before { content: '0' counter(s) ' '; }
+  .stage[data-step='0'] .stage__rail li:nth-child(-n + 1),
+  .stage[data-step='1'] .stage__rail li:nth-child(-n + 2),
+  .stage[data-step='2'] .stage__rail li:nth-child(-n + 3),
+  .stage[data-step='3'] .stage__rail li:nth-child(-n + 4) { border-color: var(--ink); color: var(--ink); }
+  @media (min-width: 900px) {
+    html.motion .stage__pin { padding-block-end: var(--space-3); }
+    html.motion .stage__proof .ph { min-height: 5rem; }
+    html.motion .stage { height: 680vh; }
+    html.motion .stage[data-mode='3d'] { height: 320vh; }
+    html.motion .stage__art svg { max-height: 54svh; }
+  }
+
+  /* ---- 2D pointer labels: placed by stage.js on the part they name ---- */
+  .stage__notes { display: none; list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; pointer-events: none; }
+  html.motion .stage:not([data-mode='3d']) .stage__notes { display: block; }
+  .stage__notes li { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity 0.25s var(--ease-out); will-change: transform; }
+  .stage__notes li.is-on { opacity: 1; }
+  .note { position: absolute; left: 0; top: 0; direction: ltr; display: flex; flex-direction: column; align-items: flex-start; transform: translate(-5px, calc(-100% + 5px)); }
+  .note b { unicode-bidi: plaintext; white-space: nowrap; font-family: var(--font-mono); font-weight: 400; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink); background: var(--paper); border: 1px solid var(--ink); padding: 0.2rem 0.4rem; }
+  .note i { display: block; width: 1px; height: 1.1rem; margin-inline-start: 4.5px; background: var(--ink); }
+  .note em { display: block; width: 10px; height: 10px; border-radius: 50%; background: var(--lime); border: 1px solid var(--ink); }
+  li.is-flip .note { align-items: flex-end; transform: translate(calc(-100% + 5px), calc(-100% + 5px)); }
+  li.is-flip .note i { margin-inline: 0 4.5px; }
+  li.is-below .note { flex-direction: column-reverse; transform: translate(-5px, -5px); }
+  li.is-below.is-flip .note { transform: translate(calc(-100% + 5px), -5px); }
+  @media (min-width: 900px) { .note b { font-size: 0.8rem; padding: 0.25rem 0.5rem; } }
+
+  /* ---- 3D mode: canvas replaces the SVG; HTML callouts follow the parts ---- */
+  .stage__art { position: relative; }
+  .stage[data-mode='3d'] .stage__art svg { display: none; }
+  .stage[data-mode='3d'] .stage__art { height: clamp(15rem, 44svh, 36rem); }
+  .stage__canvas { display: block; width: 100%; height: 100%; }
+  .stage__callouts { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .stage__callouts li { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity 0.35s var(--ease-out); will-change: transform; }
+  .stage__callouts li.is-on { opacity: 1; }
+  .stage .co { direction: ltr; display: flex; align-items: center; gap: 0.5rem; transform: translate(-5px, -50%); white-space: nowrap; font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink); }
+  .stage .co i { position: relative; width: 18px; height: 18px; border-radius: 50%; background: var(--lime); border: 1px solid var(--ink); flex: none; }
+  .stage .co i::before, .stage .co i::after { content: ''; position: absolute; inset: 50% 4px auto; height: 1.5px; margin-top: -0.75px; background: var(--ink); }
+  .stage .co i::after { inset: 4px auto 4px 50%; width: 1.5px; height: auto; margin: 0 0 0 -0.75px; }
+  html.motion .stage .co i { animation: hs 2.4s var(--ease-out) infinite; }
+  @keyframes hs { 0% { box-shadow: 0 0 0 0 rgba(187, 212, 64, 0.7); } 70%, 100% { box-shadow: 0 0 0 11px rgba(187, 212, 64, 0); } }
+  .stage .co b::after { content: ' \2197'; opacity: 0.6; }
+  .stage .co b { unicode-bidi: plaintext; font-weight: 400; background: var(--white); color: var(--ink); padding: 0.28rem 0.6rem; box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.35); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; }
+  @media (min-width: 900px) {
+    .stage[data-mode='3d'] .stage__art { height: clamp(18rem, 54svh, 42rem); }
+  }
+  .stage li.is-flip .co { flex-direction: row-reverse; transform: translate(calc(-100% + 5px), -50%); }

@@ -1,0 +1,86 @@
+
+:root {
+  /* Colour: light theme. Lime is a fill, never text or thin lines on paper. */
+  /* light theme: off-white ground, navy line art, lime accent */
+  /* 2026-11-20: the light style sitewide (docs/superpowers/specs/2026-11-20-light-style-sitewide-design.md):
+     cream paper and warm sepia ink; nothing dark. --navy and --deep now mean the sepia ink. */
+  --navy: #4a3b2c;
+  --deep: #4a3b2c;
+  --paper: #efe6cf;
+  --paper-2: #e6dabd;
+  --white: #fbf6ea;
+  --ink: #4a3b2c;
+  --grey: #8a7860;
+  --hairline: rgba(74, 59, 44, 0.18);
+  --cream: #efe6cf;
+  --cream-2: #e6dabd;
+  --ochre: #ecd49b;
+  --sea: #d6e6ee;
+  --peach: #f3d1b2;
+  --sepia: #4a3b2c;
+  --sepia-2: #8a7860;
+  --font-script: 'Yellowtail', 'Brush Script MT', cursive;
+  --lime: #bbd440;  /* logo lime */
+  --bp: #4a3b2c; /* line ink for the line-art scenes (logo navy on cool grey, lime as the accent) */
+  --signal: #bbd440; /* accent = lime; the client's logo has no red */
+
+  --font-display: 'Unbounded Variable', 'Arial Black', system-ui, sans-serif;
+  --font-body: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-num: 'Anton', 'Arial Narrow', Impact, sans-serif;   /* condensed numerals */
+  --font-serif: 'Instrument Serif', 'Times New Roman', Georgia, serif; /* editorial titles and quotes (What we make) */
+  --lh-body: 1.55;
+  --lh-display: 1.08;
+
+  --step--1: clamp(0.8125rem, 0.78rem + 0.15vw, 0.9rem);
+  --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --step-1: clamp(1.2rem, 1.08rem + 0.6vw, 1.85rem);
+  --step-2: clamp(1.5rem, 1.25rem + 1.2vw, 2.8rem);
+  --step-3: clamp(1.9rem, 1.4rem + 2.4vw, 4.2rem);
+  --step-4: clamp(2.1rem, 1.3rem + 3vw, 6rem);
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+  --space-6: clamp(3rem, 2rem + 5vw, 6.5rem);
+  --gutter: clamp(1rem, 4vw, 3.5rem);
+  --maxw: clamp(1280px, 78vw + 200px, 1760px); /* grows with the screen so wide displays don't leave empty side margins */
+  --radius: 14px;
+  --pill: 999px;
+  --header-h: 64px;
+
+  /* Motion tokens (mirrored in src/scripts/motion-tokens.js) */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.25s;
+  --dur-base: 0.5s;
+  --dur-ink: 0.35s;
+
+  /* Direction helpers: flip with the document direction */
+  --dir: 1;
+  --origin-start: left;
+  --origin-end: right;
+}
+
+[dir='rtl'] {
+  --dir: -1;
+  --origin-start: right;
+  --origin-end: left;
+}
+
+/* Arabic: its own face, larger, looser, no tracking, no uppercase */
+html[lang='ar'] {
+  --font-display: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --lh-body: 1.8;
+  --lh-display: 1.35;
+  font-size: 112.5%;
+}
+html[lang='ar'] * {
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  font-style: normal !important;
+}

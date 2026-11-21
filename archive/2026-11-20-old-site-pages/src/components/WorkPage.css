@@ -1,0 +1,22 @@
+.wp { position: relative; z-index: 1; background: var(--paper); padding-block-start: calc(var(--header-h) + var(--space-5)); padding-block-end: var(--space-4); }
+.wp h1 { max-width: 34ch; margin-block: 0.5rem var(--space-2); line-height: 1.15; }
+.wp__bold { font-size: var(--step-3); color: var(--ink); font-weight: 700; }
+.wp__muted { font-size: var(--step-2); color: var(--grey); font-weight: 600; }
+.wp__lead { color: var(--grey); max-width: 48ch; }
+
+/* one numbered row per category, same device as the About page's facts/values rows */
+.wp__list { background: var(--paper-2); }
+.wp__rows { list-style: none; margin: 0 0 var(--space-4); padding: 0; }
+.wp__rows li {
+  display: grid; grid-template-columns: 3rem 5.5rem 1fr; align-items: center; column-gap: var(--space-3);
+  padding-block: var(--space-2); border-block-end: 1px solid var(--hairline);
+}
+.wp__rows li:first-child { border-block-start: 1px solid var(--hairline); }
+.wp__num { font-family: var(--font-mono); font-size: var(--step-0); color: var(--grey); }
+.wp__thumb { min-height: 5.5rem; aspect-ratio: 1; border-radius: 8px; font-size: 0.62rem; padding: 0.4rem; }
+.wp__info h2 { font-size: var(--step-0); margin-block-end: 0.2rem; }
+.wp__info p { color: var(--grey); font-size: 0.92rem; margin: 0; }
+@media (min-width: 720px) {
+  .wp__rows li { grid-template-columns: 4rem 7rem 1fr; }
+  .wp__thumb { min-height: 6.5rem; font-size: var(--step--1); }
+}

@@ -1,0 +1,45 @@
+.ap { position: relative; z-index: 1; background: var(--paper); padding-block-start: calc(var(--header-h) + var(--space-5)); overflow: clip; }
+.ap h1 { font-size: var(--step-3); max-width: 24ch; margin-block: 0.5rem var(--space-2); position: relative; }
+.ap__notice { color: var(--grey); max-width: 48ch; margin-block-end: var(--space-4); font-style: italic; }
+
+/* giant faded "21", the client's one confirmed number, sitting behind the intro as texture */
+.ap__intro-wrap { position: relative; }
+.ap__num {
+  position: absolute; inset-block-start: -1.2rem; inset-inline-end: -0.5rem;
+  font-family: var(--font-display); font-weight: 600; font-size: min(42vw, 22rem); line-height: 1;
+  color: var(--navy); opacity: 0.06; pointer-events: none; user-select: none; z-index: 0;
+}
+[dir='rtl'] .ap__num { inset-inline-end: auto; inset-inline-start: -0.5rem; }
+
+.ap__intro { position: relative; z-index: 1; display: grid; gap: 1rem; max-width: 60ch; }
+.ap__intro .lead { color: var(--grey); }
+.ap__intro .lead:first-child { color: var(--ink); font-weight: 600; }
+
+/* credits sheet: vision, mission and the two confirmed facts as dense label/value rows (same device as
+   the A24-style film-credit rows this site already borrows for its services section) */
+.ap__facts { background: var(--paper-2); }
+.ap__factsheet { margin: 0; display: grid; gap: 0; max-width: 72ch; }
+.ap__factsheet > div { display: grid; grid-template-columns: 11rem 1fr; gap: var(--space-3); padding-block: var(--space-2); border-block-end: 1px solid var(--hairline); }
+.ap__factsheet > div:first-child { border-block-start: 1px solid var(--hairline); }
+.ap__factsheet dt { font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.08em; color: var(--grey); }
+html[lang='ar'] .ap__factsheet dt { text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-weight: 700; }
+.ap__factsheet dd { margin: 0; font-weight: 600; }
+@media (max-width: 560px) { .ap__factsheet > div { grid-template-columns: 1fr; gap: 0.3rem; } }
+
+/* core values: big numbered rows on a dark band instead of a small card grid */
+.ap__values { background: var(--navy); color: #fff; }
+.ap__values h2 { font-size: var(--step-2); margin-block-end: var(--space-4); }
+.ap__valuelist { list-style: none; margin: 0; padding: 0; }
+.ap__valuelist li {
+  display: grid; grid-template-columns: 4rem 1fr; column-gap: var(--space-3); align-items: baseline;
+  padding-block: var(--space-3); border-block-end: 1px solid rgba(255, 255, 255, 0.14);
+}
+.ap__valuelist li:first-child { border-block-start: 1px solid rgba(255, 255, 255, 0.14); }
+.ap__valuenum { font-family: var(--font-mono); font-size: var(--step-1); color: var(--lime); }
+.ap__valuelist h3 { font-size: var(--step-1); margin-block-end: 0.3rem; grid-column: 2; }
+.ap__valuelist p { color: rgba(255, 255, 255, 0.68); grid-column: 2; max-width: 50ch; }
+@media (min-width: 720px) {
+  .ap__valuelist li { grid-template-columns: 5rem 1fr 1fr; column-gap: var(--space-4); }
+  .ap__valuelist h3 { grid-column: 2; }
+  .ap__valuelist p { grid-column: 3; max-width: none; }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "creativescreens-site",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build && node scripts/size-report.mjs",
+    "start": "npx serve out",
+    "size": "node scripts/size-report.mjs",
+    "test": "node --test src/lib/*.test.ts",
+    "test:geo": "python -m unittest 3d/map/test_geo.py",
+    "diorama:data": "python 3d/map/fetch_data.py",
+    "diorama:street": "node scripts/blender.mjs 3d/build_street.py",
+    "diorama:map": "node scripts/blender.mjs 3d/build_map.py",
+    "diorama:export": "node scripts/blender.mjs 3d/bake_export.py",
+    "diorama:check": "node scripts/blender.mjs 3d/tests/check_street.py && node scripts/blender.mjs 3d/tests/check_map.py"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "5.3.0",
+    "@fontsource-variable/unbounded": "5.3.0",
+    "@fontsource/anton": "5.3.0",
+    "@fontsource/aref-ruqaa": "^5.3.0",
+    "@fontsource/dm-mono": "5.3.0",
+    "@fontsource/ibm-plex-sans-arabic": "5.3.0",
+    "@fontsource/instrument-serif": "5.3.0",
+    "@fontsource/yellowtail": "^5.3.0",
+    "gsap": "3.15.1",
+    "lenis": "1.3.27",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/three": "0.187.0",
+    "typescript": "5.9.3"
+  }
+}

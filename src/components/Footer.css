@@ -1,0 +1,81 @@
+
+  .ftr {
+    position: relative;
+    z-index: 1;
+    background: var(--ochre);                 /* a warm ground: the footer rises from the page on a worn edge */
+    color: var(--sepia);
+    padding-block: var(--space-5) 5.6rem;
+  }
+  .ftr__grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .ftr__brand {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 600;
+  }
+  .ftr__muted {
+    color: rgb(74 59 44 / 0.72);
+  }
+  .ftr__list {
+    margin: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+  .ftr__list dt {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: rgb(74 59 44 / 0.72);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .ftr__list dd {
+    margin: 0;
+  }
+  .ftr__lang {
+    display: inline-block;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid rgb(74 59 44 / 0.4);
+    border-radius: var(--pill);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .ftr__lang:hover {
+    background: var(--lime);
+    color: var(--navy);
+  }
+  .ftr { overflow: clip visible; }   /* sideways clip only: the worn edge reaches up into the page above */
+  .ftr__word { margin-block-start: var(--space-4); display: grid; gap: 2.2vw; margin-block-end: -0.4vw; user-select: none; }
+  .ftr__word i {
+    display: block; background: #fbf6ea; -webkit-mask-repeat: no-repeat;   /* the wordmark cut out of the ochre in paper */ mask-repeat: no-repeat; -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  }
+  .ftr__word .w1 { aspect-ratio: 487 / 66; -webkit-mask-image: url('/img/logo-creative.svg'); mask-image: url('/img/logo-creative.svg'); }
+  .ftr__word .w2 { aspect-ratio: 468 / 66; width: 96.1%; -webkit-mask-image: url('/img/logo-screens.svg'); mask-image: url('/img/logo-screens.svg'); }
+  .ftr__logo { display: block; height: 15px; aspect-ratio: 997 / 66; background: var(--sepia); -webkit-mask: url('/img/logo-wordmark.svg') no-repeat left center / contain; mask: url('/img/logo-wordmark.svg') no-repeat left center / contain; }
+  .ftr__tag { display: block; margin-block-start: 0.7rem; height: 9px; aspect-ratio: 700 / 37; background: rgb(74 59 44 / 0.72); -webkit-mask: url('/img/logo-tagline.svg') no-repeat left center / contain; mask: url('/img/logo-tagline.svg') no-repeat left center / contain; }
+  .ftr__city { margin-block-start: 0.7rem; }
+  .ftr__socials { list-style: none; margin: 0.6rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .ftr__socials a { color: rgb(74 59 44 / 0.8); text-decoration: none; font-size: var(--step--1); border: 1px solid rgb(74 59 44 / 0.35); border-radius: var(--pill); padding: 0.3rem 0.8rem; }
+  .ftr__socials a:hover { color: var(--sepia); background: var(--lime); border-color: var(--lime); }
+  .ftr__base {
+    margin-block-start: var(--space-5);
+    padding-block-start: var(--space-3);
+    border-block-start: 1px solid rgb(74 59 44 / 0.25);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    justify-content: space-between;
+    font-size: var(--step--1);
+  }
+  @media (min-width: 900px) {
+    .ftr__grid {
+      grid-template-columns: 1.2fr 1.6fr auto;
+      align-items: start;
+    }
+    .ftr {
+      padding-block-end: 0;
+    }
+  }
+
+/* the worn edge the footer rises on (shared Erode, pointing up) */
