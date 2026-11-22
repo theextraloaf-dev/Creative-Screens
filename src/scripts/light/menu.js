@@ -1,9 +1,9 @@
-/* The Services menu: the eight services in giant stacked type, full screen on cream. Opens from the pill; Esc, the
+/* The Services menu: the eight services in giant stacked type, full screen on cream. Opens from the menu button in the header pill; Esc, the
    close button or a pick closes it; Tab stays inside while it is open. */
 export function initMenu() {
   const menu = document.querySelector('[data-services]');
-  const opener = document.querySelector('[data-services-open]');
-  if (!menu || !opener) return { open() {}, close() {} };
+  const openers = [...document.querySelectorAll('[data-services-open]')];   // the menu button in the header pill
+  if (!menu || !openers.length) return { open() {}, close() {} };
   const closeBtn = menu.querySelector('.lmenu__close');
   let lastFocus = null;
 
@@ -13,7 +13,7 @@ export function initMenu() {
     menu.hidden = false;
     window.__lenis?.stop();
     document.documentElement.style.overflow = 'hidden';
-    opener.setAttribute('aria-expanded', 'true');
+    openers.forEach((o) => o.setAttribute('aria-expanded', 'true'));
     requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-open')));
     closeBtn.focus({ preventScroll: true });
   }
@@ -22,13 +22,13 @@ export function initMenu() {
     menu.classList.remove('is-open');
     menu.hidden = true;
     document.documentElement.style.overflow = '';
-    opener.setAttribute('aria-expanded', 'false');
+    openers.forEach((o) => o.setAttribute('aria-expanded', 'false'));
     window.__lenis?.start();
     if (restore) lastFocus?.focus?.({ preventScroll: true });
   }
 
-  opener.setAttribute('aria-expanded', 'false');
-  opener.addEventListener('click', open);
+  openers.forEach((o) => o.setAttribute('aria-expanded', 'false'));
+  openers.forEach((o) => o.addEventListener('click', open));
   closeBtn.addEventListener('click', () => close());
   menu.addEventListener('click', (e) => { if (e.target.closest('a')) close({ restore: false }); }, true);
   document.addEventListener('keydown', (e) => {

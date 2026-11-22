@@ -201,12 +201,12 @@ export function ClosingPanel({ locale, from = 'cream', seed = 11, script, lines,
   );
 }
 
-/** The Services menu: the giant stacked list, full screen on cream, opened from the pill. */
+/** The Services menu: the giant stacked list, full screen on cream, opened from the menu button in the header pill
+    (Header.tsx, .hdr__svc). */
 export function ServicesMenu({ locale }: { locale: Locale }) {
   const m = messages(locale); const L = m.light;
   return (
     <>
-      <button type="button" className="lmenu-open" data-services-open aria-haspopup="dialog">{L.menu} <span aria-hidden="true">≡</span></button>
       <div className="lmenu" data-services role="dialog" aria-modal="true" aria-labelledby="lmenu-title" hidden>
         <img className="lmenu__bg" src="/video/hero-light-poster.webp" alt="" loading="lazy" />
         <button type="button" className="lmenu__close" aria-label={L.menuClose}>×</button>

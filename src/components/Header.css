@@ -123,6 +123,21 @@
     place-items: center;
     cursor: pointer;
   }
+  /* the Services menu button (desktop, on pages with the Services menu): round and outlined like the language pill,
+     its two lines in sepia, last in the pill */
+  .hdr__svc {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(74, 59, 44, 0.35);
+    background: transparent;
+    place-items: center;
+    cursor: pointer;
+  }
+  .hdr__svc:hover { border-color: var(--lime); background: rgb(255 255 255 / 0.35); }
+  .hdr__svc .hdr__burger,
+  .hdr__svc .hdr__burger::before { background: var(--sepia); }
   .hdr__burger,
   .hdr__burger::before {
     display: block;
@@ -194,6 +209,9 @@
     }
     .hdr__quote {
       display: inline-flex;
+    }
+    html:has(.light.has-dialogs) .hdr__svc {
+      display: inline-grid;
     }
     .hdr__menu,
     .hdr__panel {

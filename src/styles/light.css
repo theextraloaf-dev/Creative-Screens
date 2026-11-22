@@ -60,8 +60,8 @@ html.motion:not(.l-seen) .lload:not(.is-done) { animation: lload-out 0.6s 4.5s f
 .lload__fact b { font-family: var(--font-display); font-size: var(--step--1); letter-spacing: 0.1em; text-transform: uppercase; }
 .lload__fact span { color: var(--sepia-2); }
 
-/* ---------------------------------------------------------------- chapter bar + services button */
-.lchapters, .lmenu-open { display: none; }
+/* ---------------------------------------------------------------- chapter bar (the Services menu opens from the header pill: Header.css .hdr__svc) */
+.lchapters { display: none; }
 html.motion .light.is-ready .lchapters {
   position: fixed; z-index: 40; inset-block-start: clamp(4.6rem, 10vh, 5.6rem); left: 50%; translate: -50% 0; width: min(34rem, 56vw);
   display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; padding-block-start: 0.7rem;
@@ -74,13 +74,6 @@ html.motion .light.is-phone .lchapters { display: none; }   /* phone mode: narro
 .lchapters a.is-on { color: var(--sepia); font-weight: 600; }
 .lchapters__line { position: absolute; inset-inline: 0; inset-block-start: 0; height: 2px; background: rgb(74 59 44 / 0.15); border-radius: 2px; }
 .lchapters__line i { position: absolute; inset-block: 0; inset-inline-start: 0; width: calc(var(--prog, 0) * 100%); background: var(--sepia); border-radius: 2px; }
-.light.has-dialogs .lmenu-open {
-  display: inline-flex; align-items: center; gap: 0.5em; position: fixed; z-index: 41;
-  inset-block-start: clamp(4.6rem, 10vh, 5.6rem); inset-inline-end: var(--space-3);
-  padding: 0.6em 1.1em; border: 1.5px solid var(--sepia); border-radius: 999px; background: var(--cream); color: var(--sepia); cursor: pointer;
-  font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.1em; text-transform: uppercase;
-}
-.lmenu-open:hover { background: var(--lime); border-color: var(--lime); }
 
 /* ---------------------------------------------------------------- 1. hero postcard */
 .lhero__card { position: relative; margin: 0; overflow: hidden; background: var(--cream-2); }

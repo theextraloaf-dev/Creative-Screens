@@ -36,6 +36,10 @@ export function Header({ locale, routeKey, alt }: Props) {
             aria-label={m.lang.aria}
             data-lang-switch={other}>{m.lang.label}</a>
           <a className="btn hdr__quote" href={quoteHref}>{m.cta.quote}</a>
+          {/* desktop: opens the full-screen Services menu (src/scripts/light/menu.js); shown only on pages that have it */}
+          <button className="hdr__svc" type="button" data-services-open aria-haspopup="dialog" aria-label={m.light.menuOpen}>
+            <span className="hdr__burger" aria-hidden="true"></span>
+          </button>
           <button className="hdr__menu" type="button" aria-expanded="false" aria-controls="menu-panel" data-menu-toggle>
             <span className="sr-only">{m.nav.menu}</span>
             <span className="hdr__burger" aria-hidden="true"></span>

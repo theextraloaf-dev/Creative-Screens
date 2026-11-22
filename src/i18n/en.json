@@ -1518,6 +1518,7 @@
       "Quote"
     ],
     "menu": "Services",
+    "menuOpen": "Open the services menu",
     "menuClose": "Close the services menu",
     "photos": "Photos",
     "of": "of",
