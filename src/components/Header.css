@@ -54,6 +54,14 @@
     -webkit-mask: url('/img/logo-wordmark.svg') no-repeat center / contain; mask: url('/img/logo-wordmark.svg') no-repeat center / contain;
   }
   @media (min-width: 420px) { .hdr__wordmark { height: 12px; } }
+  /* the narrowest phones (320–379 px): a smaller wordmark, slimmer padding and a slimmer language pill, so the menu
+     button stays on screen (at 11 px the wordmark alone is 166 px wide) */
+  @media (max-width: 379px) {
+    .hdr__bar { gap: 0.5rem; padding-inline: 0.75rem; }
+    .hdr__wordmark { height: 8.5px; }
+    .hdr__actions { gap: 0.35rem; }
+    .hdr__lang { padding-inline: 0.6rem; }
+  }
   .hdr__nav {
     display: none;
     gap: 1.6rem;

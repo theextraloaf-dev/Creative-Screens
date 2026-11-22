@@ -290,7 +290,8 @@ export function PageHead({ locale, id, trail, script, bold, lines, count, lead, 
       <div className="lpage-head__text">
         <Crumbs locale={locale} trail={trail} />
         {(script || bold) && <Kicker script={script} bold={bold} />}
-        <h1 id={id} className="lgiant lgiant--page">
+        {/* a word of ten letters or more (PROMOTIONAL, INSTALLATION) sets the title a size down on the narrowest phones */}
+        <h1 id={id} className={`lgiant lgiant--page${lines.join(' ').split(/\s+/).some((w) => w.length >= 10) ? ' is-long' : ''}`}>
           {lines.map((l, i) => (
             <span key={l} className="lline" data-line>
               <span>{l}{count && i === lines.length - 1 && <sup className="lpage-head__count ltr">{count}</sup>}</span>

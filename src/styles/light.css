@@ -194,7 +194,7 @@ img.is-object { object-fit: contain !important; background: #fbf6ea; padding: cl
 .ljobs__card.is-object .ljobs__open { background: #fbf6ea; }
 .ljobs__card.is-object .ljobs__open img { object-fit: contain; padding: clamp(1rem, 2.4vw, 2.6rem); mix-blend-mode: multiply; }
 .lbox__strip img.is-object { padding: clamp(1rem, 3vw, 3rem); }
-.lsvc__list { list-style: none; padding: 0; display: grid; gap: 0.32em; font-size: clamp(1.8rem, 0.8rem + 3.6vw, 5rem); line-height: 1.05; }
+.lsvc__list { list-style: none; padding: 0; display: grid; gap: 0.32em; font-size: clamp(1.5rem, 0.8rem + 3.6vw, 5rem); line-height: 1.05; }   /* 1.5rem floor: SUSTAINABILITY fits a 320 px phone */
 html.motion .light.is-pinned .lsvc__list { font-size: clamp(1.3rem, min(3vw, 4.6vh), 4rem); margin: 0; }
 .lsvc__list a { color: inherit; text-decoration: none; display: inline-block; }
 .lsvc__list a { transition: color 0.3s; }
@@ -345,7 +345,7 @@ html.motion .light.is-pinned .ljobs.has-gl .ljobs__col { background: none; }
 /* a page hero: cream, under the header, script kicker + giant title + lead */
 .lpage-hero { position: relative; width: var(--wrap); margin-inline: auto; padding-block: clamp(8rem, 20vh, 12rem) clamp(5rem, 12vh, 8rem); }
 .lpage-hero--text { min-height: 70vh; }
-.lgiant--page { font-size: clamp(2.6rem, 1rem + 6vw, 7.6rem); margin-block: var(--space-2) var(--space-3); }
+.lgiant--page { font-size: clamp(2rem, 1rem + 6vw, 7.6rem); margin-block: var(--space-2) var(--space-3); }
 .lgiant--page mark { background: none; color: inherit; font-family: var(--font-script); font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--sepia-2); font-size: 1.05em; }
 .lpage-lead { max-width: 40rem; margin: 0 0 var(--space-2); font-size: var(--step-1); line-height: 1.5; color: rgb(74 59 44 / 0.78); }
 
@@ -414,6 +414,16 @@ html.motion .light.is-pinned .ljobs__open::after {
 .lpage-head__text { display: grid; justify-items: start; gap: var(--space-2); min-width: 0; }
 .lpage-head__text > .lgiant { margin-block: 0 var(--space-1); }
 .lpage-head.has-fan:not(.is-fan-first) .lgiant--page { font-size: clamp(2.4rem, min(1rem + 3.4vw, 10vh), 5.8rem); }   /* half the width beside the fan */
+/* phones: the fan sits under the title, so the title takes the full width and scales with it (one long word, e.g.
+   DRINKWARE, still fits a 320 px screen inside its gutters) */
+@media (max-width: 767px) { .lpage-head.has-fan:not(.is-fan-first) .lgiant--page { font-size: clamp(2rem, 1rem + 6vw, 3.4rem); } }
+/* phones: a title with a word of ten letters or more (PROMOTIONAL, INSTALLATION; PageHead marks it is-long) scales at
+   about a tenth of the screen width, so the word stays inside the gutters (with or without the fan beside it) */
+@media (max-width: 767px) {
+  .lpage-head .lgiant--page.is-long, .lpage-head.has-fan:not(.is-fan-first) .lgiant--page.is-long { font-size: clamp(1.6rem, 10vw - 0.25rem, 3.4rem); }
+}
+/* card names may break inside a word as a last resort on the narrowest phones */
+@media (max-width: 419px) { .ltype__name, .lsvcs__name { overflow-wrap: anywhere; } }
 .lpage-head__count { font-family: var(--font-mono); font-size: 0.2em; font-weight: 600; letter-spacing: 0.06em; vertical-align: top; margin-inline-start: 0.3em; color: var(--sepia-2); position: relative; top: 0.4em; }
 @media (min-width: 900px) {
   .lpage-head.has-fan { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
@@ -615,6 +625,7 @@ html.motion .lfan__card { animation: lfan-deal 0.9s var(--ease-out) backwards; a
 .lsvcs--ranges .lsvcs__name { font-size: clamp(1.5rem, 0.9rem + 1.6vw, 2.6rem); }
 .ltypes-sec { display: grid; gap: var(--space-3); }
 .ltypes { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(0.9rem, 1.8vw, 1.5rem); grid-template-columns: repeat(auto-fill, minmax(min(100%, 15.5rem), 1fr)); }
+@media (min-width: 1200px) { .ltypes { grid-template-columns: repeat(4, minmax(0, 1fr)); } }   /* a steady four across on wide screens, as the Work grid */
 .ltype { display: grid; grid-template-rows: auto auto auto 1fr auto; gap: 0.5rem; padding: 0.8rem 0.8rem 1rem; border-radius: 18px; background: #fbf6ea; box-shadow: 0 12px 28px rgb(74 59 44 / 0.1); }
 .ltype__art { position: relative; display: grid; place-items: center; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: #f3ebdb; }
 .ltype__art img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-out); }
@@ -622,7 +633,7 @@ html.motion .lfan__card { animation: lfan-deal 0.9s var(--ease-out) backwards; a
 .ltype__art.is-text + .ltype__num { visibility: hidden; }   /* the number is already the picture */
 .ltype__art.is-text b { font-family: var(--font-display); font-size: clamp(3rem, 2rem + 3vw, 5rem); color: rgb(74 59 44 / 0.22); }
 .ltype__num { margin-block-start: 0.3rem; padding-inline: 0.2rem; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--sepia-2); }
-.ltype__name { margin: 0; padding-inline: 0.2rem; font-family: var(--font-display); font-size: var(--step-1); line-height: 1.05; text-transform: uppercase; color: var(--sepia); }
+.ltype__name { margin: 0; padding-inline: 0.2rem; font-family: var(--font-display); font-size: var(--step-1); line-height: 1.05; text-transform: uppercase; color: var(--sepia); overflow-wrap: break-word; hyphens: auto; }
 [lang='ar'] .ltype__name { text-transform: none; line-height: 1.4; }
 .ltype__line { margin: 0; padding-inline: 0.2rem; font-size: var(--step--1); line-height: 1.55; color: rgb(74 59 44 / 0.75); }
 .ltype .lproduct__quote { margin-inline-start: 0.2rem; align-self: end; }
