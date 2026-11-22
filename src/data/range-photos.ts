@@ -135,4 +135,11 @@ export const rangePhotos: Record<string, RangePhoto> = Object.fromEntries([
   p('flags-banners', 'rollup-banners', 'https://pixabay.com/photos/exhibition-stand-banner-blank-5052522/'),
   p('exhibitions-events', 'custom-booths', 'https://pixabay.com/photos/congress-exhibition-event-business-474319/'),
   p('exhibitions-events', 'counters', 'https://pixabay.com/photos/office-desk-reception-business-5053798/'),
+  // third pass: equivalents for six of the seven types still on a text card (teardrop flags still has none)
+  p('flags-banners', 'x-banners', 'https://unsplash.com/photos/a-blank-white-rectangular-sign-leaning-forward-0GywLiHMUTU'),
+  p('event-setup', 'step-repeat', 'https://www.pexels.com/photo/love-text-on-a-light-blue-background-7679702/'),
+  p('event-setup', 'cutout-standees', 'https://www.pexels.com/photo/boy-and-girl-cutout-decals-1386336/'),
+  p('exhibitions-events', 'modular-booths', 'https://www.pexels.com/photo/modern-booth-design-with-scandinavian-furniture-31311141/'),
+  p('exhibitions-events', 'popup-stands', 'https://www.pexels.com/photo/modern-exhibition-stand-with-blank-display-40987442/'),
+  p('acrylic-awards', 'acrylic-trophies', 'https://unsplash.com/photos/several-clear-statuettes-stand-in-a-row-shsJnMCkvhY'),
 ]);

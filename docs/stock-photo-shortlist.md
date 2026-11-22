@@ -260,3 +260,18 @@ No honest stock photo found (shown as a numbered text card until there is a real
 - acrylic-awards/trophies/acrylic-trophies: dropped on review: the same awards photo already shows acrylic plaques
 - exhibitions-events/booths/modular-booths: dropped on review: the same scene as the shell-scheme photo
 - exhibitions-events/booths/popup-stands: dropped on review: the same render already shows roll-up banners
+
+## Range types: the last seven (2026-11-22, third pass)
+
+Six of the seven types left on a text card now have an equivalent, from Unsplash and Pexels (Pixabay's search sat behind a bot check this time). Same rules as above: cropped square to 800 px WebP, no readable third-party brands, no faces as the subject, renders marked (render). Each pick was compared with every photo already on the site (16×16 greyscale check plus a look by eye).
+
+| Type | File | Source | Shows |
+|---|---|---|---|
+| flags-banners / roll-ups / x-banners | x-banners.webp | [Unsplash](https://unsplash.com/photos/a-blank-white-rectangular-sign-leaning-forward-0GywLiHMUTU) | blank upright banner panel with an eyelet in each corner, as an X-frame holds it (render) |
+| event-setup / stage-backdrops / step-repeat | step-repeat.webp | [Pexels](https://www.pexels.com/photo/love-text-on-a-light-blue-background-7679702/) | the repeat pattern itself: one word printed in staggered rows (not a wall) |
+| event-setup / event-branding / cutout-standees | cutout-standees.webp | [Pexels](https://www.pexels.com/photo/boy-and-girl-cutout-decals-1386336/) | two white cut-out figures standing against purple and blue |
+| exhibitions-events / booths / modular-booths | modular-booths.webp | [Pexels](https://www.pexels.com/photo/modern-booth-design-with-scandinavian-furniture-31311141/) | booth corner built from black wall panels, with lounge chair, plant and framed prints |
+| exhibitions-events / booths / popup-stands | popup-stands.webp | [Pexels](https://www.pexels.com/photo/modern-exhibition-stand-with-blank-display-40987442/) | straight pop-up wall with counter case in a bright hall (render; same stand model as the pop-out banners picture, different room) |
+| acrylic-awards / trophies / acrylic-trophies | acrylic-trophies.webp | [Unsplash](https://unsplash.com/photos/several-clear-statuettes-stand-in-a-row-shsJnMCkvhY) | a row of clear cut statuettes lit on a dark stage |
+
+Still no photo (numbered text card): flags-banners/feather-flags/teardrop-flags. Tried teardrop flag, feather flag, beach flag(s), blade flag, sail flag, promotional flag(s), advertising flags, flag mockup, event flags, surf flags; the only teardrop-shaped flags found are the sail-flags scene already used, and the red/yellow blade-flag beach is the rectangle-flags scene.
