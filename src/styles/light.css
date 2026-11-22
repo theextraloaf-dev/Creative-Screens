@@ -298,6 +298,49 @@ html.motion .light.is-pinned .ljobs.has-gl .ljobs__col { background: none; }
 .ljobs__gl.is-dragging { cursor: grabbing; }
 
 
+/* ---------------------------------------------------------------- our clients (Clients.tsx): Expedia's logo carousel,
+   hairline rules above the row and under each logo; rolls when motion is allowed, a static centred row otherwise */
+.lclients { padding-block: clamp(4rem, 9vw, 7rem); text-align: center; }
+.lclients__head { padding-inline: var(--pad); margin-block-end: clamp(1.6rem, 3vw, 2.4rem); }
+.lclients__title { margin: 0; font-family: var(--font-display); font-size: clamp(1.8rem, 1rem + 2.4vw, 3.2rem); line-height: 0.98; text-transform: uppercase; }
+[lang='ar'] .lclients__title { text-transform: none; line-height: 1.3; }
+.lclients__lead { max-width: 30rem; margin: var(--space-2) auto 0; color: var(--sepia-2); line-height: 1.6; }
+.lclients__lead .lsample { vertical-align: 0.15em; white-space: nowrap; }
+.lclients__rail { --gap: clamp(2rem, 4.5vw, 3.6rem); --logo-w: clamp(6.5rem, 8vw, 8.5rem); width: var(--wrap); margin-inline: auto; }
+.lclients__belt { display: flex; justify-content: center; }
+.lclients__row {
+  list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; column-gap: var(--gap);
+  max-width: fit-content; border-block-start: 2px solid var(--hairline);
+}
+.lclients__row--copy, .lclients__item.is-repeat { display: none; }
+.lclients__item { display: grid; place-items: center; width: var(--logo-w); padding-block: clamp(1.8rem, 3.2vw, 2.9rem); border-block-end: 2px solid var(--hairline); }
+.lclients__item img {
+  display: block; width: 100%; aspect-ratio: 97 / 53; object-fit: contain;
+  filter: grayscale(1) sepia(0.35); mix-blend-mode: multiply; opacity: 0.8; transition: filter 0.3s, opacity 0.3s;
+}
+.lclients__item:hover img { filter: none; opacity: 1; }
+.lclients__name {
+  display: grid; place-items: center; width: 100%; aspect-ratio: 97 / 53; border: 1.5px dashed var(--hairline); border-radius: 10px;
+  font-family: var(--font-display); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.04em; color: var(--sepia-2);
+}
+[lang='ar'] .lclients__name { text-transform: none; letter-spacing: 0; }
+.lclients__toggle { display: none; }
+/* rolling: the belt holds the row twice and slides by one row, then starts over where it began (unseen) */
+html.motion .lclients__rail {
+  width: 100%; overflow: hidden; border-block-start: 2px solid var(--hairline);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+html.motion .lclients__belt { width: max-content; justify-content: flex-start; animation: lclients-roll calc(var(--n) * 3.2s) linear infinite; }
+html.motion .lclients__row { flex-wrap: nowrap; max-width: none; border-block-start: 0; padding-inline-end: var(--gap); }
+html.motion .lclients__row--copy { display: flex; }
+html.motion .lclients__item { flex: none; }
+html.motion .lclients__item.is-repeat { display: grid; }
+html.motion .lclients__toggle { display: inline-grid; margin-block-start: var(--space-3); width: 2.6rem; height: 2.6rem; font-size: 0.75rem; }
+.lclients.is-paused .lclients__belt, .lclients__rail:hover .lclients__belt { animation-play-state: paused; }
+html.motion[dir='rtl'] .lclients__belt { animation-name: lclients-roll-rtl; }   /* Arabic rolls the other way */
+@keyframes lclients-roll { to { transform: translateX(-50%); } }
+@keyframes lclients-roll-rtl { to { transform: translateX(50%); } }
+
 /* ---------------------------------------------------------------- 5. closing panel */
 .lclose { padding: clamp(12rem, 26vh, 18rem) var(--pad) clamp(7rem, 18vh, 12rem); }
 .lclose__bg { position: absolute; inset: -8% 0; z-index: 0; width: 100%; height: 116%; object-fit: cover; object-position: 50% 60%; filter: sepia(0.12) saturate(1.05); will-change: transform; }

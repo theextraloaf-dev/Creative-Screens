@@ -6,6 +6,7 @@
 import type { CSSProperties } from 'react';
 import { hrefFor, messages, type Locale } from '@/i18n';
 import { ClosingPanel, Erode, Giant, JobsDialog, JobsGallery, Kicker, LightPage, ServicesPinned, WorkshopFilm } from './light/parts';
+import { Clients } from './light/Clients';
 import { QuoteSection } from './QuoteSection';
 import { Shell } from './Shell';
 
@@ -163,6 +164,9 @@ export function LightPreview({ locale, routeKey = 'home' }: { locale: Locale; ro
 
         {/* 4. finished jobs: Biegajaca's pinned sideways gallery (on the same cream as the film above) */}
         <JobsGallery locale={locale} />
+
+        {/* our clients: the main clients we have worked with, as Expedia's ruled logo row, rolling (same cream) */}
+        <Clients locale={locale} />
 
         {/* 5. closing: the cream wears away onto the corniche and the panel rises; the quote form follows */}
         <ClosingPanel locale={locale} from="cream" seed={11} href="#quote" />
