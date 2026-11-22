@@ -1,5 +1,5 @@
 /* "Services" (after biegajaca-sztuka.pl's Commissions page): the subpage head (breadcrumb, giant title, lead, the
-   quote button and a fan of our own pictures), the eight trades as large staggered cards on ochre (each takes the ink
+   quote button and a fan of our own pictures), the nine trades as large staggered cards on ochre (each takes the ink
    strokes under the pointer and leads to its page), how an order works, the common questions, and the closing panel.
    Design: docs/superpowers/specs/2026-11-20-light-style-sitewide-design.md */
 import { hrefFor, messages, type Locale } from '@/i18n';

@@ -7,7 +7,7 @@
 
 export type Locale = 'en' | 'ar';
 export type ServiceSlug =
-  | 'print-stationery' | 'signage' | 'graphics' | 'flags-banners' | 'exhibitions-events' | 'led-screens' | 'gifts-apparel' | 'acrylic-awards';
+  | 'print-stationery' | 'signage' | 'graphics' | 'flags-banners' | 'exhibitions-events' | 'event-setup' | 'led-screens' | 'gifts-apparel' | 'acrylic-awards';
 export type Look = 'photo' | 'object' | 'drawing';
 export interface JobCopy { title: string; client: string; place: string; line: string }
 export interface Job { slug: string; service: ServiceSlug; year: number; sample: boolean; look: Look; photos: string[]; en: JobCopy; ar: JobCopy }

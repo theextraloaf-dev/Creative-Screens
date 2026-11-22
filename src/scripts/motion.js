@@ -79,12 +79,14 @@ function init() {
   document.querySelectorAll('[data-count]').forEach((el) => {
     const end = Number(el.dataset.count);
     const state = { v: 0 };
+    // a figure written with a thousands comma in the HTML (10,000) keeps it while counting
+    const show = el.textContent.includes(',') ? (n) => n.toLocaleString('en-US') : (n) => String(n);
     el.textContent = '0';
     gsap.to(state, {
       v: end, duration: T.count.duration, ease: T.count.ease,
       scrollTrigger: trigger(el, { start: 'top 92%' }),
-      onUpdate: () => { el.textContent = String(Math.round(state.v)); },
-      onComplete: () => { el.textContent = String(end); },
+      onUpdate: () => { el.textContent = show(Math.round(state.v)); },
+      onComplete: () => { el.textContent = show(end); },
     });
   });
 

@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { answerRows, sizeKeys, type FieldDef } from '@/lib/quote-fields';
 import { buildQuoteMessage, isEmailValid, isQuoteReady, mailtoHref } from '@/lib/quote-message';
 import { whatsappHref, type Messages } from '@/i18n';
 import './QuoteForm.css';
 
 export const SERVICE_EVENT = 'cs:service';
+/** detail: { service?, brief? } (see the listener below) */
+export const QUOTE_EVENT = 'cs:quote';
 
 interface Props {
   copy: Messages['quote'];
@@ -45,10 +47,22 @@ export function QuoteForm({ copy, services, whatsapp, email, preset = '', brief:
   const setWhoField = (field: keyof typeof who) => (value: string) => setWho((w) => ({ ...w, [field]: value }));
   const setVal = (key: string) => (value: string) => setVals((v) => ({ ...v, [key]: value }));
 
+  // a "Get a quote" beside one thing we make (a range or a product on a service page) sets the service and the
+  // brief's first line; what the visitor has typed is never overwritten, only an earlier first line is replaced
+  const lastAuto = useRef(firstBrief);
   useEffect(() => {
     const onService = (e: Event) => setService((e as CustomEvent<string>).detail);
+    const onQuote = (e: Event) => {
+      const { service: s, brief: b } = (e as CustomEvent<{ service?: string; brief?: string }>).detail ?? {};
+      if (s) setService(s);
+      if (b) {
+        setDetails((d) => (!d.trim() || d === lastAuto.current ? b : d.startsWith(lastAuto.current) ? b + d.slice(lastAuto.current.length) : `${b}\n${d}`));
+        lastAuto.current = b;
+      }
+    };
     window.addEventListener(SERVICE_EVENT, onService);
-    return () => window.removeEventListener(SERVICE_EVENT, onService);
+    window.addEventListener(QUOTE_EVENT, onQuote);
+    return () => { window.removeEventListener(SERVICE_EVENT, onService); window.removeEventListener(QUOTE_EVENT, onQuote); };
   }, []);
 
   const tailored = service ? (copy.tailored as unknown as Record<string, Tailored>)[service] : undefined;

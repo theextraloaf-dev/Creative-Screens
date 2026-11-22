@@ -26,6 +26,7 @@ export function AboutPage({ locale }: { locale: Locale }) {
     { dt: p.vision.h, dd: p.vision.body },
     { dt: p.mission.h, dd: p.mission.body },
     { dt: p.experienceLabel, dd: p.experienceValue },
+    { dt: p.customersLabel, dd: <span className="ltr">{p.customersValue}</span> },
     { dt: p.hqLabel, dd: site.address },
   ];
 

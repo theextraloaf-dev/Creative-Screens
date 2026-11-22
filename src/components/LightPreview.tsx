@@ -140,6 +140,7 @@ export function LightPreview({ locale, routeKey = 'home' }: { locale: Locale; ro
                 {L.cities.map((c, i) => <li key={c} data-city={i} data-at={stopAt[i].toFixed(4)} className={i === 0 ? 'is-on' : ''}>{c}</li>)}
               </ol>
               <p className="lcount lroute__km"><b className="ltr" data-km>0</b> <span>{L.km}</span></p>
+              <p className="lcount lroute__km lroute__customers"><b className="ltr"><span data-count="10000">10,000</span>+</b> <span>{L.customers}</span></p>
             </div>
             <svg className="lroute__map" viewBox="0 0 600 620" aria-hidden="true">
               <path className="lroute__ghost" d={roadD} />

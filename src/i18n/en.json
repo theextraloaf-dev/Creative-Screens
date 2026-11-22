@@ -39,6 +39,86 @@
     "viewAll": "See all categories in detail",
     "items": [
       {
+        "slug": "gifts-apparel",
+        "name": "Gifts & Apparel",
+        "line": "Drinkware, bags, headwear, tech, office, home and outdoor gifts, plus culture-themed giveaways, branded to order.",
+        "machine": "Heat press",
+        "makes": [
+          "Drinkware",
+          "Bags & Travel",
+          "Headwear",
+          "Technology",
+          "Office & Writing",
+          "Home & Living",
+          "Outdoor & Recreation",
+          "Culture Gifts"
+        ],
+        "parts": [
+          {
+            "name": "Polo shirt",
+            "line": "Embroidered or printed with your logo."
+          },
+          {
+            "name": "Cap",
+            "line": "Front-panel embroidery."
+          },
+          {
+            "name": "Notebook",
+            "line": "Debossed cover, elastic band."
+          },
+          {
+            "name": "Mug",
+            "line": "Printed all the way round."
+          },
+          {
+            "name": "Pen",
+            "line": "Laser-engraved metal pen."
+          },
+          {
+            "name": "Insert tray",
+            "line": "A foam insert cut to fit each item."
+          }
+        ]
+      },
+      {
+        "slug": "graphics",
+        "name": "Window Vinyl Stickers",
+        "line": "Window film, wall murals, floor graphics and fleet wraps.",
+        "machine": "Wide-format printer",
+        "makes": [
+          "Window film",
+          "Wall murals",
+          "Floor graphics",
+          "Fleet wraps"
+        ],
+        "parts": [
+          {
+            "name": "Tailgate",
+            "line": "Wrap cut to the tailgate's shape."
+          },
+          {
+            "name": "Bed side",
+            "line": "The biggest canvas on the truck."
+          },
+          {
+            "name": "Rear door",
+            "line": "Cut around handles and seals."
+          },
+          {
+            "name": "Front door",
+            "line": "Where the logo usually goes."
+          },
+          {
+            "name": "Bonnet",
+            "line": "One sheet, no joins."
+          },
+          {
+            "name": "Vinyl layers",
+            "line": "Liner, adhesive, printed vinyl, overlaminate."
+          }
+        ]
+      },
+      {
         "slug": "print-stationery",
         "name": "Print & Stationery",
         "line": "Business cards, brochures, letterheads and packaging, printed in-house.",
@@ -115,44 +195,6 @@
         ]
       },
       {
-        "slug": "graphics",
-        "name": "Window, Wall, Floor & Vehicle Graphics",
-        "line": "Window film, wall murals, floor graphics and fleet wraps.",
-        "machine": "Wide-format printer",
-        "makes": [
-          "Window film",
-          "Wall murals",
-          "Floor graphics",
-          "Fleet wraps"
-        ],
-        "parts": [
-          {
-            "name": "Tailgate",
-            "line": "Wrap cut to the tailgate's shape."
-          },
-          {
-            "name": "Bed side",
-            "line": "The biggest canvas on the truck."
-          },
-          {
-            "name": "Rear door",
-            "line": "Cut around handles and seals."
-          },
-          {
-            "name": "Front door",
-            "line": "Where the logo usually goes."
-          },
-          {
-            "name": "Bonnet",
-            "line": "One sheet, no joins."
-          },
-          {
-            "name": "Vinyl layers",
-            "line": "Liner, adhesive, printed vinyl, overlaminate."
-          }
-        ]
-      },
-      {
         "slug": "flags-banners",
         "name": "Flags & Banners",
         "line": "Feather flags, pole flags, roll-ups and large banners.",
@@ -192,13 +234,12 @@
       },
       {
         "slug": "exhibitions-events",
-        "name": "Exhibitions & Events",
-        "line": "Booths, stage backdrops and event branding, built and installed.",
+        "name": "Exhibition Booths & Fabrication",
+        "line": "Exhibition booths and custom fabrication, built in our workshop and installed.",
         "machine": "Booth build area",
         "makes": [
-          "Booths",
-          "Stage backdrops",
-          "Event branding"
+          "Exhibition booths",
+          "Custom fabrication"
         ],
         "parts": [
           {
@@ -224,6 +265,30 @@
           {
             "name": "Screen",
             "line": "A wall bracket for a display."
+          }
+        ]
+      },
+      {
+        "slug": "event-setup",
+        "name": "Event Setup & Branding",
+        "line": "Stage backdrops and event branding, set up for the day and taken down after.",
+        "machine": "Event setup crew",
+        "makes": [
+          "Stage backdrops",
+          "Event branding"
+        ],
+        "parts": [
+          {
+            "name": "Backdrop",
+            "line": "Printed fabric or panels behind the stage."
+          },
+          {
+            "name": "Truss",
+            "line": "An aluminium frame that carries the backdrop."
+          },
+          {
+            "name": "Venue branding",
+            "line": "Entrance arches, roll-ups and signs across the venue."
           }
         ]
       },
@@ -261,48 +326,6 @@
           {
             "name": "Assembled wall",
             "line": "Cabinets stacked into one screen on a ground stand."
-          }
-        ]
-      },
-      {
-        "slug": "gifts-apparel",
-        "name": "Gifts & Apparel",
-        "line": "Drinkware, bags, headwear, tech, office, home and outdoor gifts, plus culture-themed giveaways, branded to order.",
-        "machine": "Heat press",
-        "makes": [
-          "Drinkware",
-          "Bags & Travel",
-          "Headwear",
-          "Technology",
-          "Office & Writing",
-          "Home & Living",
-          "Outdoor & Recreation",
-          "Culture Gifts"
-        ],
-        "parts": [
-          {
-            "name": "Polo shirt",
-            "line": "Embroidered or printed with your logo."
-          },
-          {
-            "name": "Cap",
-            "line": "Front-panel embroidery."
-          },
-          {
-            "name": "Notebook",
-            "line": "Debossed cover, elastic band."
-          },
-          {
-            "name": "Mug",
-            "line": "Printed all the way round."
-          },
-          {
-            "name": "Pen",
-            "line": "Laser-engraved metal pen."
-          },
-          {
-            "name": "Insert tray",
-            "line": "A foam insert cut to fit each item."
           }
         ]
       },
@@ -346,7 +369,7 @@
       }
     ],
     "concept": "Concept illustration: placeholder layout and machines",
-    "lead": "One workshop, eight trades. Scroll through the floor.",
+    "lead": "One workshop, nine trades. Scroll through the floor.",
     "scroll": "[Scroll to continue]",
     "bay": "Bay",
     "quote": "Get a quote",
@@ -376,7 +399,7 @@
       "timeLabel": "Turnaround",
       "note": "* Placeholder times until Creative Screens confirms them.",
       "close": "Close",
-      "lead": "One workshop, eight trades. Pick what you need and see what is included."
+      "lead": "One workshop, nine trades. Pick what you need and see what is included."
     }
   },
   "sequence": {
@@ -657,7 +680,7 @@
         "d": "Two decades of jobs from a single banner to a full fleet."
       },
       {
-        "stat": "8",
+        "stat": "9",
         "unit": "services",
         "t": "One team, one quote",
         "d": "Print, signage, graphics, LED and gifts from one team."
@@ -1036,7 +1059,7 @@
       },
       "exhibitions-events": {
         "hint": "The event date and venue come first.",
-        "detailsPh": "The event, the look you want, the space you have, anything we should know.",
+        "detailsPh": "The event, the stand you want, the space you have, anything we should know.",
         "where": "none",
         "fields": [
           {
@@ -1045,10 +1068,9 @@
             "label": "What do you need?",
             "options": [
               "Exhibition booth",
-              "Stage or photo backdrop",
-              "Roll-ups & standees",
+              "Custom fabrication",
               "Counters & furniture",
-              "Full event branding"
+              "Roll-ups & standees"
             ],
             "short": "Scope"
           },
@@ -1274,13 +1296,61 @@
             "short": "Installation"
           }
         ]
+      },
+      "event-setup": {
+        "hint": "The event date and venue come first.",
+        "detailsPh": "The event, the look you want, the venue, anything we should know.",
+        "where": "none",
+        "fields": [
+          {
+            "key": "scope",
+            "kind": "chips",
+            "label": "What do you need?",
+            "options": [
+              "Stage or photo backdrop",
+              "Entrance & venue branding",
+              "Roll-ups & standees",
+              "Full event branding"
+            ],
+            "short": "Scope"
+          },
+          {
+            "key": "eventDate",
+            "kind": "date",
+            "label": "Event date",
+            "short": "Event date"
+          },
+          {
+            "key": "venue",
+            "kind": "text",
+            "label": "Venue",
+            "placeholder": "e.g. Oman Convention & Exhibition Centre",
+            "short": "Venue"
+          },
+          {
+            "key": "size",
+            "kind": "size",
+            "label": "Stage or space size"
+          },
+          {
+            "key": "support",
+            "kind": "chips",
+            "label": "What should we do?",
+            "options": [
+              "Design & print only",
+              "Print and install",
+              "Print, install & dismantle"
+            ],
+            "short": "Scope of work"
+          }
+        ]
       }
     }
   },
   "proof": {
     "items": [
       "21 years in Muscat",
-      "Eight trades, one workshop",
+      "Nine trades, one workshop",
       "Made in-house",
       "Quote by WhatsApp or email"
     ]
@@ -1299,7 +1369,7 @@
   "pages": {
     "services": {
       "eyebrow": "What we make",
-      "titleBold": "Eight trades,",
+      "titleBold": "Nine trades,",
       "titleMuted": "one workshop in Muscat.",
       "lead": "Every category we offer. Pick one to see what's inside.",
       "subLead": "Pick a range to see it",
@@ -1311,7 +1381,7 @@
     },
     "work": {
       "eyebrow": "Our work",
-      "titleBold": "Eight trades.",
+      "titleBold": "Nine trades.",
       "titleMuted": "One workshop. Real project photos are on the way.",
       "lead": "A dedicated row is ready for each category below — once real project photos come in, this becomes the portfolio.",
       "ph": "Photos pending",
@@ -1366,7 +1436,9 @@
           "h": "Sustainability",
           "body": "Promoting responsible, mindful business practices."
         }
-      ]
+      ],
+      "customersLabel": "Satisfied customers",
+      "customersValue": "10,000+"
     },
     "privacy": {
       "eyebrow": "Privacy policy",
@@ -1405,7 +1477,7 @@
     ],
     "servicesScript": "Services",
     "servicesKicker": "What we make",
-    "servicesLead": "Eight things we make, all under one roof in Muscat.",
+    "servicesLead": "Nine things we make, all under one roof in Muscat.",
     "jobsScript": "Finished",
     "jobsKicker": "jobs",
     "jobsTitle": "Work out on the street",
@@ -1458,7 +1530,8 @@
     "aboutScript": "Since",
     "valuesScript": "What we",
     "valuesBold": "stand for",
-    "categoryScript": "Services"
+    "categoryScript": "Services",
+    "customers": "satisfied customers"
   },
   "sub": {
     "home": "Home",
@@ -1547,6 +1620,8 @@
       ],
       "cta": "Tell us about it"
     },
-    "openJob": "Open the job page"
+    "openJob": "Open the job page",
+    "rangeBrief": "I'm interested in: {name}",
+    "quoteShort": "Get a quote"
   }
 }

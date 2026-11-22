@@ -14,6 +14,7 @@ import { subCategories } from '@/data/sub-categories';
 import { subCategoryProducts } from '@/data/sub-category-products';
 import { Faq, Ground, JobsDialog, LightPage, PageHead, Steps, type FanItem } from './light/parts';
 import { JobCard } from './light/JobCard';
+import { QUOTE_EVENT } from './QuoteForm';
 import { QuoteSection } from './QuoteSection';
 import { Shell } from './Shell';
 
@@ -36,6 +37,8 @@ export function CategoryPage({ locale, category }: { locale: Locale; category: s
   const activeName = cat.makes[active] ?? cat.name;
   const products = subCategoryProducts[`${category}/${activeSlug}`] ?? [];
   const ownJobs = jobs.filter((j) => j.service === category);
+  // "Get a quote" beside a range or a product: the form below takes this service and "I'm interested in: …"
+  const ask = (name: string) => window.dispatchEvent(new CustomEvent(QUOTE_EVENT, { detail: { service: category, brief: S.rangeBrief.replace('{name}', name) } }));
   // the fan: one catalogue piece from each range; a service without product photos shows its plate and its jobs
   const pieces: FanItem[] = subs.map((sb) => subCategoryProducts[`${category}/${sb}`]?.[0]?.image).filter((src): src is string => !!src)
     .slice(0, 4).map((src) => ({ src, look: 'object' }));
@@ -63,13 +66,20 @@ export function CategoryPage({ locale, category }: { locale: Locale; category: s
             </div>
 
             <div className="lcat__panel" role="tabpanel" aria-label={activeName}>
-              <h3 className="lcat__panelTitle">{activeName}</h3>
+              <div className="lcat__panelHead">
+                <h3 className="lcat__panelTitle">{activeName}</h3>
+                <a className="lbtn" href="#quote" onClick={() => ask(activeName)}>{S.quoteFor.replace('{name}', activeName)}</a>
+              </div>
               {products.length > 0 ? (
                 <ul className="lproducts">
                   {products.map((item) => (
                     <li key={item.slug} className="lproduct">
                       <span className="lproduct__art"><img className="is-object" src={item.image} alt="" width="600" height="600" loading="lazy" decoding="async" /></span>
                       <span className="lproduct__name">{item.name}</span>
+                      <a className="lproduct__quote" href="#quote" onClick={() => ask(`${activeName}: ${item.name}`)}
+                        aria-label={S.quoteFor.replace('{name}', item.name)}>
+                        {S.quoteShort} <span className="arrow" aria-hidden="true">→</span>
+                      </a>
                     </li>
                   ))}
                 </ul>

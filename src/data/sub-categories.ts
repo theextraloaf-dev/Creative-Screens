@@ -8,7 +8,8 @@ export const subCategories: Record<string, string[]> = {
   signage: ['shop-fronts', '3d-letters', 'lightboxes', 'wayfinding'],
   graphics: ['window-film', 'wall-murals', 'floor-graphics', 'fleet-wraps'],
   'flags-banners': ['feather-flags', 'pole-flags', 'roll-ups', 'large-banners'],
-  'exhibitions-events': ['booths', 'stage-backdrops', 'event-branding'],
+  'exhibitions-events': ['booths', 'fabrication'],
+  'event-setup': ['stage-backdrops', 'event-branding'],
   'led-screens': ['indoor-led-walls', 'outdoor-led-walls', 'installation'],
   /* Renamed/expanded 2026-11-17 to match jasani.ae's own category names (jasani.ae/shop's sidebar
      filter and homepage tiles) — Creative Screens' gifts-apparel is the same kind of catalogue, so

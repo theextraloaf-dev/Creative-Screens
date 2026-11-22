@@ -10,6 +10,7 @@ export const serviceFacts: Record<string, ServiceFacts> = {
   graphics: { days: [2, 5] },
   'flags-banners': { days: [2, 4] },
   'exhibitions-events': { days: [5, 10] },
+  'event-setup': { days: [2, 5] },
   'led-screens': { days: [7, 14] },
   'gifts-apparel': { days: [2, 6] },
   'acrylic-awards': { days: [2, 5] },
