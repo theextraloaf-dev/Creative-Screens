@@ -263,7 +263,7 @@ No honest stock photo found (shown as a numbered text card until there is a real
 
 ## Range types: the last seven (2026-11-22, third pass)
 
-Six of the seven types left on a text card now have an equivalent, from Unsplash and Pexels (Pixabay's search sat behind a bot check this time). Same rules as above: cropped square to 800 px WebP, no readable third-party brands, no faces as the subject, renders marked (render). Each pick was compared with every photo already on the site (16×16 greyscale check plus a look by eye).
+The seven types left on a text card now have an equivalent: six from Unsplash and Pexels (Pixabay's search sat behind a bot check at first), then teardrop flags from Pixabay. Same rules as above: cropped square to 800 px WebP, no readable third-party brands, no faces as the subject, renders marked (render). Each pick was compared with every photo already on the site (16×16 greyscale check plus a look by eye).
 
 | Type | File | Source | Shows |
 |---|---|---|---|
@@ -274,4 +274,10 @@ Six of the seven types left on a text card now have an equivalent, from Unsplash
 | exhibitions-events / booths / popup-stands | popup-stands.webp | [Pexels](https://www.pexels.com/photo/modern-exhibition-stand-with-blank-display-40987442/) | straight pop-up wall with counter case in a bright hall (render; same stand model as the pop-out banners picture, different room) |
 | acrylic-awards / trophies / acrylic-trophies | acrylic-trophies.webp | [Unsplash](https://unsplash.com/photos/several-clear-statuettes-stand-in-a-row-shsJnMCkvhY) | a row of clear cut statuettes lit on a dark stage |
 
-Still no photo (numbered text card): flags-banners/feather-flags/teardrop-flags. Tried teardrop flag, feather flag, beach flag(s), blade flag, sail flag, promotional flag(s), advertising flags, flag mockup, event flags, surf flags; the only teardrop-shaped flags found are the sail-flags scene already used, and the red/yellow blade-flag beach is the rectangle-flags scene.
+Teardrop flags came last (Pixabay's search was reachable again): after teardrop flag, feather flag, beach flag(s), blade flag, sail flag, promotional flag(s), advertising flags, flag mockup, event flags and surf flags found nothing on Unsplash or Pexels, Pixabay had a real photo of two teardrop flags on a beach.
+
+| Type | File | Source | Shows |
+|---|---|---|---|
+| flags-banners / feather-flags / teardrop-flags | teardrop-flags.webp | [Pixabay](https://pixabay.com/photos/beach-sea-sand-shore-flags-7079348/) | one blue teardrop flag on its spike base on a beach (cropped to the left flag of two: the other carries a club slogan and website; the cropped one shows only part of a word) |
+
+Every range type now has a photo.

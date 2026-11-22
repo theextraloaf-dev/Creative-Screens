@@ -135,7 +135,8 @@ export const rangePhotos: Record<string, RangePhoto> = Object.fromEntries([
   p('flags-banners', 'rollup-banners', 'https://pixabay.com/photos/exhibition-stand-banner-blank-5052522/'),
   p('exhibitions-events', 'custom-booths', 'https://pixabay.com/photos/congress-exhibition-event-business-474319/'),
   p('exhibitions-events', 'counters', 'https://pixabay.com/photos/office-desk-reception-business-5053798/'),
-  // third pass: equivalents for six of the seven types still on a text card (teardrop flags still has none)
+  // third pass: equivalents for the last seven types on a text card
+  p('flags-banners', 'teardrop-flags', 'https://pixabay.com/photos/beach-sea-sand-shore-flags-7079348/'),
   p('flags-banners', 'x-banners', 'https://unsplash.com/photos/a-blank-white-rectangular-sign-leaning-forward-0GywLiHMUTU'),
   p('event-setup', 'step-repeat', 'https://www.pexels.com/photo/love-text-on-a-light-blue-background-7679702/'),
   p('event-setup', 'cutout-standees', 'https://www.pexels.com/photo/boy-and-girl-cutout-decals-1386336/'),
