@@ -202,10 +202,12 @@ html.motion .light.is-pinned .lsvc__list { font-size: clamp(1.3rem, min(3vw, 4.6
 html.motion .light.is-ready .lsvc__list li { color: rgb(74 59 44 / 0.28); transition: color 0.35s; }
 html.motion .light.is-ready .lsvc__list li.is-live { color: var(--sepia); }
 @media (min-width: 900px) {
-  .lsvc__pin { grid-template-columns: minmax(16rem, 0.62fr) 1.6fr; column-gap: clamp(3rem, 7vw, 8rem); align-items: center; }
+  /* the text column and the list sized to their content and centred as a pair, so the block sits balanced in the
+     page instead of hugging the left edge with empty space on the right; the list shrinks (and wraps) if it must */
+  .lsvc__pin { grid-template-columns: minmax(15rem, 29rem) minmax(0, max-content); justify-content: center; column-gap: clamp(3rem, 6vw, 7rem); align-items: center; }
 }
 html.motion .light.is-pinned .lsvc__pin {
-  min-height: 100vh; grid-template-columns: minmax(14rem, 0.62fr) 1.6fr; column-gap: clamp(2rem, 6vw, 8rem); align-items: center;
+  min-height: 100vh; grid-template-columns: minmax(14rem, 29rem) minmax(0, max-content); justify-content: center; column-gap: clamp(2.5rem, 5.5vw, 7rem); align-items: center;
   padding-block: clamp(6.5rem, 14vh, 9rem) clamp(1.5rem, 4vh, 3rem);
 }
 html.motion .light.is-pinned .lsvc__lead { margin-block: clamp(0.4rem, 1.5vh, var(--space-2)) clamp(0.6rem, 2vh, var(--space-3)); }
