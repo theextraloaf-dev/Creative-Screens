@@ -151,6 +151,27 @@ export function JobsDialog({ locale }: { locale: Locale }) {
   );
 }
 
+/** "Made in our workshop": the client's own job footage (printer, wall wraps, 3D letters, a car decal) cut into one
+    film. Wide screens get three vertical panels side by side (workshop-1080/720), phones the vertical cut
+    (workshop-tall); it plays muted and looped only while on screen, and shows its still with reduced motion. */
+export function WorkshopFilm({ locale, from, seed, id = 'l-film' }: { locale: Locale; from?: Ground; seed?: number; id?: string }) {
+  const L = messages(locale).light;
+  return (
+    <Ground on="cream" from={from} seed={seed} id={id} label={`${id}-t`} className="lfilm">
+      <div className="lfilm__head">
+        <Kicker script={L.filmScript} bold={L.filmBold} />
+        <h2 id={`${id}-t`} className="lsection-title">{L.filmTitle}</h2>
+        <p className="lfilm__lead" data-rise>{L.filmLead}</p>
+      </div>
+      <figure className="lfilm__frame" data-rise>
+        <video muted loop playsInline preload="none" poster="/video/workshop-poster.webp" aria-hidden="true" data-autoplay
+          data-src-wide="/video/workshop-1080.mp4" data-src-mid="/video/workshop-720.mp4"
+          data-src-tall="/video/workshop-tall.mp4" data-poster-tall="/video/workshop-tall-poster.webp" />
+      </figure>
+    </Ground>
+  );
+}
+
 /** The closing: the ground above wears away onto the corniche photo, and a cream panel rises over it. */
 export function ClosingPanel({ locale, from = 'cream', seed = 11, script, lines, cta, href, id = 'l-quote' }: {
   locale: Locale; from?: Ground; seed?: number; script?: string; lines?: string[]; cta?: string; href?: string; id?: string;
@@ -223,9 +244,11 @@ export function Crumbs({ locale, trail }: { locale: Locale; trail: { label: stri
   );
 }
 
-export type FanItem = { src: string; look?: 'photo' | 'object' | 'drawing' };
+/** A fan card: a picture, or a short muted loop (video) with the picture as its still; tag labels it (e.g. a render). */
+export type FanItem = { src: string; look?: 'photo' | 'object' | 'drawing'; video?: string; tag?: string };
 
-/** A fanned stack of tilted pictures: photos fill their card, catalogue pieces and drawings sit on paper. It deals
+/** A fanned stack of tilted pictures: photos fill their card, catalogue pieces and drawings sit on paper, and a clip
+    plays while it is on screen (the motion code, src/scripts/light/index.js; a still with reduced motion). It deals
     out as the page opens and spreads a little under the pointer. */
 export function Fan({ items }: { items: FanItem[] }) {
   const mid = (items.length - 1) / 2;
@@ -235,7 +258,10 @@ export function Fan({ items }: { items: FanItem[] }) {
       {items.map((it, i) => (
         <span key={`${it.src}-${i}`} className={`lfan__card is-${it.look ?? 'photo'}`}
           style={{ '--i': i, '--o': i - mid, '--r': `${tilt[i % tilt.length]}deg`, zIndex: 10 - Math.round(Math.abs(i - mid) * 2) } as CSSProperties}>
-          <img src={it.src} alt="" decoding="async" />
+          {it.video
+            ? <video muted loop playsInline preload="none" poster={it.src} data-autoplay data-src={it.video} />
+            : <img src={it.src} alt="" decoding="async" />}
+          {it.tag && <span className="lsample lfan__tag">{it.tag}</span>}
         </span>
       ))}
     </div>

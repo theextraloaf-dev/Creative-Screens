@@ -5,7 +5,7 @@
    Design: docs/superpowers/specs/2026-11-20-clean-light-jobs-gallery-design.md and 2026-11-20-light-style-sitewide-design.md */
 import type { CSSProperties } from 'react';
 import { hrefFor, messages, type Locale } from '@/i18n';
-import { ClosingPanel, Erode, Giant, JobsDialog, JobsGallery, Kicker, LightPage, ServicesPinned } from './light/parts';
+import { ClosingPanel, Erode, Giant, JobsDialog, JobsGallery, Kicker, LightPage, ServicesPinned, WorkshopFilm } from './light/parts';
 import { QuoteSection } from './QuoteSection';
 import { Shell } from './Shell';
 
@@ -158,8 +158,11 @@ export function LightPreview({ locale, routeKey = 'home' }: { locale: Locale; ro
           </div>
         </section>
 
-        {/* 4. finished jobs: Biegajaca's pinned sideways gallery */}
-        <JobsGallery locale={locale} from="sea" seed={7} />
+        {/* made in our workshop: the client's own job footage, cut into one film */}
+        <WorkshopFilm locale={locale} from="sea" seed={8} />
+
+        {/* 4. finished jobs: Biegajaca's pinned sideways gallery (on the same cream as the film above) */}
+        <JobsGallery locale={locale} />
 
         {/* 5. closing: the cream wears away onto the corniche and the panel rises; the quote form follows */}
         <ClosingPanel locale={locale} from="cream" seed={11} href="#quote" />

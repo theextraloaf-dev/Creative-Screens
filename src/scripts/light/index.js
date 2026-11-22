@@ -42,6 +42,38 @@ function playHeroFilm() {
   new IntersectionObserver(([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: 0.05 }).observe(v);
 }
 
+/* Short muted loops (the workshop film, the clips in the service fans): nothing loads until one is near the screen,
+   and each plays only while on screen. The workshop film picks its cut: the vertical one on portrait phones, the
+   three-panel one otherwise (720p on smaller screens or with data saving). This file only runs when motion is
+   allowed, so with reduced motion every clip stays on its still. */
+function playClips() {
+  const vids = [...document.querySelectorAll('video[data-autoplay]')];
+  if (!vids.length) return;
+  const portrait = matchMedia('(max-aspect-ratio: 4/5)').matches;
+  const small = innerWidth < 1100 || navigator.connection?.saveData;
+  const pick = (v) => {
+    if (v.dataset.src) return v.dataset.src;
+    if (portrait && v.dataset.srcTall) { if (v.dataset.posterTall) v.poster = v.dataset.posterTall; return v.dataset.srcTall; }
+    return small ? v.dataset.srcMid : v.dataset.srcWide;
+  };
+  const seen = new Set();
+  const io = new IntersectionObserver((entries) => entries.forEach(({ target: v, isIntersecting }) => {
+    if (isIntersecting) {
+      seen.add(v);
+      if (!v.getAttribute('src')) v.src = pick(v);
+      v.play().catch(() => {});
+    } else { seen.delete(v); if (!v.paused) v.pause(); }
+  }), { rootMargin: '200px 0px', threshold: 0.01 });
+  vids.forEach((v) => {
+    if (portrait && v.dataset.posterTall) v.poster = v.dataset.posterTall;
+    io.observe(v);
+  });
+  // browsers pause video on a hidden tab; carry on with the ones on screen when the visitor comes back
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) seen.forEach((v) => { if (v.paused) v.play().catch(() => {}); });
+  });
+}
+
 export async function initLight({ gsap, ScrollTrigger }) {
   const root = document.querySelector('[data-light]');
   if (!root) return null;
@@ -58,6 +90,7 @@ export async function initLight({ gsap, ScrollTrigger }) {
 
   const loaderDone = runLoader();
   playHeroFilm();
+  playClips();
   const mm = gsap.matchMedia();
   // pinning needs room both ways: a phone on its side (wide but short) gets the phone layout
   mm.add({ pinned: '(min-width: 768px) and (min-height: 560px)', phone: '(max-width: 767px), (max-height: 559px)' }, (ctx) => {

@@ -4,7 +4,7 @@
    Design: docs/superpowers/specs/2026-11-20-light-style-sitewide-design.md */
 import { hl, messages, type Locale } from '@/i18n';
 import { site } from '@/config/site';
-import { ClosingPanel, Crumbs, Fan, Ground, Kicker, LightPage } from './light/parts';
+import { ClosingPanel, Crumbs, Fan, Ground, Kicker, LightPage, WorkshopFilm } from './light/parts';
 import { Shell } from './Shell';
 
 // the head's fan (as on Biegajaca's About): the workshop, the corniche in the middle, two catalogue pieces
@@ -45,6 +45,8 @@ export function AboutPage({ locale }: { locale: Locale }) {
           </div>
           <Fan items={FAN} />
         </section>
+
+        <WorkshopFilm locale={locale} id="l-film" />
 
         <section className="labout__facts" aria-label={p.eyebrow}>
           <dl className="lfacts">

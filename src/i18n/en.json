@@ -1531,7 +1531,11 @@
     "valuesScript": "What we",
     "valuesBold": "stand for",
     "categoryScript": "Services",
-    "customers": "satisfied customers"
+    "customers": "satisfied customers",
+    "filmScript": "Made in",
+    "filmBold": "our workshop",
+    "filmTitle": "Real jobs, our own hands",
+    "filmLead": "Printed, cut and fitted by our team: wall wraps, 3D letters and vehicle graphics, filmed on the job."
   },
   "sub": {
     "home": "Home",
@@ -1622,6 +1626,7 @@
     },
     "openJob": "Open the job page",
     "rangeBrief": "I'm interested in: {name}",
-    "quoteShort": "Get a quote"
+    "quoteShort": "Get a quote",
+    "render": "Design render"
   }
 }

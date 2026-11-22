@@ -12,6 +12,7 @@ import { jobs } from '@/data/jobs';
 import { hrefFor, messages, otherLocale, type Locale } from '@/i18n';
 import { subCategories } from '@/data/sub-categories';
 import { subCategoryProducts } from '@/data/sub-category-products';
+import { serviceMedia } from '@/data/service-media';
 import { Faq, Ground, JobsDialog, LightPage, PageHead, Steps, type FanItem } from './light/parts';
 import { JobCard } from './light/JobCard';
 import { QUOTE_EVENT } from './QuoteForm';
@@ -43,9 +44,12 @@ export function CategoryPage({ locale, category }: { locale: Locale; category: s
   const pieces: FanItem[] = subs.map((sb) => subCategoryProducts[`${category}/${sb}`]?.[0]?.image).filter((src): src is string => !!src)
     .slice(0, 4).map((src) => ({ src, look: 'object' }));
   const workshop: FanItem[] = [{ src: '/video/hero-poster.jpg', look: 'photo' }, { src: '/services/printer-banner.webp', look: 'photo' }];
-  const fan: FanItem[] = pieces.length >= 2 ? pieces
+  const base: FanItem[] = pieces.length >= 2 ? pieces
     : [{ src: `/plates/${category}.png`, look: 'drawing' as const }, ...ownJobs.map((j) => ({ src: j.photos[0], look: j.look })), ...workshop]
       .filter((it, k, all) => all.findIndex((o) => o.src === it.src) === k).slice(0, 3);   // no picture twice; the workshop fills in
+  // the service's own footage or visual goes in the middle of the fan, on top (src/data/service-media.ts)
+  const own: FanItem[] = (serviceMedia[category] ?? []).map((md) => ({ src: md.still, look: 'photo', video: md.video, tag: md.tag === 'render' ? S.render : undefined }));
+  const fan: FanItem[] = own.length ? [base[0], ...own, ...base.slice(1)].filter(Boolean).slice(0, 4) : base;
 
   return (
     <Shell locale={locale} routeKey="services" alt={`${hrefFor('services', otherLocale(locale))}${category}/`}>
