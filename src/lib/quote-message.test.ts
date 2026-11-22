@@ -27,7 +27,7 @@ test('a given email must look like one, an empty one is fine', () => {
 });
 
 test('the message groups answers under contact, project and brief and leaves out empty ones', () => {
-  const text = buildQuoteMessage({ ...base, answers: [['Needed', 'This week'], ['Budget', ' ']] }, labels);
+  const text = buildQuoteMessage({ ...base, answers: [['Needed', 'This week'], ['Area', ' ']] }, labels);
   assert.equal(text, ['Hello', '', 'Contact', 'Name: Sara', 'Phone: +968 9123 4567', '', 'Project', 'Service: Signage', 'Needed: This week'].join('\n'));
 });
 

@@ -1,17 +1,16 @@
-/* PLACEHOLDER commercial facts per service (price "from", turnaround in working days).
+/* PLACEHOLDER turnaround per service, in working days. The site shows no prices.
    Replace with the client's real figures; the copy marks them with * until then. */
 export interface ServiceFacts {
-  from: number;
   days: [number, number];
 }
 
 export const serviceFacts: Record<string, ServiceFacts> = {
-  'print-stationery': { from: 5, days: [1, 3] },
-  signage: { from: 60, days: [3, 7] },
-  graphics: { from: 25, days: [2, 5] },
-  'flags-banners': { from: 15, days: [2, 4] },
-  'exhibitions-events': { from: 250, days: [5, 10] },
-  'led-screens': { from: 400, days: [7, 14] },
-  'gifts-apparel': { from: 3, days: [2, 6] },
-  'acrylic-awards': { from: 12, days: [2, 5] },
+  'print-stationery': { days: [1, 3] },
+  signage: { days: [3, 7] },
+  graphics: { days: [2, 5] },
+  'flags-banners': { days: [2, 4] },
+  'exhibitions-events': { days: [5, 10] },
+  'led-screens': { days: [7, 14] },
+  'gifts-apparel': { days: [2, 6] },
+  'acrylic-awards': { days: [2, 5] },
 };

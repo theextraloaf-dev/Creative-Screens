@@ -23,8 +23,6 @@ interface Tailored {
   hint: string;
   detailsPh: string;
   where: 'site' | 'delivery' | 'none';
-  budgetLabel?: string;
-  budgets?: string[];
   fields: FieldDef[];
 }
 
@@ -56,7 +54,7 @@ export function QuoteForm({ copy, services, whatsapp, email, preset = '', brief:
   const tailored = service ? (copy.tailored as unknown as Record<string, Tailored>)[service] : undefined;
   const serviceName = services.find((s) => s.slug === service)?.name ?? '';
 
-  /* every question for this service, in the order asked: its own, then place, budget, timing and artwork */
+  /* every question for this service, in the order asked: its own, then place, timing and artwork (no prices or budgets anywhere on the site) */
   const projectFields: FieldDef[] = tailored
     ? [
         ...tailored.fields,
@@ -64,7 +62,6 @@ export function QuoteForm({ copy, services, whatsapp, email, preset = '', brief:
           { key: 'location', kind: 'select' as const, label: copy.where[tailored.where].label, short: copy.msg.location, options: o.locations },
           { key: 'area', kind: 'text' as const, label: copy.where[tailored.where].area, short: copy.msg.area, placeholder: f.areaPh },
         ]),
-        { key: 'budget', kind: 'select' as const, label: tailored.budgetLabel ?? f.budget, short: copy.msg.budget, options: tailored.budgets ?? o.budgets },
         { key: 'deadline', kind: 'select' as const, label: f.deadline, short: copy.msg.deadline, options: copy.deadlines },
         { key: 'artwork', kind: 'chips' as const, label: f.artwork, short: copy.msg.artwork, options: o.artworks },
       ]

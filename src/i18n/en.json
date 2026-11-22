@@ -372,11 +372,9 @@
       "quote": "Get a quote for this",
       "includes": "Included",
       "examples": "Typical jobs",
-      "from": "From OMR {n}*",
       "time": "{a}–{b} working days*",
-      "fromLabel": "Price",
       "timeLabel": "Turnaround",
-      "note": "* Placeholder figures until Creative Screens confirms prices and times.",
+      "note": "* Placeholder times until Creative Screens confirms them.",
       "close": "Close",
       "lead": "One workshop, eight trades. Pick what you need and see what is included."
     }
@@ -662,7 +660,7 @@
         "stat": "8",
         "unit": "services",
         "t": "One team, one quote",
-        "d": "Print, signage, graphics, LED and gifts priced together."
+        "d": "Print, signage, graphics, LED and gifts from one team."
       },
       {
         "stat": "1",
@@ -696,7 +694,6 @@
       "unit": "Unit",
       "details": "Tell us about the project",
       "detailsPh": "What is it for, what should it say, materials, colours, anything we should know. Logo or files can follow on WhatsApp.",
-      "budget": "Budget (optional)",
       "deadline": "When do you need it?",
       "artwork": "Artwork",
       "areaPh": "e.g. Al Khuwair, or the shop name"
@@ -711,13 +708,6 @@
         "Muscat",
         "Another city in Oman",
         "Outside Oman"
-      ],
-      "budgets": [
-        "Under 200 OMR",
-        "200 – 1,000 OMR",
-        "1,000 – 5,000 OMR",
-        "5,000 OMR and above",
-        "Not sure yet"
       ],
       "artworks": [
         "I have print-ready artwork",
@@ -740,7 +730,7 @@
       "steps": [
         "We read your brief within one working day.*",
         "A short call or WhatsApp to confirm sizes, materials and timing.",
-        "You get a clear quote with the price and the delivery date."
+        "You get a clear quote with the delivery date."
       ],
       "promise": [
         "No obligation",
@@ -771,7 +761,6 @@
       "subject": "Quote request",
       "location": "Location",
       "area": "Area",
-      "budget": "Budget",
       "deadline": "Needed",
       "artwork": "Artwork"
     },
@@ -1098,13 +1087,6 @@
         "hint": "Indoor or outdoor, and the size, decide the screen.",
         "detailsPh": "What it will show, the wall or space, power and internet on site, anything we should know.",
         "where": "site",
-        "budgets": [
-          "Under 1,000 OMR",
-          "1,000 – 5,000 OMR",
-          "5,000 – 20,000 OMR",
-          "20,000 OMR and above",
-          "Not sure yet"
-        ],
         "fields": [
           {
             "key": "setting",
@@ -1186,14 +1168,6 @@
         "hint": "Tell us what and how many, and how it should be branded.",
         "detailsPh": "Who they are for, colours, your logo, anything we should know. Logo files can follow on WhatsApp.",
         "where": "delivery",
-        "budgetLabel": "Budget per piece (optional)",
-        "budgets": [
-          "Under 1 OMR",
-          "1 – 3 OMR",
-          "3 – 10 OMR",
-          "10 OMR and above",
-          "Not sure yet"
-        ],
         "fields": [
           {
             "key": "type",
@@ -1504,7 +1478,7 @@
       },
       {
         "h": "We quote and agree a date.",
-        "p": "A clear price and a date, with no obligation."
+        "p": "A clear quote and a date, with no obligation."
       },
       {
         "h": "We make it in Muscat.",
