@@ -254,3 +254,6 @@ html.loader-on .loader {
 }
 .loader__bar > i { position: absolute; inset: 0; background: var(--lime); transform: scaleX(0); transform-origin: var(--origin-start); }
 html[lang='ar'] .loader__label { letter-spacing: 0; text-transform: none; }
+
+/* iPhone/iPad: no grey flash on tap (keyboard focus rings are unchanged) */
+a, button, summary, label { -webkit-tap-highlight-color: transparent; }

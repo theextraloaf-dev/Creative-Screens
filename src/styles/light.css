@@ -252,6 +252,7 @@ html.motion .light.is-pinned .ljobs__title { font-size: clamp(1.6rem, min(2.4vw,
 
 /* phones: a swipe row with snap */
 html.motion .light.is-phone .ljobs__track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0.9rem; padding-block-end: 0.6rem; scrollbar-width: none; }
+html.motion .light.is-phone .ljobs__track::-webkit-scrollbar { display: none; }   /* Safari before 18.2 ignores scrollbar-width */
 html.motion .light.is-phone .ljobs__card { flex: 0 0 88%; scroll-snap-align: center; }
 html.motion .light.is-phone .ljobs__now { display: block; }
 html.motion .light.is-phone .ljobs__now h3, html.motion .light.is-phone .ljobs__now .ljobs__meta { display: none; }
@@ -331,7 +332,9 @@ html.motion .lclients__row--copy { display: flex; }
 html.motion .lclients__item { flex: none; }
 html.motion .lclients__item.is-repeat { display: grid; }
 html.motion .lclients__toggle { display: inline-grid; margin-block-start: var(--space-3); width: 2.6rem; height: 2.6rem; font-size: 0.75rem; }
-.lclients.is-paused .lclients__belt, .lclients__rail:hover .lclients__belt { animation-play-state: paused; }
+.lclients.is-paused .lclients__belt { animation-play-state: paused; }
+/* hover pauses only with a real pointer: on a phone a tap would leave the row "hovered" and stopped */
+@media (hover: hover) { .lclients__rail:hover .lclients__belt { animation-play-state: paused; } }
 html.motion[dir='rtl'] .lclients__belt { animation-name: lclients-roll-rtl; }   /* Arabic rolls the other way */
 @keyframes lclients-roll { to { transform: translateX(-50%); } }
 @keyframes lclients-roll-rtl { to { transform: translateX(50%); } }
@@ -482,7 +485,7 @@ html.motion .light.is-pinned .ljobs__open::after {
 }
 .lfan__card img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .lfan__card.is-object img { object-fit: contain; padding: 10%; mix-blend-mode: multiply; }
-.lfan:hover .lfan__card { rotate: calc(var(--r) * 1.5); translate: calc(var(--o) * 1.1rem * var(--dir)) calc(var(--o) * var(--o) * 0.8rem - 0.4rem); }
+@media (hover: hover) { .lfan:hover .lfan__card { rotate: calc(var(--r) * 1.5); translate: calc(var(--o) * 1.1rem * var(--dir)) calc(var(--o) * var(--o) * 0.8rem - 0.4rem); } }   /* touch screens: no sticky spread after a tap */
 html.motion .lfan__card { animation: lfan-deal 0.9s var(--ease-out) backwards; animation-delay: calc(0.2s + var(--i) * 0.08s); }
 @keyframes lfan-deal { from { opacity: 0; translate: calc(var(--o) * -75% * var(--dir)) 2.5rem; rotate: 0deg; } }
 @media (min-width: 900px) { .lfan__card { --w: clamp(7.5rem, 13.5vw, 16rem); } }   /* beside the title: sized to stay inside its column */
@@ -555,7 +558,8 @@ html.motion .lfan__card { animation: lfan-deal 0.9s var(--ease-out) backwards; a
 .lfaq__item summary { transition: padding-block-end 0.45s var(--ease-out); }
 .lfaq__item[open] summary { padding-block-end: 0.45rem; }   /* the answer sits as close under its question as a step's sentence */
 /* where supported, the answer slides open instead of appearing */
-@supports selector(::details-content) {
+/* both are needed: Safari 18.4+ has ::details-content but not interpolate-size, and would snap instead of slide */
+@supports selector(::details-content) and (interpolate-size: allow-keywords) {
   .lfaq { interpolate-size: allow-keywords; }
   .lfaq__item::details-content { block-size: 0; overflow: clip; transition: block-size 0.45s var(--ease-out), content-visibility 0.45s allow-discrete; }
   .lfaq__item[open]::details-content { block-size: auto; }
