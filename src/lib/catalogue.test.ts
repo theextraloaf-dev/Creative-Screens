@@ -46,7 +46,7 @@ test('every type photo exists, belongs to a type and says where it came from', (
   for (const [key, ph] of Object.entries(rangePhotos)) {
     assert.ok(typeKeys.has(key), `${key} is a type`);
     assert.ok(fs.existsSync(path.join('public', ph.src)), `${key}: ${ph.src} exists`);
-    assert.ok(['Unsplash', 'Pexels'].includes(ph.site) && /^https:\/\/(unsplash\.com|www\.pexels\.com)\//.test(ph.source), `${key}: free stock source`);
+    assert.ok(['Unsplash', 'Pexels', 'Pixabay'].includes(ph.site) && /^https:\/\/(unsplash\.com|www\.pexels\.com|pixabay\.com)\//.test(ph.source), `${key}: free stock source`);
   }
 });
 

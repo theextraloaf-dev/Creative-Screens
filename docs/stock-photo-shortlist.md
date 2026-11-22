@@ -224,3 +224,39 @@ No honest stock photo found (shown as a numbered text card until there is a real
 - event-setup/event-branding/table-covers: no printed/logo table cover found
 - acrylic-awards/trophies/acrylic-trophies: no cut-acrylic trophy photo found
 - acrylic-awards/display-stands/product-risers: only 3D-render podiums found
+
+## Range types: equivalents for the missing ones (2026-11-22, second pass)
+
+Every range now has its own page (`/services/<service>/<range>/`) after dlxprint.com's catalogue structure; dlxprint's own photos are not used (watermarks and their clients' branding, see above). A second search looked for equivalents a customer would recognise as the type (Unsplash, Pexels and now Pixabay, all free licences); renders are marked (render), cropped square to 800 px WebP in `public/subcategories/<service>/`, with no readable third-party brands and no faces as the subject. The range pages say the photos show the kind of product, not Creative Screens' own jobs. Record: `src/data/range-photos.ts`.
+
+| Type | File | Source | Shows |
+|---|---|---|---|
+| signage / shop-fronts / flex-face | flex-face.webp | [Unsplash](https://unsplash.com/photos/glowing-sign-reading-more-comfy-inside-K7POp95l3jk) | lit fascia box reading 'More comfy inside' |
+| signage / shop-fronts / push-through | push-through.webp | [Unsplash](https://unsplash.com/photos/a-glowing-coffee-sign-at-night-0nI7hESANlg) | glowing COFFEE letters in a dark sign box |
+| signage / lightboxes / flex-lightbox | flex-lightbox.webp | [Unsplash](https://unsplash.com/photos/glowing-coffee-sign-in-dark--CFrhnKfhwA) | lit white COFFEE light box at night |
+| flags-banners / feather-flags / flag-bases | flag-bases.webp | [Unsplash](https://unsplash.com/photos/row-of-international-flags-displayed-indoors-Ws7PzdSfYf8) | chrome flag-pole bases on marble (recropped to the bases) |
+| flags-banners / roll-ups / popout-banners | popout-banners.webp | [Pexels](https://www.pexels.com/photo/minimalist-exhibition-stand-with-blank-backdrop-40987443/) | blank pop-up backdrop stand with counter (3D) (render) |
+| flags-banners / large-banners / mesh-banners | mesh-banners.webp | [Unsplash](https://unsplash.com/photos/curved-building-facade-covered-in-grey-triangular-mesh-zaNiiLIafIA) | building scaffold wrapped in grey mesh |
+| graphics / fleet-wraps / door-logos | door-logos.webp | [Pexels](https://www.pexels.com/photo/man-inside-a-parked-van-7363197/) | white van side door lettered 'DELIVERY always on time' |
+| graphics / floor-graphics / outdoor-floor | outdoor-floor.webp | [Pexels](https://www.pexels.com/photo/white-and-pink-foot-print-signage-on-concrete-surface-4923437/) | pink footprint sticker on concrete pavement |
+| exhibitions-events / fabrication / pos-stands | pos-stands.webp | [Pexels](https://www.pexels.com/photo/colorful-menorca-postcards-display-in-store-37838839/) | wooden floor-standing postcard/poster display rack |
+| event-setup / stage-backdrops / curved-backdrops | curved-backdrops.webp | [Unsplash](https://unsplash.com/photos/modern-hallway-with-red-and-blue-curved-walls-PpKzH2Jb1Oo) | curved red fabric-look wall in a lobby corridor |
+| event-setup / stage-backdrops / backlit-backdrops | backlit-backdrops.webp | [Pexels](https://www.pexels.com/photo/silhouettes-against-a-warm-lit-wall-35226362/) | large glowing printed wall with visitor silhouettes |
+| event-setup / event-branding / photo-frames | photo-frames.webp | [Pexels](https://www.pexels.com/photo/empty-wooden-frames-hanging-on-in-the-garden-8888563/) | empty photo-prop frames hanging at an outdoor event |
+| event-setup / event-branding / table-covers | table-covers.webp | [Unsplash](https://unsplash.com/photos/tables-with-red-and-blue-patterned-tablecloths-and-black-chairs-NMuin3ox0Ik) | fitted printed table cover with black skirt |
+| acrylic-awards / display-stands / product-risers | product-risers.webp | [Pexels](https://www.pexels.com/photo/fancy-pieces-of-jewelry-on-display-9432649/) | jewellery on stepped and wave-shaped display risers with clear acrylic holders |
+| print-stationery / stickers-labels / roll-labels | roll-labels.webp | [Pixabay](https://pixabay.com/photos/print-label-thermal-label-label-8001411/) | roll of blank white labels unwound on grey |
+| print-stationery / stickers-labels / epoxy-stickers | epoxy-stickers.webp | [Pixabay](https://pixabay.com/photos/smilies-fun-happy-smile-2495082/) | glossy domed smiley badges on grid paper |
+| flags-banners / roll-ups / rollup-banners | rollup-banners.webp | [Pixabay](https://pixabay.com/photos/exhibition-stand-banner-blank-5052522/) | blank roll-up banner beside counter and curved wall (3D) (render) |
+| exhibitions-events / booths / custom-booths | custom-booths.webp | [Pixabay](https://pixabay.com/photos/congress-exhibition-event-business-474319/) | bespoke red and yellow built stands seen from above at an expo |
+| exhibitions-events / fabrication / counters | counters.webp | [Pixabay](https://pixabay.com/photos/office-desk-reception-business-5053798/) | white reception counter with grey band in a lobby |
+
+No honest stock photo found (shown as a numbered text card until there is a real photo):
+
+- flags-banners/roll-ups/x-banners: no photo or clean render of an X-frame banner stand on Unsplash, Pexels or Pixabay (tried x-banner, x banner stand, banner stand, banner display, poster stand, roll up stand, promotional stand)
+- flags-banners/feather-flags/teardrop-flags: dropped on review: same beach scene as the sail-flags photo
+- event-setup/stage-backdrops/step-repeat: every logo/press wall found on Unsplash, Pexels and Pixabay (step and repeat, press wall, media wall, sponsor wall, logo backdrop, photocall, red carpet backdrop, conference backdrop...) carries a readable brand (Sony, PlayStation, Canva, Zadra/Polsat, a bar name) and/or a posing person as the subject; no uncroppable generic one
+- event-setup/event-branding/cutout-standees: dropped on review: a shop name blurred out of the board left a visible smudge
+- acrylic-awards/trophies/acrylic-trophies: dropped on review: the same awards photo already shows acrylic plaques
+- exhibitions-events/booths/modular-booths: dropped on review: the same scene as the shell-scheme photo
+- exhibitions-events/booths/popup-stands: dropped on review: the same render already shows roll-up banners

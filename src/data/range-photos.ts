@@ -1,11 +1,11 @@
-/* The photo for each range type (src/data/ranges.ts), keyed `${service}/${type}`: free stock photos (Unsplash or
-   Pexels licence: free commercial use, no attribution required), cropped square to 800 px WebP under
+/* The photo for each range type (src/data/ranges.ts), keyed `${service}/${type}`: free stock photos (Unsplash, Pexels or
+   Pixabay licence: free commercial use, no attribution required), cropped square to 800 px WebP under
    public/subcategories/<service>/. They show the kind of product, not Creative Screens' own jobs (the range pages
    say so). A type with no entry shows as a text card. Sources are also listed in docs/stock-photo-shortlist.md. */
-export interface RangePhoto { src: string; site: 'Unsplash' | 'Pexels'; source: string }
+export interface RangePhoto { src: string; site: 'Unsplash' | 'Pexels' | 'Pixabay'; source: string }
 
 const p = (service: string, type: string, source: string): [string, RangePhoto] =>
-  [`${service}/${type}`, { src: `/subcategories/${service}/${type}.webp`, site: source.includes('pexels.com') ? 'Pexels' : 'Unsplash', source }];
+  [`${service}/${type}`, { src: `/subcategories/${service}/${type}.webp`, site: source.includes('pexels.com') ? 'Pexels' : source.includes('pixabay.com') ? 'Pixabay' : 'Unsplash', source }];
 
 export const rangePhotos: Record<string, RangePhoto> = Object.fromEntries([
   p('led-screens', 'indoor-led-walls', 'https://unsplash.com/photos/a-large-display-of-a-waterfall-inside-of-a-building-4NfAhnr721E'),
@@ -116,4 +116,23 @@ export const rangePhotos: Record<string, RangePhoto> = Object.fromEntries([
   p('acrylic-awards', 'medals', 'https://unsplash.com/photos/a-row-of-gold-medals-with-a-red-ribbon-u-OIymmnw1s'),
   p('acrylic-awards', 'brochure-holders', 'https://unsplash.com/photos/a-magazine-holder-sitting-on-top-of-a-desk-xT5l_hUdWig'),
   p('acrylic-awards', 'sign-holders', 'https://www.pexels.com/photo/a-table-number-signage-near-a-candle-12628200/'),
+  p('signage', 'flex-face', 'https://unsplash.com/photos/glowing-sign-reading-more-comfy-inside-K7POp95l3jk'),
+  p('signage', 'push-through', 'https://unsplash.com/photos/a-glowing-coffee-sign-at-night-0nI7hESANlg'),
+  p('signage', 'flex-lightbox', 'https://unsplash.com/photos/glowing-coffee-sign-in-dark--CFrhnKfhwA'),
+  p('flags-banners', 'flag-bases', 'https://unsplash.com/photos/row-of-international-flags-displayed-indoors-Ws7PzdSfYf8'),
+  p('flags-banners', 'popout-banners', 'https://www.pexels.com/photo/minimalist-exhibition-stand-with-blank-backdrop-40987443/'),
+  p('flags-banners', 'mesh-banners', 'https://unsplash.com/photos/curved-building-facade-covered-in-grey-triangular-mesh-zaNiiLIafIA'),
+  p('graphics', 'door-logos', 'https://www.pexels.com/photo/man-inside-a-parked-van-7363197/'),
+  p('graphics', 'outdoor-floor', 'https://www.pexels.com/photo/white-and-pink-foot-print-signage-on-concrete-surface-4923437/'),
+  p('exhibitions-events', 'pos-stands', 'https://www.pexels.com/photo/colorful-menorca-postcards-display-in-store-37838839/'),
+  p('event-setup', 'curved-backdrops', 'https://unsplash.com/photos/modern-hallway-with-red-and-blue-curved-walls-PpKzH2Jb1Oo'),
+  p('event-setup', 'backlit-backdrops', 'https://www.pexels.com/photo/silhouettes-against-a-warm-lit-wall-35226362/'),
+  p('event-setup', 'photo-frames', 'https://www.pexels.com/photo/empty-wooden-frames-hanging-on-in-the-garden-8888563/'),
+  p('event-setup', 'table-covers', 'https://unsplash.com/photos/tables-with-red-and-blue-patterned-tablecloths-and-black-chairs-NMuin3ox0Ik'),
+  p('acrylic-awards', 'product-risers', 'https://www.pexels.com/photo/fancy-pieces-of-jewelry-on-display-9432649/'),
+  p('print-stationery', 'roll-labels', 'https://pixabay.com/photos/print-label-thermal-label-label-8001411/'),
+  p('print-stationery', 'epoxy-stickers', 'https://pixabay.com/photos/smilies-fun-happy-smile-2495082/'),
+  p('flags-banners', 'rollup-banners', 'https://pixabay.com/photos/exhibition-stand-banner-blank-5052522/'),
+  p('exhibitions-events', 'custom-booths', 'https://pixabay.com/photos/congress-exhibition-event-business-474319/'),
+  p('exhibitions-events', 'counters', 'https://pixabay.com/photos/office-desk-reception-business-5053798/'),
 ]);
