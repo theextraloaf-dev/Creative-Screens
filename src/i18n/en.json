@@ -86,10 +86,10 @@
         "line": "Window film, wall murals, floor graphics and fleet wraps.",
         "machine": "Wide-format printer",
         "makes": [
-          "Window film",
-          "Wall murals",
+          "Window graphics",
+          "Wall graphics",
           "Floor graphics",
-          "Fleet wraps"
+          "Vehicle graphics"
         ],
         "parts": [
           {
@@ -124,9 +124,11 @@
         "line": "Business cards, brochures, letterheads and packaging, printed in-house.",
         "machine": "Digital press",
         "makes": [
-          "Business cards",
-          "Brochures",
-          "Letterheads",
+          "Business stationery",
+          "Brochures & catalogues",
+          "Stickers & labels",
+          "Invoice books & stamps",
+          "Promotional print",
           "Packaging"
         ],
         "parts": [
@@ -162,10 +164,13 @@
         "line": "Shop fronts, 3D letters, lightboxes and wayfinding.",
         "machine": "CNC router",
         "makes": [
-          "Shop fronts",
+          "Shop signs",
           "3D letters",
-          "Lightboxes",
-          "Wayfinding"
+          "Light boxes",
+          "Wayfinding",
+          "Name plates",
+          "Labels & safety signs",
+          "Standing signs"
         ],
         "parts": [
           {
@@ -201,8 +206,8 @@
         "machine": "Dye-sub printer and sewing",
         "makes": [
           "Feather flags",
-          "Pole flags",
-          "Roll-ups",
+          "Flags",
+          "Roll-ups & stands",
           "Large banners"
         ],
         "parts": [
@@ -339,7 +344,7 @@
         "makes": [
           "Laser-cut acrylic",
           "Plaques",
-          "Trophies",
+          "Trophies & medals",
           "Display stands"
         ],
         "parts": [
@@ -1631,6 +1636,16 @@
     "openJob": "Open the job page",
     "rangeBrief": "I'm interested in: {name}",
     "quoteShort": "Get a quote",
-    "render": "Design render"
+    "render": "Design render",
+    "typesTitle": "What it covers",
+    "typesCount": "Types: {n}",
+    "piecesCount": "Pieces: {n}",
+    "seeRange": "See what's in it",
+    "piecesTitle": "From our catalogue",
+    "otherRanges": "More from {name}",
+    "stockNote": "Photos show the kind of product, not our own jobs.",
+    "stockLink": "See our finished work",
+    "prevRange": "Previous range",
+    "nextRange": "Next range"
   }
 }

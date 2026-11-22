@@ -4,8 +4,9 @@
    CategoryPage.tsx to build /services/{category}/'s sidebar/tab switcher and its shop-style
    grids (no separate page per sub-category). */
 export const subCategories: Record<string, string[]> = {
-  'print-stationery': ['business-cards', 'brochures', 'letterheads', 'packaging'],
-  signage: ['shop-fronts', '3d-letters', 'lightboxes', 'wayfinding'],
+  // print and signage ranges after dlxprint.com's catalogue (what matches our trades)
+  'print-stationery': ['stationery', 'brochures', 'stickers-labels', 'business-books', 'promotional-print', 'packaging'],
+  signage: ['shop-fronts', '3d-letters', 'lightboxes', 'wayfinding', 'name-plates', 'labels-safety', 'standing-signs'],
   graphics: ['window-film', 'wall-murals', 'floor-graphics', 'fleet-wraps'],
   'flags-banners': ['feather-flags', 'pole-flags', 'roll-ups', 'large-banners'],
   'exhibitions-events': ['booths', 'fabrication'],

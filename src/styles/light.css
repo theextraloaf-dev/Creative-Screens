@@ -358,22 +358,17 @@ html.motion .light.is-pinned .ljobs.has-gl .ljobs__col { background: none; }
 .lpill { padding: 0.7em 1.2em; border-radius: 999px; border: 1.5px solid rgb(74 59 44 / 0.35); background: rgb(251 246 234 / 0.55); color: var(--sepia); font: inherit; font-weight: 600; cursor: pointer; transition: background 0.25s, border-color 0.25s; }
 .lpill:hover { background: #fbf6ea; }
 .lpill.is-active { background: var(--sepia); border-color: var(--sepia); color: var(--cream); }
-.lcat__panel { display: grid; gap: var(--space-3); justify-items: start; }
-.lcat__panelTitle { margin: 0; font-family: var(--font-display); font-size: clamp(1.8rem, 1rem + 2.4vw, 3.4rem); text-transform: uppercase; line-height: 1; }
-[lang='ar'] .lcat__panelTitle { text-transform: none; line-height: 1.3; }
 .lproducts { list-style: none; margin: 0; padding: 0; width: 100%; display: grid; gap: clamp(0.8rem, 1.6vw, 1.4rem); grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr)); }
-.lproduct { display: grid; gap: 0.6rem; padding: 0.8rem; border-radius: 18px; background: #fbf6ea; box-shadow: 0 12px 28px rgb(74 59 44 / 0.1); }
-.lproduct__art { display: block; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: #fbf6ea; }
+.lproduct { display: grid; grid-template-rows: auto 1fr auto; gap: 0.6rem; padding: 0.8rem 0.8rem 1rem; border-radius: 18px; background: #fbf6ea; box-shadow: 0 12px 28px rgb(74 59 44 / 0.1); }
+.lproduct__art { display: block; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: #f3ebdb; }   /* one soft paper tile; a cut-out's white multiplies into it */
 .lproduct__art img { width: 100%; height: 100%; mix-blend-mode: multiply; }
 .lproduct__art img.is-photo { object-fit: cover; mix-blend-mode: normal; transition: transform 0.6s var(--ease-out); }   /* a kind of product shown by a photo (LED screens) */
 .lproduct:hover .lproduct__art img.is-photo { transform: scale(1.04); }
-.lproduct__name { font-weight: 600; font-size: var(--step--1); padding-inline: 0.2rem; }
-.lcat__concept { display: grid; gap: var(--space-3); align-items: center; max-width: 52rem; }
-@media (min-width: 640px) { .lcat__concept { grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); } }
-.lcat__conceptArt { margin: 0; max-width: 18rem; aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; background: #fbf6ea; box-shadow: 0 24px 60px rgb(74 59 44 / 0.14); rotate: -1.5deg; }
-.lcat__conceptArt img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.lcat__conceptArt img.is-object { mix-blend-mode: multiply; }
-.lcat__note { margin: 0; color: rgb(74 59 44 / 0.78); line-height: 1.6; }
+.lproduct__name { font-weight: 600; font-size: var(--step--1); line-height: 1.45; padding-inline: 0.2rem; }
+.lproduct .lproduct__quote { align-self: end; margin-inline-start: 0.2rem; }
+/* a cut-out multiplied onto its frame paints no fill of its own (that fill multiplied into a darker ring round it) */
+:is(.lproduct__art, .lsvcs__art, .lwork__media, .lfan__card, .ljob__main) img.is-object { background: transparent; }
+.lproduct__art img.is-object { padding: 9%; }
 
 /* about: the 21 Years lockup, the intro, the facts as large rows, the values beside their sentence */
 .labout__lockup { margin: 0 0 var(--space-2); font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 1.5rem + 6vw, 8rem); line-height: 0.9; }
@@ -589,7 +584,6 @@ html.motion .lfan__card { animation: lfan-deal 0.9s var(--ease-out) backwards; a
   .lworks__filters .lpill { flex: 0 0 auto; white-space: nowrap; }
 }
 /* a service page: every range and every product has its own way to the quote form below */
-.lcat__panelHead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem; width: 100%; }
 .lproduct__quote {
   justify-self: start; margin-block-start: 0.1rem; padding: 0.45em 0.9em; border-radius: 999px; border: 1.5px solid rgb(74 59 44 / 0.3);
   color: var(--sepia); font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
@@ -612,3 +606,28 @@ html.motion .lfan__card { animation: lfan-deal 0.9s var(--ease-out) backwards; a
 /* a clip in a fan card fills it like a photo; a tag (e.g. Design render) sits on its corner */
 .lfan__card video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .lfan__tag { position: absolute; z-index: 2; inset-block-end: 0.45rem; inset-inline-start: 0.45rem; font-size: 0.56rem; }
+
+/* ---------------------------------------------------------------- a range's own page (RangePage.tsx)
+   the types as paper cards: a square photo (or the type's number on paper when there is no photo yet), the
+   number, the name, what it is, and its own "Get a quote"; the service's ranges as cards on the service page
+   reuse the Services page's staggered cards (.lsvcs) */
+.lsvcs--ranges { padding-block: var(--space-4) clamp(4rem, 10vw, 9rem); }
+.lsvcs--ranges .lsvcs__name { font-size: clamp(1.5rem, 0.9rem + 1.6vw, 2.6rem); }
+.ltypes-sec { display: grid; gap: var(--space-3); }
+.ltypes { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(0.9rem, 1.8vw, 1.5rem); grid-template-columns: repeat(auto-fill, minmax(min(100%, 15.5rem), 1fr)); }
+.ltype { display: grid; grid-template-rows: auto auto auto 1fr auto; gap: 0.5rem; padding: 0.8rem 0.8rem 1rem; border-radius: 18px; background: #fbf6ea; box-shadow: 0 12px 28px rgb(74 59 44 / 0.1); }
+.ltype__art { position: relative; display: grid; place-items: center; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: #f3ebdb; }
+.ltype__art img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-out); }
+.ltype:hover .ltype__art img { transform: scale(1.04); }
+.ltype__art.is-text + .ltype__num { visibility: hidden; }   /* the number is already the picture */
+.ltype__art.is-text b { font-family: var(--font-display); font-size: clamp(3rem, 2rem + 3vw, 5rem); color: rgb(74 59 44 / 0.22); }
+.ltype__num { margin-block-start: 0.3rem; padding-inline: 0.2rem; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--sepia-2); }
+.ltype__name { margin: 0; padding-inline: 0.2rem; font-family: var(--font-display); font-size: var(--step-1); line-height: 1.05; text-transform: uppercase; color: var(--sepia); }
+[lang='ar'] .ltype__name { text-transform: none; line-height: 1.4; }
+.ltype__line { margin: 0; padding-inline: 0.2rem; font-size: var(--step--1); line-height: 1.55; color: rgb(74 59 44 / 0.75); }
+.ltype .lproduct__quote { margin-inline-start: 0.2rem; align-self: end; }
+.ltypes__note { margin: 0; font-size: var(--step--1); color: rgb(74 59 44 / 0.7); }
+.ltypes__note a { color: var(--sepia); }
+.lranges-nav { display: grid; gap: var(--space-2); padding-block-start: var(--space-3); }
+.lranges-nav__title { margin: 0; font-family: var(--font-mono); font-size: var(--step--1); font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sepia-2); }
+.lranges-nav .lpill { text-decoration: none; }
