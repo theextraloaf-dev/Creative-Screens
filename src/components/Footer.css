@@ -33,6 +33,14 @@
   .ftr__list dd {
     margin: 0;
   }
+  .ftr__list dd a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .ftr__list dd a:hover {
+    color: rgb(74 59 44 / 0.72);
+  }
   .ftr__lang {
     display: inline-block;
     padding: 0.6rem 1.1rem;
