@@ -3,11 +3,12 @@
    strokes under the pointer and leads to its page), how an order works, the common questions, and the closing panel.
    Design: docs/superpowers/specs/2026-11-20-light-style-sitewide-design.md */
 import { hrefFor, messages, type Locale } from '@/i18n';
+import { serviceCover } from '@/data/service-media';
 import { ClosingPanel, Faq, Ground, Ink, LightPage, PageHead, Steps } from './light/parts';
 import { Shell } from './Shell';
 
 const FAN = [
-  { src: '/video/hero-poster.jpg', look: 'photo' as const },
+  { src: '/video/hero-poster.webp', look: 'photo' as const },
   { src: '/subcategories/gifts-apparel/cap-trucker-navy.jpg', look: 'object' as const },
   { src: '/services/printer-banner.webp', look: 'photo' as const },
   { src: '/subcategories/acrylic-awards/trophy-crop.webp', look: 'object' as const },
@@ -32,7 +33,7 @@ export function ServicesPage({ locale }: { locale: Locale }) {
               <li key={s.slug} className="lsvcs__item" data-rise>
                 <a className="lsvcs__card" href={`${servicesHref}${s.slug}/`}>
                   <span className="lsvcs__art">
-                    <img className="is-drawing" src={`/plates/${s.slug}.png`} alt="" width="1254" height="1254" loading="lazy" decoding="async" />
+                    {serviceCover[s.slug] && <img className={`is-${serviceCover[s.slug].look}`} src={serviceCover[s.slug].src} alt="" loading="lazy" decoding="async" />}
                     <Ink />
                   </span>
                   <span className="lsvcs__num ltr" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>

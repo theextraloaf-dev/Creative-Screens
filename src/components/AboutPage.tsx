@@ -9,7 +9,7 @@ import { Shell } from './Shell';
 
 // the head's fan (as on Biegajaca's About): the workshop, the corniche in the middle, two catalogue pieces
 const FAN = [
-  { src: '/video/hero-poster.jpg', look: 'photo' as const },
+  { src: '/video/hero-poster.webp', look: 'photo' as const },
   { src: '/subcategories/acrylic-awards/trophy-crop.webp', look: 'object' as const },
   { src: '/video/hero-light-poster.webp', look: 'photo' as const },
   { src: '/gifts/dallah-set.webp', look: 'object' as const },

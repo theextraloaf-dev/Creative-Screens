@@ -4,14 +4,15 @@ import path from 'node:path';
 import { test } from 'node:test';
 import en from '../i18n/en.json' with { type: 'json' };
 import { jobs } from '../data/jobs.ts';
+import { serviceCover } from '../data/service-media.ts';
 import {
   activeCard, cardPose, erodePath, galleryTravel, jobFromHash, jobHash, liftDelay, listIndex, moreJobs, placeAt, serviceCounts, placeY, slidePose, slideTarget, snapStep, stepTarget, tornPath,
 } from './jobs-gallery.ts';
 
 const SERVICES = en.services.items.map((s) => s.slug);
 
-test('12 jobs with unique slugs, valid services, sample flags', () => {
-  assert.equal(jobs.length, 12);
+test('9 jobs with unique slugs, valid services, sample flags', () => {
+  assert.equal(jobs.length, 9);
   assert.equal(new Set(jobs.map((j) => j.slug)).size, jobs.length);
   for (const j of jobs) {
     assert.ok(SERVICES.includes(j.service), `${j.slug}: service ${j.service}`);
@@ -22,12 +23,24 @@ test('12 jobs with unique slugs, valid services, sample flags', () => {
   }
 });
 
-test("jobs use the original site's images only, each with a look that says how to frame it", () => {
+test("jobs use the original site's photos and catalogue pieces only, never a line drawing", () => {
   for (const j of jobs) {
-    assert.ok(['photo', 'object', 'drawing'].includes(j.look), `${j.slug}: look ${j.look}`);
-    for (const p of j.photos) assert.ok(!p.startsWith('/diorama/'), `${j.slug}: ${p} is not a toy render`);
-    if (j.look === 'drawing') assert.ok(j.photos.every((p) => p.startsWith('/plates/')), `${j.slug}: drawings are the plates`);
+    assert.ok(['photo', 'object'].includes(j.look), `${j.slug}: look ${j.look}`);
+    for (const p of j.photos) assert.ok(!p.startsWith('/diorama/') && !p.startsWith('/plates/'), `${j.slug}: ${p} is a real picture`);
   }
+});
+
+test('every service has a cover picture (a photo or a catalogue piece, never a drawing) that exists', () => {
+  for (const slug of SERVICES) {
+    const c = serviceCover[slug];
+    assert.ok(c, `${slug} has a cover`);
+    assert.ok(['photo', 'object'].includes(c.look), `${slug}: look ${c.look}`);
+    assert.ok(!c.src.startsWith('/plates/') && fs.existsSync(path.join('public', c.src)), `${slug}: ${c.src} exists`);
+  }
+});
+
+test('the line-drawing plates are gone from the site', () => {
+  assert.equal(fs.existsSync(path.join('public', 'plates')), false);
 });
 
 test('cardPose is neutral at the anchor and leans away from it', () => {

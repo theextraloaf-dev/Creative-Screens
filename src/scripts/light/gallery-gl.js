@@ -9,7 +9,7 @@
      catch a moving sheen; slides further from it are a little dimmer (warm, never grey: this is a light page).
    - A fast scroll bends the planes like canvas: a travelling wave plus a bow in the direction of travel, eased in
      quickly and out slowly.
-   - Photos fill their slide; catalogue pieces and drawings sit on paper with a margin, their white multiplied away.
+   - Photos fill their slide; catalogue pieces sit on paper with a margin, their white multiplied away.
    Needs WebGL2; without it the gallery keeps its DOM cards. */
 import { slidePose } from '../../lib/jobs-gallery.ts';
 
@@ -52,7 +52,7 @@ uniform float uLoaded, uLook, uImgAspect, uOpacity, uRadius, uUnit, uFocal, uSha
 uniform vec2 uSize;
 uniform vec3 uLight, uPaper;
 out vec4 o;
-vec3 pic(vec2 t) { vec4 c = texture(uTex, t); return mix(vec3(1.0), c.rgb, c.a); }   // drawings are transparent PNGs: over white
+vec3 pic(vec2 t) { vec4 c = texture(uTex, t); return mix(vec3(1.0), c.rgb, c.a); }   // a transparent image sits over white
 float rbox(vec2 p, vec2 b, float r) { vec2 q = abs(p) - b + r; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r; }
 void main() {
   float d = rbox(vLocal, uSize * 0.5, uRadius);
@@ -66,7 +66,7 @@ void main() {
     vec2 sc = boxAspect > uImgAspect ? vec2(1.0, uImgAspect / boxAspect) : vec2(boxAspect / uImgAspect, 1.0);
     vec2 uv = (vUv - 0.5) * sc + 0.5;
     tex = pic(vec2(uv.x, 1.0 - uv.y));
-  } else {                                               // a catalogue piece or drawing: contained on paper, multiplied
+  } else {                                               // a catalogue piece: contained on paper, multiplied
     float pad = 0.08;
     vec2 inner = vec2(1.0 - 2.0 * pad / boxAspect, 1.0 - 2.0 * pad);
     float innerAspect = boxAspect * inner.x / inner.y;

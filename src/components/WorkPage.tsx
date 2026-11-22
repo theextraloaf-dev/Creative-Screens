@@ -7,6 +7,7 @@ import { jobs } from '@/data/jobs';
 import { hrefFor, messages, type Locale } from '@/i18n';
 import { ClosingPanel, Ground, JobsDialog, LightPage, PageHead } from './light/parts';
 import { WorksGrid } from './light/WorksGrid';
+import { cardLabels } from './light/JobCard';
 import { Shell } from './Shell';
 
 export function WorkPage({ locale }: { locale: Locale }) {
@@ -21,7 +22,8 @@ export function WorkPage({ locale }: { locale: Locale }) {
         <PageHead locale={locale} id="wp-title" trail={[{ label: m.nav.work }]} script={L.workScript} lines={[S.workTitle]}
           count={String(jobs.length).padStart(3, '0')} lead={L.workLead} fan={fan} />
         <Ground on="ochre" from="cream" seed={41} className="lworks-sec">
-          <WorksGrid locale={locale} />
+          <WorksGrid locale={locale} services={m.services.items.map((s) => ({ slug: s.slug, name: s.name }))}
+            labels={{ ...cardLabels(m), filterLabel: S.filterLabel, all: S.all }} />
         </Ground>
         <ClosingPanel locale={locale} from="ochre" seed={43} lines={S.workClose.lines} cta={S.workClose.cta} href={`${hrefFor('home', locale)}#quote`} />
       </LightPage>

@@ -3,7 +3,8 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { answerRows, sizeKeys, type FieldDef } from '@/lib/quote-fields';
 import { buildQuoteMessage, isEmailValid, isQuoteReady, mailtoHref } from '@/lib/quote-message';
-import { whatsappHref, type Messages } from '@/i18n';
+import type { Messages } from '@/i18n';
+import { whatsappHref } from '@/i18n/links';
 import './QuoteForm.css';
 
 export const SERVICE_EVENT = 'cs:service';

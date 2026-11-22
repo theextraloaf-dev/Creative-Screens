@@ -12,13 +12,46 @@
    on 2026-11-16 was reverted the same day: every photo checked carried either dlxprint's own
    watermark or a real client's logo). Product names are kept in English on both locales since
    these are supplier SKU names, not site copy. Key is `${category}/${subcategory}`. */
-export interface SubProduct { slug: string; name: string; image: string }
+export interface SubProduct {
+  slug: string; name: string; image: string;
+  /** the name on the Arabic pages; supplier SKU names stay in English, a kind of product gets its Arabic name */
+  nameAr?: string;
+  /** a photo fills its card; a catalogue cut-out (the default) sits whole on paper */
+  look?: 'photo' | 'object';
+}
 
 const gift = (slug: string, name: string): SubProduct => ({ slug, name, image: `/gifts/${slug}.webp` });
 const award = (slug: string, name: string): SubProduct => ({ slug, name, image: `/subcategories/acrylic-awards/${slug}.jpg` });
 const more = (slug: string, name: string): SubProduct => ({ slug, name, image: `/subcategories/gifts-apparel/${slug}.jpg` });
+/* LED screen types after FineLED's catalogue (fineledscreen.com/products), each shown by a free stock photo
+   (Unsplash / Pexels, cropped to 800x800; sources in docs/stock-photo-shortlist.md). Types with no honest stock
+   photo (transparent, floor, hologram fan, taxi-top, delivery box) are left out until there are real photos. */
+const led = (slug: string, name: string, nameAr: string): SubProduct => ({ slug, name, nameAr, image: `/subcategories/led-screens/${slug}.webp`, look: 'photo' });
 
 export const subCategoryProducts: Record<string, SubProduct[]> = {
+  'led-screens/indoor-outdoor': [
+    led('indoor-led-walls', 'Indoor LED walls', 'جدران LED داخلية'),
+    led('outdoor-led-screens', 'Outdoor screens & billboards', 'شاشات ولوحات إعلانية خارجية'),
+    led('stadium-screens', 'Stadium & sports screens', 'شاشات الملاعب والرياضة'),
+    led('conference-walls', 'Conference & auditorium walls', 'شاشات قاعات المؤتمرات والمسارح'),
+  ],
+  'led-screens/creative-led': [
+    led('curved-flexible', 'Curved & flexible LED', 'شاشات LED منحنية ومرنة'),
+    led('sculptural-3d', '3D & sculptural LED', 'شاشات LED مجسّمة وثلاثية الأبعاد'),
+  ],
+  'led-screens/rental-events': [
+    led('stage-event-screens', 'Stage & event screens', 'شاشات المسارح والفعاليات'),
+    led('portable-kiosks', 'Portable screens & kiosks', 'شاشات متنقلة وأكشاك رقمية'),
+    led('studio-walls', 'Studio & broadcast walls', 'شاشات الاستوديو والبث'),
+  ],
+  'led-screens/led-signs': [
+    led('scrolling-boards', 'Scrolling message boards', 'لوحات رسائل متحركة'),
+    led('small-led-signs', 'Small LED signs', 'لوحات LED صغيرة'),
+  ],
+  'led-screens/installation': [
+    led('installation', 'Supply, installation & upkeep', 'التوريد والتركيب والصيانة'),
+  ],
+
   'acrylic-awards/trophies': [award('trophies', 'Beech Wood & Marble Award')],
   'acrylic-awards/plaques': [award('plaques', 'Wood & Mirror Plaque')],
 

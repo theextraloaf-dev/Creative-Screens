@@ -47,7 +47,7 @@ const contours = Array.from({ length: 12 }, (_, i) => {
 // that alternates sides; workshop photos fill their card, catalogue pieces sit on a tile of the palette. Each links to
 // its service; labels are messages.light.welcomeCards. depth: how much faster (+) or slower (-) than the page it rises.
 const CARDS = [
-  { src: '/video/hero-poster.jpg', service: 'print-stationery', look: 'photo', shape: 'wide', depth: 0.6 },
+  { src: '/video/hero-poster.webp', service: 'print-stationery', look: 'photo', shape: 'wide', depth: 0.6 },
   { src: '/subcategories/gifts-apparel/cap-trucker-navy.jpg', service: 'gifts-apparel', look: 'object', tone: 'var(--peach)', shape: 'square', depth: -0.5 },
   { src: '/subcategories/acrylic-awards/trophy-crop.webp', service: 'acrylic-awards', look: 'object', tone: 'var(--sea)', shape: 'square', depth: 1 },
   { src: '/services/printer-banner.webp', service: 'flags-banners', look: 'photo', shape: 'square', depth: 0.2 },

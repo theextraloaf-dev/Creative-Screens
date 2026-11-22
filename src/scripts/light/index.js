@@ -53,7 +53,7 @@ function playClips() {
   const small = innerWidth < 1100 || navigator.connection?.saveData;
   const pick = (v) => {
     if (v.dataset.src) return v.dataset.src;
-    if (portrait && v.dataset.srcTall) { if (v.dataset.posterTall) v.poster = v.dataset.posterTall; return v.dataset.srcTall; }
+    if (portrait && v.dataset.srcTall) return v.dataset.srcTall;
     return small ? v.dataset.srcMid : v.dataset.srcWide;
   };
   const seen = new Set();
@@ -64,10 +64,7 @@ function playClips() {
       v.play().catch(() => {});
     } else { seen.delete(v); if (!v.paused) v.pause(); }
   }), { rootMargin: '200px 0px', threshold: 0.01 });
-  vids.forEach((v) => {
-    if (portrait && v.dataset.posterTall) v.poster = v.dataset.posterTall;
-    io.observe(v);
-  });
+  vids.forEach((v) => io.observe(v));
   // browsers pause video on a hidden tab; carry on with the ones on screen when the visitor comes back
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) seen.forEach((v) => { if (v.paused) v.play().catch(() => {}); });

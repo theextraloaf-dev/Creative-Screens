@@ -295,12 +295,14 @@
       {
         "slug": "led-screens",
         "name": "LED Screens",
-        "line": "Indoor and outdoor LED walls, supplied and installed.",
+        "line": "Indoor, outdoor, creative and rental LED screens, supplied and installed.",
         "machine": "LED wall rig",
         "makes": [
-          "Indoor LED walls",
-          "Outdoor LED walls",
-          "Installation"
+          "Indoor & outdoor screens",
+          "Creative LED",
+          "Rental & events",
+          "LED signs",
+          "Installation & support"
         ],
         "parts": [
           {
@@ -1377,7 +1379,6 @@
       "lead": "Every category we offer. Pick one to see what's inside.",
       "subLead": "Pick a range to see it",
       "allLabel": "All categories",
-      "conceptLabel": "Concept illustration — real photos coming soon",
       "comingSoon": "Product photos for this range are coming soon. Tell us what you need and we'll quote it anyway.",
       "cta": "Get a quote for this",
       "bottomCta": "Get a quote"

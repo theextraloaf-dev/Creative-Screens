@@ -71,3 +71,24 @@ Went through jasani.ae's full catalogue (the person asked to "take everything fo
 ### Still not covered
 - Outdoor & Recreation only has one item — most other options in that category were named-brand products (Tacx, Ocean Bottle) or VINGA-branded.
 - Apparel & Clothing has nothing — see rejection reason above. Would need Creative Screens' own photos or a stock source without the face/trademark problem.
+
+## LED screen types (2026-11-22)
+
+The LED Screens page's ranges follow the screen types FineLED sells (fineledscreen.com/products, a Dubai/Muscat LED company), grouped the way they group them. None of FineLED's own pictures are used: their gallery is their clients' installations, and several of their images are AI-made. Each type is shown by a free stock photo instead (Unsplash or Pexels licence: free commercial use, no attribution required, not resold on its own). Downloaded at 1600 px, cropped square to 800 px WebP in `public/subcategories/led-screens/`. Crops keep clear of third-party names: the shop fascia beside the indoor wall, the venue name on the facade canopy, the sponsor sign in the stadium's corner.
+
+| Range | Type | File | Source |
+|---|---|---|---|
+| Indoor & outdoor screens | Indoor LED walls | indoor-led-walls.webp | [Unsplash: a large display of a waterfall inside a building](https://unsplash.com/photos/a-large-display-of-a-waterfall-inside-of-a-building-4NfAhnr721E) |
+| | Outdoor screens & billboards | outdoor-led-screens.webp | [Unsplash: modern building with vibrant digital art display at night](https://unsplash.com/photos/modern-building-with-vibrant-digital-art-display-at-night-NpwbASm2_l0) |
+| | Stadium & sports screens | stadium-screens.webp | [Unsplash: empty stadium seats with illuminated advertising boards](https://unsplash.com/photos/empty-stadium-seats-with-illuminated-advertising-boards-JOV2_bt3H0A) |
+| | Conference & auditorium walls | conference-walls.webp | [Unsplash: speaker presenting to a large audience in an auditorium](https://unsplash.com/photos/speaker-presenting-to-a-large-audience-in-an-auditorium-qzO9a6oQ8AM) |
+| Creative LED | Curved & flexible LED | curved-flexible.webp | [Unsplash: performers on a stage with violet lights](https://unsplash.com/photos/performers-on-a-stage-with-violet-lights-CX9quolwCfM) |
+| | 3D & sculptural LED | sculptural-3d.webp | [Unsplash: low angle photography of cube LED wall](https://unsplash.com/photos/low-angle-photography-of-cube-led-wall-SRIVLOiIZQQ) |
+| Rental & events | Stage & event screens | stage-event-screens.webp | [Unsplash: a large crowd watches a concert on a blue-lit stage](https://unsplash.com/photos/a-large-crowd-watches-a-concert-on-a-blue-lit-stage-IOSLnFHMzss) |
+| | Portable screens & kiosks | portable-kiosks.webp | [Unsplash: digital menu board in cafeteria](https://unsplash.com/photos/digital-menu-board-in-cafeteria-c7khRSSStJQ) |
+| | Studio & broadcast walls | studio-walls.webp | [Unsplash: modern television studio with purple lighting and large screens](https://unsplash.com/photos/modern-television-studio-with-purple-lighting-and-large-screens-yjlTDZdsvak) |
+| LED signs | Scrolling message boards | scrolling-boards.webp | [Unsplash: red LED sign displays the word happy repeated](https://unsplash.com/photos/red-led-sign-displays-the-word-happy-repeated-Urz7qG9a2Ck) |
+| | Small LED signs | small-led-signs.webp | [Unsplash: red and yellow LED light](https://unsplash.com/photos/red-and-yellow-led-light-HFmiFFxGFdU) |
+| Installation & support | Supply, installation & upkeep | installation.webp | [Pexels: unrecognizable workman installing digital screen on stage](https://www.pexels.com/photo/unrecognizable-workman-installing-digital-screen-on-stage-7513419/) |
+
+Left out (FineLED sells them, but no honest free photo exists; searched Unsplash and Pexels): transparent LED, LED floors, hologram LED fans, taxi-top LED screens (only plain taxi signs), LED delivery boxes (only plain delivery boxes). Add them when Creative Screens has its own photos.

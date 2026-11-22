@@ -10,7 +10,8 @@ export const subCategories: Record<string, string[]> = {
   'flags-banners': ['feather-flags', 'pole-flags', 'roll-ups', 'large-banners'],
   'exhibitions-events': ['booths', 'fabrication'],
   'event-setup': ['stage-backdrops', 'event-branding'],
-  'led-screens': ['indoor-led-walls', 'outdoor-led-walls', 'installation'],
+  // after the screen types FineLED (fineledscreen.com/products) sells, grouped the way they group them
+  'led-screens': ['indoor-outdoor', 'creative-led', 'rental-events', 'led-signs', 'installation'],
   /* Renamed/expanded 2026-11-17 to match jasani.ae's own category names (jasani.ae/shop's sidebar
      filter and homepage tiles) — Creative Screens' gifts-apparel is the same kind of catalogue, so
      the sub-categories should read the way a buyer already expects from that market. Apparel &

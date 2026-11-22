@@ -5,6 +5,10 @@ import { jobs, type Job } from '@/data/jobs';
 import { hrefFor, messages, type Locale } from '@/i18n';
 import { erodePath } from '@/lib/jobs-gallery';
 import { site } from '@/config/site';
+import { serviceCover } from '@/data/service-media';
+import { Ink } from './Ink';
+
+export { Ink };
 
 export type Ground = 'cream' | 'ochre' | 'sea' | 'peach';
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -53,7 +57,7 @@ export function Ground({ on, from, seed, id, label, className = '', children, ..
   );
 }
 
-/** The services as a pinned giant list: the scroll moves the live row; its plate and counter follow. */
+/** The services as a pinned giant list: the scroll moves the live row; its picture and counter follow. */
 export function ServicesPinned({ locale, from, seed, id = 'l-services', script, kicker, lead }: {
   locale: Locale; from?: Ground; seed?: number; id?: string; script: string; kicker: string; lead: string;
 }) {
@@ -67,7 +71,10 @@ export function ServicesPinned({ locale, from, seed, id = 'l-services', script, 
           <p className="lsvc__lead">{lead}</p>
           <p className="lcount"><b className="ltr" data-svc-count>01</b> <span className="ltr">/ {pad(services.length)}</span></p>
           <div className="lsvc__photo" aria-hidden="true">
-            {services.map((s, i) => <img key={s.slug} src={`/plates/${s.slug}.png`} alt="" loading="lazy" data-svc-photo={i} className={`is-drawing${i === 0 ? ' is-live' : ''}`} />)}
+            {services.map((s, i) => {
+              const cover = serviceCover[s.slug];
+              return cover && <img key={s.slug} src={cover.src} alt="" loading="lazy" decoding="async" data-svc-photo={i} className={`is-${cover.look}${i === 0 ? ' is-live' : ''}`} />;
+            })}
           </div>
         </div>
         <ol className="lsvc__list lgiant">
@@ -116,7 +123,7 @@ export function JobsGallery({ locale, from, seed, on = 'cream', id = 'l-work', t
             {jobs.map((j, i) => (
               <li key={j.slug} className={`ljobs__card is-${j.look}`} data-card={i} data-slug={j.slug}>
                 <button type="button" className="ljobs__open" data-see={j.slug} aria-label={`${L.see}: ${j[locale].title}`}>
-                  <img src={j.photos[0]} alt="" loading={i < 3 ? 'eager' : 'lazy'} width={1280} height={800} />
+                  <img src={j.photos[0]} alt="" loading="lazy" width={1280} height={800} />
                 </button>
                 {j.sample && <span className="lsample lsample--card">{L.sample}</span>}
                 <div className="ljobs__cap"><h3>{j[locale].title}</h3><p>{meta(j)}</p></div>
@@ -153,7 +160,8 @@ export function JobsDialog({ locale }: { locale: Locale }) {
 
 /** "Made in our workshop": the client's own job footage (printer, wall wraps, 3D letters, a car decal) cut into one
     film. Wide screens get three vertical panels side by side (workshop-1080/720), phones the vertical cut
-    (workshop-tall); it plays muted and looped only while on screen, and shows its still with reduced motion. */
+    (workshop-tall); it plays muted and looped only while on screen, and shows its still with reduced motion. The
+    still is a lazy picture under the video (a video's poster is fetched at once, wherever the film is on the page). */
 export function WorkshopFilm({ locale, from, seed, id = 'l-film' }: { locale: Locale; from?: Ground; seed?: number; id?: string }) {
   const L = messages(locale).light;
   return (
@@ -164,9 +172,12 @@ export function WorkshopFilm({ locale, from, seed, id = 'l-film' }: { locale: Lo
         <p className="lfilm__lead" data-rise>{L.filmLead}</p>
       </div>
       <figure className="lfilm__frame" data-rise>
-        <video muted loop playsInline preload="none" poster="/video/workshop-poster.webp" aria-hidden="true" data-autoplay
-          data-src-wide="/video/workshop-1080.mp4" data-src-mid="/video/workshop-720.mp4"
-          data-src-tall="/video/workshop-tall.mp4" data-poster-tall="/video/workshop-tall-poster.webp" />
+        <picture>
+          <source media="(max-aspect-ratio: 4/5)" srcSet="/video/workshop-tall-poster.webp" width={720} height={1280} />
+          <img src="/video/workshop-poster.webp" alt="" width={1920} height={1080} loading="lazy" decoding="async" />
+        </picture>
+        <video muted loop playsInline preload="none" aria-hidden="true" data-autoplay
+          data-src-wide="/video/workshop-1080.mp4" data-src-mid="/video/workshop-720.mp4" data-src-tall="/video/workshop-tall.mp4" />
       </figure>
     </Ground>
   );
@@ -245,9 +256,9 @@ export function Crumbs({ locale, trail }: { locale: Locale; trail: { label: stri
 }
 
 /** A fan card: a picture, or a short muted loop (video) with the picture as its still; tag labels it (e.g. a render). */
-export type FanItem = { src: string; look?: 'photo' | 'object' | 'drawing'; video?: string; tag?: string };
+export type FanItem = { src: string; look?: 'photo' | 'object'; video?: string; tag?: string };
 
-/** A fanned stack of tilted pictures: photos fill their card, catalogue pieces and drawings sit on paper, and a clip
+/** A fanned stack of tilted pictures: photos fill their card, catalogue pieces sit on paper, and a clip
     plays while it is on screen (the motion code, src/scripts/light/index.js; a still with reduced motion). It deals
     out as the page opens and spreads a little under the pointer. */
 export function Fan({ items }: { items: FanItem[] }) {
@@ -343,13 +354,3 @@ export function Faq({ locale }: { locale: Locale }) {
   );
 }
 
-/** Biegajaca's hover on a work, in our colours: two broad strokes, ochre then paper, pulled across the picture like
-    ink across a screen. Drawn by CSS (stroke-dashoffset) when the card is hovered or focused. */
-export function Ink() {
-  return (
-    <svg className="link" viewBox="0 0 1000 1250" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <path className="link__a" pathLength={1} d="M-140 210 C 260 40 640 380 1140 170 C 760 440 300 330 -140 650 C 300 690 700 560 1140 860" />
-      <path className="link__b" pathLength={1} d="M1140 420 C 720 300 320 560 -140 480 C 240 790 780 690 1140 1010 C 780 1160 320 1060 -140 1290" />
-    </svg>
-  );
-}

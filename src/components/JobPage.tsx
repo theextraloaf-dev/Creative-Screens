@@ -7,7 +7,7 @@ import { jobs } from '@/data/jobs';
 import { hrefFor, messages, otherLocale, type Locale } from '@/i18n';
 import { moreJobs } from '@/lib/jobs-gallery';
 import { Ground, JobsDialog, Kicker, LightPage, Crumbs } from './light/parts';
-import { JobCard } from './light/JobCard';
+import { JobCard, cardLabels } from './light/JobCard';
 import { JobMedia } from './light/JobMedia';
 import { QuoteSection } from './QuoteSection';
 import { Shell } from './Shell';
@@ -53,7 +53,7 @@ export function JobPage({ locale, slug }: { locale: Locale; slug: string }) {
           <section className="lsub-jobs" aria-labelledby="more-t">
             <Kicker script={L.jobsScript} bold={L.jobsKicker} />
             <h2 id="more-t" className="lsection-title">{S.moreJobs}</h2>
-            <ul className="lworks__grid">{moreJobs(jobs, job.slug, 4).map((j) => <JobCard key={j.slug} job={j} locale={locale} />)}</ul>
+            <ul className="lworks__grid">{moreJobs(jobs, job.slug, 4).map((j) => <JobCard key={j.slug} job={j} locale={locale} labels={cardLabels(m)} />)}</ul>
           </section>
         </Ground>
       </LightPage>
