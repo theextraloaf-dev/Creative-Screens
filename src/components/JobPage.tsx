@@ -29,7 +29,7 @@ export function JobPage({ locale, slug }: { locale: Locale; slug: string }) {
   ];
 
   return (
-    <Shell locale={locale} routeKey="work" alt={`${hrefFor('work', otherLocale(locale))}${job.slug}/`}>
+    <Shell locale={locale} routeKey="work" alt={`${hrefFor('work', otherLocale(locale))}${job.slug}/`} waPage={{ service: svc?.name, job: c.title }}>
       <LightPage locale={locale}>
         <article className="ljob" aria-labelledby="job-title">
           <JobMedia job={job} labels={job.photos.map((_, i) => `${L.photos} ${i + 1} ${L.of} ${job.photos.length}`)} />

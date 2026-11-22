@@ -11,13 +11,15 @@ interface Props {
   routeKey: RouteKey;
   /** the same page in the other language, when it is not the section page (a service, a job) */
   alt?: string;
+  /** what the page is about, for the first line of a WhatsApp chat started from it */
+  waPage?: { service?: string; job?: string };
   world?: ReactNode;
   /** the "21 years" loader; the light preview has its own first-visit loader */
   loader?: boolean;
   children: ReactNode;
 }
 
-export function Shell({ locale, routeKey, alt, world, loader = false, children }: Props) {
+export function Shell({ locale, routeKey, alt, waPage, world, loader = false, children }: Props) {
   const m = messages(locale);
   return (
     <>
@@ -26,8 +28,8 @@ export function Shell({ locale, routeKey, alt, world, loader = false, children }
       <Header locale={locale} routeKey={routeKey} alt={alt} />
       {world}
       <main id="main">{children}</main>
-      <Footer locale={locale} routeKey={routeKey} alt={alt} />
-      <StickyCta locale={locale} />
+      <Footer locale={locale} routeKey={routeKey} alt={alt} waPage={waPage} />
+      <StickyCta locale={locale} waPage={waPage} />
       <Behaviors />
     </>
   );

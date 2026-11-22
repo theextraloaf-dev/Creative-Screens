@@ -1,11 +1,13 @@
 import { hrefFor, messages, whatsappHref, type Locale } from '@/i18n';
 import { site } from '@/config/site';
+import { waGreeting } from '@/lib/quote-message';
 import './StickyCta.css';
 
-/* Phones: bottom bar after the hero. Desktop: floating WhatsApp button. */
-export function StickyCta({ locale }: { locale: Locale }) {
+/* Phones: bottom bar after the hero. Desktop: floating WhatsApp button. The chat opens with the page's subject
+   (a service page names the service, a job page the job), so the team knows what it is about from the first line. */
+export function StickyCta({ locale, waPage }: { locale: Locale; waPage?: { service?: string; job?: string } }) {
   const m = messages(locale);
-  const wa = whatsappHref(site.whatsapp, m.wa.general);
+  const wa = whatsappHref(site.whatsapp, waGreeting(m.wa, waPage));
 
   return (
     <>

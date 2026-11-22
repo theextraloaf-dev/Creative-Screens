@@ -1,11 +1,12 @@
 import { hrefFor, messages, otherLocale, whatsappHref, type Locale, type RouteKey } from '@/i18n';
 import { site } from '@/config/site';
+import { waGreeting } from '@/lib/quote-message';
 import { Erode } from './light/parts';
 import './Footer.css';
 
-interface Props { locale: Locale; routeKey: RouteKey; alt?: string }
+interface Props { locale: Locale; routeKey: RouteKey; alt?: string; waPage?: { service?: string; job?: string } }
 
-export function Footer({ locale, routeKey, alt }: Props) {
+export function Footer({ locale, routeKey, alt, waPage }: Props) {
   const m = messages(locale);
   const other = otherLocale(locale);
 
@@ -29,7 +30,7 @@ export function Footer({ locale, routeKey, alt }: Props) {
         </div>
         <dl className="ftr__list">
           <div><dt>{m.footer.phone}</dt><dd><span className="ltr">{site.phoneDisplay}</span></dd></div>
-          <div><dt>{m.footer.whatsapp}</dt><dd><a className="ltr" href={whatsappHref(site.whatsapp, m.wa.general)} target="_blank" rel="noopener">{site.whatsappDisplay}</a></dd></div>
+          <div><dt>{m.footer.whatsapp}</dt><dd><a className="ltr" href={whatsappHref(site.whatsapp, waGreeting(m.wa, waPage))} target="_blank" rel="noopener">{site.whatsappDisplay}</a></dd></div>
           <div><dt>{m.footer.email}</dt><dd><span className="ltr">{site.email}</span></dd></div>
           <div><dt>{m.footer.hours}</dt><dd>{m.footer.hoursValue}</dd></div>
         </dl>

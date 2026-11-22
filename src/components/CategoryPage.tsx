@@ -52,7 +52,7 @@ export function CategoryPage({ locale, category }: { locale: Locale; category: s
   const fan: FanItem[] = own.length ? [base[0], ...own, ...base.slice(1)].filter(Boolean).slice(0, 4) : base;
 
   return (
-    <Shell locale={locale} routeKey="services" alt={`${hrefFor('services', otherLocale(locale))}${category}/`}>
+    <Shell locale={locale} routeKey="services" alt={`${hrefFor('services', otherLocale(locale))}${category}/`} waPage={{ service: cat.name }}>
       <LightPage locale={locale}>
         <PageHead locale={locale} id="cat-title" className="lcat__head" trail={[{ label: m.nav.services, href: servicesHref }, { label: cat.name }]}
           script={L.categoryScript} lines={[cat.name]} lead={cat.line} cta={{ label: S.quoteFor.replace('{name}', cat.name), href: '#quote' }} fan={fan} />

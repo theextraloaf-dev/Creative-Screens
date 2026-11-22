@@ -49,3 +49,11 @@ export function buildQuoteMessage(req: QuoteRequest, labels: QuoteLabels): strin
 
 export const mailtoHref = (email: string, subject: string, body: string): string =>
   `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+/** The first line of a WhatsApp chat started from a page: a job page names the job, a service page the service,
+    anywhere else the general greeting (copy in messages.wa: general, about {name}, job {title}). */
+export function waGreeting(wa: { general: string; about: string; job: string }, page: { service?: string; job?: string } = {}): string {
+  if (page.job) return wa.job.replace('{title}', page.job);
+  if (page.service) return wa.about.replace('{name}', page.service);
+  return wa.general;
+}

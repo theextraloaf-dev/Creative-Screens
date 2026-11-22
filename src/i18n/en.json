@@ -649,7 +649,9 @@
     "whatsapp": "WhatsApp"
   },
   "wa": {
-    "general": "Hello, I'd like to ask about your services."
+    "general": "Hello, I'd like to ask about your services.",
+    "about": "Hello, I'd like to ask about {name}.",
+    "job": "Hello, I'd like to ask about a job like \"{title}\"."
   },
   "placeholder": "Photo placeholder",
   "lab": {
