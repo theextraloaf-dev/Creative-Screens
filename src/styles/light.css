@@ -474,7 +474,7 @@ html.motion .light.is-pinned .ljobs__open::after {
 .lfan { --dir: 1; position: relative; display: flex; justify-content: center; align-items: center; min-width: 0; padding-block: 1.5rem 2.5rem; }
 [dir='rtl'] .lfan { --dir: -1; }
 .lfan__card {
-  --w: clamp(6rem, 11vw, 12.5rem);
+  --w: clamp(7rem, 20vw, 11.5rem);   /* one column (600–899 px): the fan has the full width */
   position: relative; flex: 0 0 var(--w); width: var(--w); aspect-ratio: 4 / 5; margin-inline: calc(var(--w) * -0.2);
   border-radius: 12px; overflow: hidden; background: #fbf6ea; border: 5px solid #fbf6ea; box-shadow: 0 22px 46px rgb(74 59 44 / 0.2);
   rotate: var(--r); translate: 0 calc(var(--o) * var(--o) * 0.55rem);
@@ -485,7 +485,8 @@ html.motion .light.is-pinned .ljobs__open::after {
 .lfan:hover .lfan__card { rotate: calc(var(--r) * 1.5); translate: calc(var(--o) * 1.1rem * var(--dir)) calc(var(--o) * var(--o) * 0.8rem - 0.4rem); }
 html.motion .lfan__card { animation: lfan-deal 0.9s var(--ease-out) backwards; animation-delay: calc(0.2s + var(--i) * 0.08s); }
 @keyframes lfan-deal { from { opacity: 0; translate: calc(var(--o) * -75% * var(--dir)) 2.5rem; rotate: 0deg; } }
-@media (max-width: 599px) { .lfan__card { --w: clamp(5.2rem, 24vw, 8.5rem); } }
+@media (min-width: 900px) { .lfan__card { --w: clamp(7.5rem, 13.5vw, 16rem); } }   /* beside the title: sized to stay inside its column */
+@media (max-width: 599px) { .lfan__card { --w: clamp(5rem, 27vw, 10rem); } }
 
 /* the ink: two broad strokes pulled across a card's picture under the pointer (the Biegajaca hover, in ochre and paper) */
 .link { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
